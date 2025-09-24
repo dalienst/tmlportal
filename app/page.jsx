@@ -9,7 +9,7 @@ function LandingPage() {
       {/* Hero Section */}
       <header className="relative bg-gradient-to-b from-primary/20 to-background py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl font-[var(--font-heading)] text-foreground animate-fade-in">
+          <h1 className="text-4xl sm:text-5xl font-[var(--font-heading)] font-bold text-foreground animate-fade-in">
             Welcome to the Tamarind Mombasa Staff Portal
           </h1>
           <p className="mt-4 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
