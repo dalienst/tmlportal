@@ -3,60 +3,31 @@
 import CentersTable from "@/components/centers/CentersTable";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import CreateCenter from "@/forms/centers/CreateCenter";
-import { useFetchAccount } from "@/hooks/accounts/actions";
 import { useFetchCenters } from "@/hooks/centers/actions";
-import { useFetchFeedbackForms } from "@/hooks/feedbackforms/actions";
 import React, { useState } from "react";
 
-function Reservations() {
-  const {
-    isLoading: isLoadingAccount,
-    data: account,
-    refetch: refetchAccount,
-  } = useFetchAccount();
+function Centers() {
   const {
     isLoading: isLoadingCenters,
     data: centers,
     refetch: refetchCenters,
   } = useFetchCenters();
-  const {
-    isLoading: isLoadingFeedbackForms,
-    data: feedbackForms,
-    refetch: refetchFeedbackForms,
-  } = useFetchFeedbackForms();
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (isLoadingAccount || isLoadingCenters || isLoadingFeedbackForms) {
+  if (isLoadingCenters) {
     return <LoadingSpinner />;
   }
 
   return (
     <div className="container mx-auto p-4 bg-background min-h-screen">
       <section className="mb-6">
-        <h2 className="text-2xl font-bold text-foreground">
-          Hello {account?.name || "User"}
-        </h2>
-      </section>
-
-      <section id="summary" className="mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white p-4 rounded-lg shadow-md">
-            <h4 className="font-bold text-foreground">Information</h4>
-            <p className="text-muted-foreground">{account?.name}</p>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow-md">
-            <p className="font-bold text-2xl text-foreground">
-              {centers?.length || 0}
-            </p>
-            <h4 className="text-muted-foreground">Total Centers</h4>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow-md">
-            <p className="font-bold text-2xl text-foreground">
-              {feedbackForms?.length || 0}
-            </p>
-            <h4 className="text-muted-foreground">Feedback Forms</h4>
-          </div>
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-foreground">
+            Centers Overview
+          </h2>
+          <p className="text-2xl font-bold text-foreground">
+            {centers?.length} Centers
+          </p>
         </div>
       </section>
 
@@ -83,8 +54,8 @@ function Reservations() {
       </section>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
             <button
               className="absolute top-2 right-2 text-foreground hover:text-primary"
               onClick={() => setIsModalOpen(false)}
@@ -102,4 +73,4 @@ function Reservations() {
   );
 }
 
-export default Reservations;
+export default Centers;
