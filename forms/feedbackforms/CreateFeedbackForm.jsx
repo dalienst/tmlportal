@@ -114,6 +114,13 @@ function CreateFeedbackForm({ refetch, closeModal, center }) {
           >
             {loading ? "Creating..." : "Create Feedback Form"}
           </button>
+          <button
+            type="button"
+            className="w-full mt-2 bg-secondary text-secondary-foreground py-1.5 rounded-lg hover:bg-opacity-90 transition-colors"
+            onClick={closeModal}
+          >
+            Cancel
+          </button>
         </Form>
       )}
     </Formik>

@@ -26,6 +26,11 @@ function CenterDetail({ params }) {
       id="center"
       className="container mx-auto p-4 bg-background min-h-screen"
     >
+      <div className="mb-3 mt-3">
+        <h2 className="text-2xl font-bold text-foreground">
+          {center?.name} Overview
+        </h2>
+      </div>
       <div className="mb-6 p-4 rounded-lg shadow-md bg-card border border-border">
         <div className="mb-4 flex justify-between items-center border-b border-border pb-4">
           <h6 className="text-xl font-semibold text-foreground">
@@ -87,7 +92,7 @@ function CenterDetail({ params }) {
                     </td>
                     <td className="px-2 py-2 border-t border-border text-sm">
                       <Link
-                        href={`/centers/${center_identity}/${feedbackForm?.form_identity}`}
+                        href={`/reservations/centers/${center_identity}/${feedbackForm?.form_identity}`}
                         className="text-primary hover:underline"
                       >
                         Manage
@@ -106,8 +111,8 @@ function CenterDetail({ params }) {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto">
             <button
               className="absolute top-2 right-2 text-foreground hover:text-primary"
               onClick={() => setIsModalOpen(false)}

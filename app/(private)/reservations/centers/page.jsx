@@ -54,8 +54,8 @@ function Centers() {
       </section>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto">
             <button
               className="absolute top-2 right-2 text-foreground hover:text-primary"
               onClick={() => setIsModalOpen(false)}
