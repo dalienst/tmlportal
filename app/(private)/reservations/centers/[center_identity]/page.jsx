@@ -31,7 +31,7 @@ function CenterDetail({ params }) {
           {center?.name} Overview
         </h2>
       </div>
-      <div className="mb-6 p-4 rounded-lg shadow-md bg-card border border-border">
+      <div className="mb-6 p-4 rounded-lg shadow-md bg-card border border-border mt-3">
         <div className="mb-4 flex justify-between items-center border-b border-border pb-4">
           <h6 className="text-xl font-semibold text-foreground">
             Feedback Forms
