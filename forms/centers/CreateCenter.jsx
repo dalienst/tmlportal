@@ -127,23 +127,25 @@ function CreateCenter({ refetch, closeModal }) {
               required
             />
           </div>
-          <button
-            type="submit"
-            className={`w-full bg-primary text-primary-foreground py-1.5 rounded-lg hover:bg-opacity-90 transition-colors ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            disabled={loading}
-          >
-            {loading ? "Creating..." : "Create Center"}
-          </button>
+          <div className="flex flex-col gap-2 mt-4 md:flex-row md:gap-4">
+            <button
+              type="submit"
+              className={`w-full bg-accent text-accent-foreground py-2 rounded-lg hover:bg-opacity-90 transition-colors ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={loading}
+            >
+              {loading ? "Creating..." : "Create"}
+            </button>
 
-          <button
-            type="button"
-            className="w-full mt-2 bg-secondary text-secondary-foreground py-1.5 rounded-lg hover:bg-opacity-90 transition-colors"
-            onClick={closeModal}
-          >
-            Cancel
-          </button>
+            <button
+              type="button"
+              className="w-full bg-secondary text-secondary-foreground py-2 rounded-lg hover:bg-opacity-90 transition-colors"
+              onClick={closeModal}
+            >
+              Cancel
+            </button>
+          </div>
         </Form>
       )}
     </Formik>
