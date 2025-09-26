@@ -4,7 +4,7 @@ import { useFetchFeedbackForm } from "@/hooks/feedbackforms/actions";
 import { createFeedback } from "@/services/feedbacks";
 import Image from "next/image";
 import React, { use, useState } from "react";
-import RatingButtons from "@/components/general/RatingButtons"; // Use the new component
+import RatingButtons from "@/components/general/RatingButtons";
 import { useRouter } from "next/navigation";
 
 function Feedback({ params }) {
@@ -63,7 +63,7 @@ function Feedback({ params }) {
           question: questionId,
           ...(typeof value === "object" && value !== null
             ? value
-            : { rating: value }), // Handle text or rating
+            : { rating: value }),
         };
         if (existingAnswerIndex >= 0) {
           newAnswers[existingAnswerIndex] = answer;
@@ -132,22 +132,24 @@ function Feedback({ params }) {
   if (isLoadingFeedbackForm) return <LoadingSpinner />;
 
   return (
-    <div className="flex items-center justify-center min-h-screen py-2 px-4">
-      <div className="w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow ">
+    <div className="flex items-center justify-center min-h-screen py-4 px-4 bg-background">
+      <div className="w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-md">
         <Image
-          className="mx-auto"
+          className="mx-auto mb-4"
           src={`${feedbackForm?.logo || "/logo.png"}`}
           alt="Tamarind Logo"
           width={100}
           height={100}
         />
-        <h2 className="text-2xl font-bold mb-4 text-center">
+        <h2 className="text-xl font-semibold text-foreground mb-4 text-center">
           {feedbackForm?.title}
         </h2>
-        <p className="text-gray-600 mb-6">{feedbackForm?.description}</p>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <p className="text-muted-foreground mb-6 text-center">
+          {feedbackForm?.description}
+        </p>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-foreground">
               Guest Name *
             </label>
             <input
@@ -155,14 +157,14 @@ function Feedback({ params }) {
               name="guest_name"
               value={formData.guest_name}
               onChange={handleInputChange}
-              className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground bg-white"
               required
             />
           </div>
           {feedbackForm?.is_accomodation && (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-foreground">
                   Apartment No *
                 </label>
                 <input
@@ -170,13 +172,13 @@ function Feedback({ params }) {
                   name="apartment_no"
                   value={formData.apartment_no}
                   onChange={handleInputChange}
-                  className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground bg-white"
                   required
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-foreground">
                     Arrival Date *
                   </label>
                   <input
@@ -184,12 +186,12 @@ function Feedback({ params }) {
                     name="arrival_date"
                     value={formData.arrival_date}
                     onChange={handleInputChange}
-                    className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground bg-white"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-foreground">
                     Checkout Date *
                   </label>
                   <input
@@ -197,7 +199,7 @@ function Feedback({ params }) {
                     name="checkout_date"
                     value={formData.checkout_date}
                     onChange={handleInputChange}
-                    className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground bg-white"
                     required
                   />
                 </div>
@@ -206,7 +208,7 @@ function Feedback({ params }) {
           )}
           {feedbackForm?.questions?.map((question) => (
             <div key={question.reference} className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-foreground">
                 {question.text}
               </label>
               {question.type === "RATING" && (
@@ -238,9 +240,9 @@ function Feedback({ params }) {
                           yes_no: true,
                         })
                       }
-                      className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-2 focus:ring-blue-500"
+                      className="w-4 h-4 text-accent border-gray-300 focus:ring-2 focus:ring-accent"
                     />
-                    <span className="ml-2 text-sm text-gray-700">Yes</span>
+                    <span className="ml-2 text-sm text-foreground">Yes</span>
                   </label>
                   <label className="flex items-center">
                     <input
@@ -257,9 +259,9 @@ function Feedback({ params }) {
                           yes_no: false,
                         })
                       }
-                      className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-2 focus:ring-blue-500"
+                      className="w-4 h-4 text-accent border-gray-300 focus:ring-2 focus:ring-accent"
                     />
-                    <span className="ml-2 text-sm text-gray-700">No</span>
+                    <span className="ml-2 text-sm text-foreground">No</span>
                   </label>
                 </div>
               )}
@@ -275,7 +277,7 @@ function Feedback({ params }) {
                       text: e.target.value,
                     })
                   }
-                  className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground bg-white"
                   rows="3"
                   placeholder="Enter your comments"
                 />
@@ -284,7 +286,7 @@ function Feedback({ params }) {
                 <div className="ml-4 mt-2 space-y-2">
                   {question.sub_questions.map((subQ) => (
                     <div key={subQ.reference}>
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-foreground">
                         {subQ.text}
                       </label>
                       <RatingButtons
@@ -307,11 +309,11 @@ function Feedback({ params }) {
               )}
             </div>
           ))}
-          {error && <p className="text-red-600">{error}</p>}
+          {error && <p className="text-red-600 text-center">{error}</p>}
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full text-white secondary-button font-medium rounded-lg text-sm px-5 py-2.5 text-center ${
+            className={`w-full text-white bg-accent font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:bg-opacity-90 transition-colors ${
               isSubmitting && "opacity-50 cursor-not-allowed"
             }`}
           >
