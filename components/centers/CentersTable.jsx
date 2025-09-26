@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 
-function CentersTable({ centers }) {
+function CentersTable({ centers, role }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -54,7 +54,7 @@ function CentersTable({ centers }) {
                   </td>
                   <td className="border-b border-border px-4 py-2">
                     <Link
-                      href={`/centers/${center?.center_identity}`}
+                      href={`/${role}/centers/${center?.center_identity}`}
                       className="bg-primary text-primary-foreground px-3 py-1 rounded-lg hover:bg-opacity-90 transition-colors"
                     >
                       View
