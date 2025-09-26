@@ -20,6 +20,7 @@ function Feedback({ params }) {
   const [formData, setFormData] = useState({
     feedback_form: form_identity,
     guest_name: "",
+    date: "",
     apartment_no: "",
     arrival_date: "",
     checkout_date: "",
@@ -156,6 +157,20 @@ function Feedback({ params }) {
               type="text"
               name="guest_name"
               value={formData.guest_name}
+              onChange={handleInputChange}
+              className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground bg-white"
+              required
+            />
+          </div>
+          {/* date */}
+          <div>
+            <label className="block text-sm font-medium text-foreground">
+              Date
+            </label>
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
               onChange={handleInputChange}
               className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground bg-white"
               required
