@@ -134,7 +134,7 @@ function Feedback({ params }) {
 
   return (
     <div className="flex items-center justify-center min-h-screen py-4 px-4 bg-background">
-      <div className="w-full max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-md">
+      <div className="w-full max-w-xl p-6 bg-white border border-gray-200 rounded-lg shadow-md">
         <Image
           className="mx-auto mb-4"
           src={`${feedbackForm?.logo || "/logo.png"}`}
