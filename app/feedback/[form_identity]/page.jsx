@@ -163,7 +163,7 @@ function Feedback({ params }) {
             />
           </div>
           {/* date */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-foreground">
               Date
             </label>
@@ -175,7 +175,7 @@ function Feedback({ params }) {
               className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground bg-white"
               required
             />
-          </div>
+          </div> */}
           {feedbackForm?.is_accomodation && (
             <>
               <div>
