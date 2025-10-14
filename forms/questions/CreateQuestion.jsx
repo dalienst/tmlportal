@@ -41,44 +41,41 @@ function CreateQuestion({ feedbackForm, closeModal, refetch }) {
             width={100}
             height={100}
           />
-          <h2 className="mb-6 text-2xl font-bold text-center text-foreground">
+          <h2 className="mb-6 text-2xl font-bold text-center text-black">
             Create Question
           </h2>
           <div className="mb-4 hidden">
-            <label
-              htmlFor="feedbackForm"
-              className="block text-foreground mb-2"
-            >
+            <label htmlFor="feedbackForm" className="block text-black mb-2">
               Feedback Form
             </label>
             <Field
               type="text"
               id="feedbackForm"
               name="feedbackForm"
-              className="w-full px-3 py-2 border border-border rounded-lg text-foreground bg-muted focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-border rounded-lg text-black bg-muted focus:ring-2 focus:ring-primary"
               disabled
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="text" className="block text-foreground mb-2">
+            <label htmlFor="text" className="block text-black mb-2">
               Question Text
             </label>
             <Field
               type="text"
               id="text"
               name="text"
-              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black"
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="type" className="block text-foreground mb-2">
+            <label htmlFor="type" className="block text-black mb-2">
               Type
             </label>
             <Field
               as="select"
               id="type"
               name="type"
-              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black"
             >
               <option value="">Select Type</option>
               <option value="RATING">Rating</option>
@@ -87,14 +84,14 @@ function CreateQuestion({ feedbackForm, closeModal, refetch }) {
             </Field>
           </div>
           <div className="mb-4">
-            <label htmlFor="order" className="block text-foreground mb-2">
+            <label htmlFor="order" className="block text-black mb-2">
               Order
             </label>
             <Field
               type="number"
               id="order"
               name="order"
-              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black"
               min="0"
             />
           </div>

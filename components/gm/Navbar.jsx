@@ -4,29 +4,25 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 
-function ReservationsNavbar() {
+function GMNavbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
     signOut({ callbackUrl: "/" });
   };
-
   return (
     <nav className="bg-sidebar text-sidebar-foreground shadow-md fixed w-full z-10">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <span className="text-xl font-bold text-primary">
-          TML | Reservations
+          TML | General Manager
         </span>
         <div className="flex items-center space-x-6">
           <div className="hidden md:flex space-x-6">
-            <Link
-              href="/reservations"
-              className="hover:text-accent transition-colors"
-            >
+            <Link href="/gm" className="hover:text-accent transition-colors">
               Dashboard
             </Link>
             <Link
-              href="/reservations/centers"
+              href="/gm/centers"
               className="hover:text-accent transition-colors"
             >
               Centers
@@ -64,14 +60,14 @@ function ReservationsNavbar() {
         <div className="md:hidden bg-sidebar p-4">
           <div className="flex flex-col space-y-2">
             <Link
-              href="/reservations"
+              href="/gm"
               className="hover:text-accent transition-colors"
               onClick={() => setIsOpen(false)}
             >
               Dashboard
             </Link>
             <Link
-              href="/reservations/centers"
+              href="/gm/centers"
               className="hover:text-accent transition-colors"
               onClick={() => setIsOpen(false)}
             >
@@ -85,4 +81,4 @@ function ReservationsNavbar() {
   );
 }
 
-export default ReservationsNavbar;
+export default GMNavbar;

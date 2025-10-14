@@ -90,7 +90,7 @@ function CenterDetail({ params }) {
                     </td>
                     <td className="px-2 py-2 border-t border-border text-sm">
                       <Link
-                        href={`/reservations/centers/${center_identity}/${feedbackForm?.form_identity}`}
+                        href={`/gm/centers/${center_identity}/${feedbackForm?.form_identity}`}
                         className="text-primary hover:underline"
                       >
                         Manage

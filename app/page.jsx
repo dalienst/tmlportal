@@ -1,7 +1,7 @@
 "use client";
 
-import Link from 'next/link';
-import React from 'react'
+import Link from "next/link";
+import React from "react";
 
 function LandingPage() {
   return (
@@ -9,7 +9,7 @@ function LandingPage() {
       {/* Hero Section */}
       <header className="relative bg-gradient-to-b from-primary/20 to-background py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl font-[var(--font-heading)] font-bold text-foreground animate-fade-in">
+          <h1 className="text-4xl sm:text-5xl font-[var(--font-heading)] font-bold text-black animate-fade-in">
             Welcome to the Tamarind Mombasa Staff Portal
           </h1>
           <p className="mt-4 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -29,12 +29,12 @@ function LandingPage() {
       {/* Features Section */}
       <section className="py-16 bg-muted">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-[var(--font-heading)] font-bold text-foreground text-center mb-12">
+          <h2 className="text-3xl font-[var(--font-heading)] font-bold text-black text-center mb-12">
             Empowering Staff Operations
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-card rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="text-xl font-semibold text-foreground">
+              <h3 className="text-xl font-semibold text-black">
                 Feedback Analysis
               </h3>
               <p className="mt-2 text-muted-foreground">
@@ -43,7 +43,7 @@ function LandingPage() {
               </p>
             </div>
             <div className="bg-card rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="text-xl font-semibold text-foreground">
+              <h3 className="text-xl font-semibold text-black">
                 Approval Workflows
               </h3>
               <p className="mt-2 text-muted-foreground">
@@ -52,7 +52,7 @@ function LandingPage() {
               </p>
             </div>
             <div className="bg-card rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="text-xl font-semibold text-foreground">
+              <h3 className="text-xl font-semibold text-black">
                 Daily Operations
               </h3>
               <p className="mt-2 text-muted-foreground">
@@ -86,4 +86,4 @@ function LandingPage() {
   );
 }
 
-export default LandingPage
+export default LandingPage;

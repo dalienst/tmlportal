@@ -50,14 +50,11 @@ function CreateCenter({ refetch, closeModal }) {
             width={100}
             height={100}
           />
-          <h2 className="mb-4 text-xl font-bold text-center text-foreground">
+          <h2 className="mb-4 text-xl font-bold text-center text-black">
             Create Center
           </h2>
           <div className="mb-3">
-            <label
-              htmlFor="logo"
-              className="block text-foreground text-sm mb-1"
-            >
+            <label htmlFor="logo" className="block text-black text-sm mb-1">
               Center Logo
             </label>
             <input
@@ -65,58 +62,49 @@ function CreateCenter({ refetch, closeModal }) {
               id="logo"
               name="logo"
               onChange={(e) => setFieldValue("logo", e.target.files[0])}
-              className="block w-full text-sm text-foreground border border-border rounded-lg cursor-pointer bg-muted focus:outline-none py-1 px-2"
+              className="block w-full text-sm text-black border border-border rounded-lg cursor-pointer bg-muted focus:outline-none py-1 px-2"
             />
           </div>
           <div className="mb-3">
-            <label
-              htmlFor="name"
-              className="block text-foreground text-sm mb-1"
-            >
+            <label htmlFor="name" className="block text-black text-sm mb-1">
               Center Name
             </label>
             <Field
               type="text"
               id="name"
               name="name"
-              className="w-full px-2 py-1 border border-border rounded-lg focus:ring-2 focus:ring-primary text-foreground text-sm"
+              className="w-full px-2 py-1 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black text-sm"
               required
             />
           </div>
           <div className="mb-3">
-            <label
-              htmlFor="contact"
-              className="block text-foreground text-sm mb-1"
-            >
+            <label htmlFor="contact" className="block text-black text-sm mb-1">
               Contact
             </label>
             <Field
               type="text"
               id="contact"
               name="contact"
-              className="w-full px-2 py-1 border border-border rounded-lg focus:ring-2 focus:ring-primary text-foreground text-sm"
+              className="w-full px-2 py-1 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black text-sm"
               required
             />
           </div>
           <div className="mb-3">
-            <label
-              htmlFor="location"
-              className="block text-foreground text-sm mb-1"
-            >
+            <label htmlFor="location" className="block text-black text-sm mb-1">
               Location
             </label>
             <Field
               type="text"
               id="location"
               name="location"
-              className="w-full px-2 py-1 border border-border rounded-lg focus:ring-2 focus:ring-primary text-foreground text-sm"
+              className="w-full px-2 py-1 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black text-sm"
               required
             />
           </div>
           <div className="mb-3">
             <label
               htmlFor="description"
-              className="block text-foreground text-sm mb-1"
+              className="block text-black text-sm mb-1"
             >
               Description
             </label>
@@ -124,7 +112,7 @@ function CreateCenter({ refetch, closeModal }) {
               as="textarea"
               id="description"
               name="description"
-              className="w-full px-2 py-1 border border-border rounded-lg focus:ring-2 focus:ring-primary text-foreground text-sm h-20 resize-none"
+              className="w-full px-2 py-1 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black text-sm h-20 resize-none"
               required
             />
           </div>
