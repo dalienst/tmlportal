@@ -29,9 +29,7 @@ function SuccessPage() {
             d="M5 13l4 4L19 7"
           />
         </svg>
-        <h1 className="text-2xl font-semibold text-foreground mb-4">
-          Thank You!
-        </h1>
+        <h1 className="text-2xl font-semibold text-black mb-4">Thank You!</h1>
         <p className="text-muted-foreground mb-6">
           Your feedback has been successfully submitted. We appreciate your time
           and input.

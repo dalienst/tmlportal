@@ -47,12 +47,12 @@ function Login() {
             height={50}
           />
         </div>
-        <h2 className="text-2xl font-bold text-foreground text-center mb-6">
+        <h2 className="text-2xl font-bold text-black text-center mb-6">
           Staff Login
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-foreground mb-1">
+            <label htmlFor="email" className="block text-black mb-1">
               Email
             </label>
             <input
@@ -65,7 +65,7 @@ function Login() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-foreground mb-1">
+            <label htmlFor="password" className="block text-black mb-1">
               Password
             </label>
             <input

@@ -53,13 +53,13 @@ function UpdateFeedbackForm({ refetch, closeModal, center, feedbackForm }) {
             width={100}
             height={100}
           />
-          <h2 className="mb-6 text-2xl font-bold text-center text-foreground">
+          <h2 className="mb-6 text-2xl font-bold text-center text-black">
             Update Feedback Form
           </h2>
           <div className="mb-4">
-            <label className="block text-foreground mb-2">Center</label>
+            <label className="block text-black mb-2">Center</label>
             <Field
-              className="w-full px-3 py-2 border border-border rounded-lg text-foreground bg-muted focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 border border-border rounded-lg text-black bg-muted focus:ring-2 focus:ring-primary"
               id="center"
               name="center"
               type="text"
@@ -67,7 +67,7 @@ function UpdateFeedbackForm({ refetch, closeModal, center, feedbackForm }) {
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="logo" className="block text-foreground mb-2">
+            <label htmlFor="logo" className="block text-black mb-2">
               Form Logo
             </label>
             <input
@@ -75,29 +75,29 @@ function UpdateFeedbackForm({ refetch, closeModal, center, feedbackForm }) {
               id="logo"
               name="logo"
               onChange={(e) => setFieldValue("logo", e.target.files[0])}
-              className="block w-full text-sm text-foreground border border-border rounded-lg cursor-pointer bg-muted focus:outline-none py-2 px-3"
+              className="block w-full text-sm text-black border border-border rounded-lg cursor-pointer bg-muted focus:outline-none py-2 px-3"
             />
           </div>
           <div className="mb-4">
-            <label className="block text-foreground mb-2">Title</label>
+            <label className="block text-black mb-2">Title</label>
             <Field
-              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black"
               id="title"
               name="title"
               type="text"
             />
           </div>
           <div className="mb-4">
-            <label className="block text-foreground mb-2">Description</label>
+            <label className="block text-black mb-2">Description</label>
             <Field
-              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary text-foreground"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black"
               id="description"
               name="description"
               type="text"
             />
           </div>
           <div className="mb-4">
-            <label className="block text-foreground mb-2 flex items-center">
+            <label className="block text-black mb-2 flex items-center">
               Is Accommodation Form
             </label>
             <div className="flex items-center">

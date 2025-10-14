@@ -21,7 +21,7 @@ function CentersTable({ centers, role }) {
       <div className="overflow-x-auto">
         <table className="w-full table-auto border rounded-lg border-border">
           <thead>
-            <tr className="bg-muted text-foreground font-semibold text-sm">
+            <tr className="bg-muted text-black font-semibold text-sm">
               <th className="border-b border-border px-4 py-2 text-left">
                 Name
               </th>
@@ -43,13 +43,13 @@ function CentersTable({ centers, role }) {
                   key={center.reference}
                   className="bg-card hover:bg-muted/50 transition-colors"
                 >
-                  <td className="border-b border-border px-4 py-2 text-foreground">
+                  <td className="border-b border-border px-4 py-2 text-black">
                     {center?.name}
                   </td>
-                  <td className="border-b border-border px-4 py-2 text-foreground">
+                  <td className="border-b border-border px-4 py-2 text-black">
                     {center?.contact}
                   </td>
-                  <td className="border-b border-border px-4 py-2 text-foreground">
+                  <td className="border-b border-border px-4 py-2 text-black">
                     {center?.location}
                   </td>
                   <td className="border-b border-border px-4 py-2">
@@ -66,7 +66,7 @@ function CentersTable({ centers, role }) {
               <tr>
                 <td
                   colSpan="4"
-                  className="border-b border-border px-4 py-2 text-center text-foreground bg-card"
+                  className="border-b border-border px-4 py-2 text-center text-black bg-card"
                 >
                   No centers available
                 </td>
@@ -91,7 +91,7 @@ function CentersTable({ centers, role }) {
                 className={`px-3 py-1 rounded ${
                   currentPage === index + 1
                     ? "bg-accent text-accent-foreground"
-                    : "bg-muted text-foreground"
+                    : "bg-muted text-black"
                 } hover:bg-opacity-80 transition-colors`}
                 onClick={() => handlePageChange(index + 1)}
               >

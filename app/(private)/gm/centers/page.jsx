@@ -42,7 +42,7 @@ function Centers() {
           </div>
 
           {centers?.length > 0 ? (
-            <CentersTable centers={centers} role="reservations" />
+            <CentersTable centers={centers} role="gm" />
           ) : (
             <div className="p-4 text-center text-black bg-muted">
               No centers available

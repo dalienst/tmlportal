@@ -142,7 +142,7 @@ function Feedback({ params }) {
           width={100}
           height={100}
         />
-        <h2 className="text-xl font-semibold text-foreground mb-4 text-center">
+        <h2 className="text-xl font-semibold text-black mb-4 text-center">
           {feedbackForm?.title}
         </h2>
         <p className="text-muted-foreground mb-6 text-center">
@@ -150,7 +150,7 @@ function Feedback({ params }) {
         </p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-foreground">
+            <label className="block text-sm font-medium text-black">
               Guest Name *
             </label>
             <input
@@ -158,13 +158,13 @@ function Feedback({ params }) {
               name="guest_name"
               value={formData.guest_name}
               onChange={handleInputChange}
-              className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground bg-white"
+              className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-black bg-white"
               required
             />
           </div>
           {/* date */}
           {/* <div>
-            <label className="block text-sm font-medium text-foreground">
+            <label className="block text-sm font-medium text-black">
               Date
             </label>
             <input
@@ -172,14 +172,14 @@ function Feedback({ params }) {
               name="date"
               value={formData.date}
               onChange={handleInputChange}
-              className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground bg-white"
+              className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-black bg-white"
               required
             />
           </div> */}
           {feedbackForm?.is_accomodation && (
             <>
               <div>
-                <label className="block text-sm font-medium text-foreground">
+                <label className="block text-sm font-medium text-black">
                   Apartment No *
                 </label>
                 <input
@@ -187,13 +187,13 @@ function Feedback({ params }) {
                   name="apartment_no"
                   value={formData.apartment_no}
                   onChange={handleInputChange}
-                  className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground bg-white"
+                  className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-black bg-white"
                   required
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-foreground">
+                  <label className="block text-sm font-medium text-black">
                     Arrival Date *
                   </label>
                   <input
@@ -201,12 +201,12 @@ function Feedback({ params }) {
                     name="arrival_date"
                     value={formData.arrival_date}
                     onChange={handleInputChange}
-                    className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground bg-white"
+                    className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-black bg-white"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-foreground">
+                  <label className="block text-sm font-medium text-black">
                     Checkout Date *
                   </label>
                   <input
@@ -214,7 +214,7 @@ function Feedback({ params }) {
                     name="checkout_date"
                     value={formData.checkout_date}
                     onChange={handleInputChange}
-                    className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground bg-white"
+                    className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-black bg-white"
                     required
                   />
                 </div>
@@ -223,7 +223,7 @@ function Feedback({ params }) {
           )}
           {feedbackForm?.questions?.map((question) => (
             <div key={question.reference} className="space-y-2">
-              <label className="block text-sm font-medium text-foreground">
+              <label className="block text-sm font-medium text-black">
                 {question.text}
               </label>
               {question.type === "RATING" && (
@@ -257,7 +257,7 @@ function Feedback({ params }) {
                       }
                       className="w-4 h-4 text-accent border-gray-300 focus:ring-2 focus:ring-accent"
                     />
-                    <span className="ml-2 text-sm text-foreground">Yes</span>
+                    <span className="ml-2 text-sm text-black">Yes</span>
                   </label>
                   <label className="flex items-center">
                     <input
@@ -276,7 +276,7 @@ function Feedback({ params }) {
                       }
                       className="w-4 h-4 text-accent border-gray-300 focus:ring-2 focus:ring-accent"
                     />
-                    <span className="ml-2 text-sm text-foreground">No</span>
+                    <span className="ml-2 text-sm text-black">No</span>
                   </label>
                 </div>
               )}
@@ -292,7 +292,7 @@ function Feedback({ params }) {
                       text: e.target.value,
                     })
                   }
-                  className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-foreground bg-white"
+                  className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-black bg-white"
                   rows="3"
                   placeholder="Enter your comments"
                 />
@@ -301,7 +301,7 @@ function Feedback({ params }) {
                 <div className="ml-4 mt-2 space-y-2">
                   {question.sub_questions.map((subQ) => (
                     <div key={subQ.reference}>
-                      <label className="block text-sm font-medium text-foreground">
+                      <label className="block text-sm font-medium text-black">
                         {subQ.text}
                       </label>
                       <RatingButtons

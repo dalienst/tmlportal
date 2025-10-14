@@ -349,13 +349,13 @@ function ReportGenerator({ params }) {
   return (
     <div className="flex flex-col items-center justify-start min-h-screen py-6 px-4 bg-background">
       <div className="w-full max-w-4xl p-6 bg-white border border-border rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-foreground mb-6">
+        <h2 className="text-2xl font-bold text-black mb-6">
           Report for {feedbackForm?.title}
         </h2>
         <div className="mb-6 p-4 bg-card border border-border rounded-lg">
           <div className="flex flex-col lg:flex-row gap-4 mb-4 items-end">
             <div className="w-full lg:w-48">
-              <label className="block text-sm font-medium text-foreground mb-1">
+              <label className="block text-sm font-medium text-black mb-1">
                 Report Type
               </label>
               <select
@@ -370,7 +370,7 @@ function ReportGenerator({ params }) {
               </select>
             </div>
             <div className="w-full lg:w-48">
-              <label className="block text-sm font-medium text-foreground mb-1">
+              <label className="block text-sm font-medium text-black mb-1">
                 Specific Date
               </label>
               <input
@@ -386,7 +386,7 @@ function ReportGenerator({ params }) {
               />
             </div>
             <div className="w-full lg:w-48">
-              <label className="block text-sm font-medium text-foreground mb-1">
+              <label className="block text-sm font-medium text-black mb-1">
                 Start Date
               </label>
               <input
@@ -401,7 +401,7 @@ function ReportGenerator({ params }) {
               />
             </div>
             <div className="w-full lg:w-48">
-              <label className="block text-sm font-medium text-foreground mb-1">
+              <label className="block text-sm font-medium text-black mb-1">
                 End Date
               </label>
               <input
@@ -417,7 +417,7 @@ function ReportGenerator({ params }) {
             </div>
             {reportType === "question-specific" && (
               <div className="w-full lg:w-48">
-                <label className="block text-sm font-medium text-foreground mb-1">
+                <label className="block text-sm font-medium text-black mb-1">
                   Question
                 </label>
                 <select
@@ -450,73 +450,73 @@ function ReportGenerator({ params }) {
         <div className="mb-6">
           {reportType === "summary" && summaryReport && (
             <div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
+              <h3 className="text-xl font-semibold text-black mb-4">
                 Summary Report
               </h3>
               <table className="w-full border-collapse border border-border">
                 <thead>
                   <tr className="bg-muted">
-                    <th className="border border-border p-2 text-left text-foreground">
+                    <th className="border border-border p-2 text-left text-black">
                       Metric
                     </th>
-                    <th className="border border-border p-2 text-left text-foreground">
+                    <th className="border border-border p-2 text-left text-black">
                       Value
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="border border-border p-2 text-foreground">
+                    <td className="border border-border p-2 text-black">
                       Total Submissions
                     </td>
-                    <td className="border border-border p-2 text-foreground">
+                    <td className="border border-border p-2 text-black">
                       {summaryReport.totalSubmissions}
                     </td>
                   </tr>
                   <tr>
-                    <td className="border border-border p-2 text-foreground">
+                    <td className="border border-border p-2 text-black">
                       Average Rating
                     </td>
-                    <td className="border border-border p-2 text-foreground">
+                    <td className="border border-border p-2 text-black">
                       {summaryReport.averageRating.toFixed(1)}
                     </td>
                   </tr>
                   <tr>
-                    <td className="border border-border p-2 text-foreground">
+                    <td className="border border-border p-2 text-black">
                       Yes Percentage
                     </td>
-                    <td className="border border-border p-2 text-foreground">
+                    <td className="border border-border p-2 text-black">
                       {summaryReport.yesPercentage.toFixed(1)}%
                     </td>
                   </tr>
                   <tr>
-                    <td className="border border-border p-2 text-foreground">
+                    <td className="border border-border p-2 text-black">
                       No Percentage
                     </td>
-                    <td className="border border-border p-2 text-foreground">
+                    <td className="border border-border p-2 text-black">
                       {summaryReport.noPercentage.toFixed(1)}%
                     </td>
                   </tr>
                   <tr>
-                    <td className="border border-border p-2 text-foreground">
+                    <td className="border border-border p-2 text-black">
                       Rating Responses
                     </td>
-                    <td className="border border-border p-2 text-foreground">
+                    <td className="border border-border p-2 text-black">
                       {summaryReport.ratingCount}
                     </td>
                   </tr>
                   <tr>
-                    <td className="border border-border p-2 text-foreground">
+                    <td className="border border-border p-2 text-black">
                       Yes/No Responses
                     </td>
-                    <td className="border border-border p-2 text-foreground">
+                    <td className="border border-border p-2 text-black">
                       {summaryReport.yesNoCount}
                     </td>
                   </tr>
                 </tbody>
               </table>
               <div className="mt-6 h-64">
-                <h4 className="text-lg font-medium text-foreground mb-2">
+                <h4 className="text-lg font-medium text-black mb-2">
                   Yes/No Distribution
                 </h4>
                 <ResponsiveContainer width="100%" height="100%">
@@ -542,13 +542,13 @@ function ReportGenerator({ params }) {
               </div>
               {summaryReport.texts && summaryReport.texts.length > 0 && (
                 <div className="mt-6">
-                  <h4 className="text-lg font-medium text-foreground mb-2">
+                  <h4 className="text-lg font-medium text-black mb-2">
                     Comments
                   </h4>
                   <table className="w-full border-collapse border border-border">
                     <thead>
                       <tr className="bg-muted">
-                        <th className="border border-border p-2 text-left text-foreground">
+                        <th className="border border-border p-2 text-left text-black">
                           Comment
                         </th>
                       </tr>
@@ -558,7 +558,7 @@ function ReportGenerator({ params }) {
                         .slice((summaryTextPage - 1) * 10, summaryTextPage * 10)
                         .map((text, index) => (
                           <tr key={index}>
-                            <td className="border border-border p-2 text-foreground">
+                            <td className="border border-border p-2 text-black">
                               {text}
                             </td>
                           </tr>
@@ -566,7 +566,7 @@ function ReportGenerator({ params }) {
                       {summaryReport.texts.length === 0 && (
                         <tr>
                           <td
-                            className="border border-border p-2 text-foreground"
+                            className="border border-border p-2 text-black"
                             colSpan="2"
                           >
                             No Data
@@ -606,7 +606,7 @@ function ReportGenerator({ params }) {
             <div>
               {!selectedQuestion && defaultQuestionReport && (
                 <div>
-                  <h3 className="text-xl font-semibold text-foreground mb-4">
+                  <h3 className="text-xl font-semibold text-black mb-4">
                     Overview by Question
                   </h3>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -634,27 +634,27 @@ function ReportGenerator({ params }) {
                               stats.type === "RATING" ? "" : "col-span-full"
                             }`}
                           >
-                            <h4 className="text-lg font-medium text-foreground mb-2">
+                            <h4 className="text-lg font-medium text-black mb-2">
                               {question?.text}
                             </h4>
                             {stats.type === "RATING" && (
                               <table className="w-full border-collapse border border-border">
                                 <thead>
                                   <tr className="bg-muted">
-                                    <th className="border border-border p-2 text-left text-foreground">
+                                    <th className="border border-border p-2 text-left text-black">
                                       Metric
                                     </th>
-                                    <th className="border border-border p-2 text-left text-foreground">
+                                    <th className="border border-border p-2 text-left text-black">
                                       Value
                                     </th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   <tr>
-                                    <td className="border border-border p-2 text-foreground">
+                                    <td className="border border-border p-2 text-black">
                                       Average Rating
                                     </td>
-                                    <td className="border border-border p-2 text-foreground">
+                                    <td className="border border-border p-2 text-black">
                                       {stats.average.toFixed(1)}
                                     </td>
                                   </tr>
@@ -666,35 +666,38 @@ function ReportGenerator({ params }) {
                                 <table className="w-full lg:w-1/2 border-collapse border border-border">
                                   <thead>
                                     <tr className="bg-muted">
-                                      <th className="border border-border p-2 text-left text-foreground">
+                                      <th className="border border-border p-2 text-left text-black">
                                         Metric
                                       </th>
-                                      <th className="border border-border p-2 text-left text-foreground">
+                                      <th className="border border-border p-2 text-left text-black">
                                         Value
                                       </th>
                                     </tr>
                                   </thead>
                                   <tbody>
                                     <tr>
-                                      <td className="border border-border p-2 text-foreground">
+                                      <td className="border border-border p-2 text-black">
                                         Yes Percentage
                                       </td>
-                                      <td className="border border-border p-2 text-foreground">
+                                      <td className="border border-border p-2 text-black">
                                         {stats.yesPercentage.toFixed(1)}%
                                       </td>
                                     </tr>
                                     <tr>
-                                      <td className="border border-border p-2 text-foreground">
+                                      <td className="border border-border p-2 text-black">
                                         No Percentage
                                       </td>
-                                      <td className="border border-border p-2 text-foreground">
+                                      <td className="border border-border p-2 text-black">
                                         {stats.noPercentage.toFixed(1)}%
                                       </td>
                                     </tr>
                                   </tbody>
                                 </table>
                                 <div className="w-full lg:w-1/2 h-64 mt-4 lg:mt-0">
-                                  <ResponsiveContainer width="100%" height="100%">
+                                  <ResponsiveContainer
+                                    width="100%"
+                                    height="100%"
+                                  >
                                     <BarChart
                                       data={[
                                         {
@@ -722,7 +725,7 @@ function ReportGenerator({ params }) {
                               <table className="w-full border-collapse border border-border">
                                 <thead>
                                   <tr className="bg-muted">
-                                    <th className="border border-border p-2 text-left text-foreground">
+                                    <th className="border border-border p-2 text-left text-black">
                                       Comment
                                     </th>
                                   </tr>
@@ -730,7 +733,7 @@ function ReportGenerator({ params }) {
                                 <tbody>
                                   {textResponses.map((text, index) => (
                                     <tr key={index}>
-                                      <td className="border border-border p-2 text-foreground">
+                                      <td className="border border-border p-2 text-black">
                                         {text}
                                       </td>
                                     </tr>
@@ -738,7 +741,7 @@ function ReportGenerator({ params }) {
                                   {textResponses.length === 0 && (
                                     <tr>
                                       <td
-                                        className="border border-border p-2 text-foreground"
+                                        className="border border-border p-2 text-black"
                                         colSpan="2"
                                       >
                                         No Data
@@ -779,7 +782,7 @@ function ReportGenerator({ params }) {
                               )}
                             {stats.type === "RATING" && (
                               <div className="mt-6 h-64">
-                                <h5 className="text-md font-medium text-foreground mb-2">
+                                <h5 className="text-md font-medium text-black mb-2">
                                   Rating Trend
                                 </h5>
                                 <ResponsiveContainer width="100%" height="100%">
@@ -807,7 +810,7 @@ function ReportGenerator({ params }) {
               )}
               {selectedQuestion && questionReport && (
                 <div>
-                  <h3 className="text-xl font-semibold text-foreground mb-4">
+                  <h3 className="text-xl font-semibold text-black mb-4">
                     Report for{" "}
                     {
                       feedbackForm.questions.find(
@@ -818,10 +821,10 @@ function ReportGenerator({ params }) {
                   <table className="w-full border-collapse border border-border">
                     <thead>
                       <tr className="bg-muted">
-                        <th className="border border-border p-2 text-left text-foreground">
+                        <th className="border border-border p-2 text-left text-black">
                           Metric
                         </th>
-                        <th className="border border-border p-2 text-left text-foreground">
+                        <th className="border border-border p-2 text-left text-black">
                           Value
                         </th>
                       </tr>
@@ -829,20 +832,20 @@ function ReportGenerator({ params }) {
                     <tbody>
                       {questionReport.averageRating !== undefined && (
                         <tr>
-                          <td className="border border-border p-2 text-foreground">
+                          <td className="border border-border p-2 text-black">
                             Average Rating
                           </td>
-                          <td className="border border-border p-2 text-foreground">
+                          <td className="border border-border p-2 text-black">
                             {questionReport.averageRating.toFixed(1)}
                           </td>
                         </tr>
                       )}
                       {questionReport.yesPercentage !== undefined && (
                         <tr>
-                          <td className="border border-border p-2 text-foreground">
+                          <td className="border border-border p-2 text-black">
                             Yes Percentage
                           </td>
-                          <td className="border border-border p-2 text-foreground">
+                          <td className="border border-border p-2 text-black">
                             {questionReport.yesPercentage.toFixed(1)}%
                           </td>
                         </tr>
@@ -855,11 +858,11 @@ function ReportGenerator({ params }) {
                           )
                           .map((text, index) => (
                             <tr key={index}>
-                              <td className="border border-border p-2 text-foreground">
+                              <td className="border border-border p-2 text-black">
                                 Comment{" "}
                                 {index + 1 + (specificTextPage - 1) * 10}
                               </td>
-                              <td className="border border-border p-2 text-foreground">
+                              <td className="border border-border p-2 text-black">
                                 {text}
                               </td>
                             </tr>
@@ -868,7 +871,7 @@ function ReportGenerator({ params }) {
                         questionReport.texts.length === 0 && (
                           <tr>
                             <td
-                              className="border border-border p-2 text-foreground"
+                              className="border border-border p-2 text-black"
                               colSpan="2"
                             >
                               No Data
@@ -907,7 +910,7 @@ function ReportGenerator({ params }) {
                   <div className="mt-6">
                     {questionReport.ratings && (
                       <div ref={barChartRef}>
-                        <h4 className="text-lg font-medium text-foreground mb-2">
+                        <h4 className="text-lg font-medium text-black mb-2">
                           Rating Distribution
                         </h4>
                         <div className="h-64">
@@ -936,7 +939,7 @@ function ReportGenerator({ params }) {
                     )}
                     {questionReport.yesPercentage !== undefined && (
                       <div ref={pieChartRef}>
-                        <h4 className="text-lg font-medium text-foreground mb-2">
+                        <h4 className="text-lg font-medium text-black mb-2">
                           Yes/No Distribution
                         </h4>
                         <div className="h-64">
@@ -983,11 +986,11 @@ function ReportGenerator({ params }) {
             Download PDF
           </button>
           <button>
-          <Link
-            href={`/feedback/${form_identity}`}
-            className="bg-secondary text-secondary-foreground px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors"
-          >
-            Back to Form
+            <Link
+              href={`/feedback/${form_identity}`}
+              className="bg-secondary text-secondary-foreground px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors"
+            >
+              Back to Form
             </Link>
           </button>
         </div>
