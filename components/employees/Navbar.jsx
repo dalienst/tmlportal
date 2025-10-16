@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 
@@ -14,12 +14,12 @@ function EmployeeNavbar() {
   return (
     <nav className="bg-sidebar text-sidebar-foreground shadow-md fixed w-full z-10">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <span className="text-xl font-bold text-primary">TML | Employees</span>
+        <span className="text-xl font-bold text-destructive">TML | Employees</span>
         <div className="flex items-center space-x-6">
           <div className="hidden md:flex space-x-6">
             <Link
               href="/employees"
-              className="hover:text-accent transition-colors"
+              className="hover:text-accent text-destructive transition-colors"
             >
               Dashboard
             </Link>
@@ -28,7 +28,7 @@ function EmployeeNavbar() {
           </div>
           <button
             onClick={handleLogout}
-            className="bg-primary text-primary-foreground px-4 py-1.5 rounded-lg hover:bg-opacity-90 transition-colors md:px-6 md:py-2"
+            className="bg-destructive text-white px-4 py-1.5 rounded-lg hover:bg-opacity-90 transition-colors md:px-6 md:py-2"
           >
             Logout
           </button>
