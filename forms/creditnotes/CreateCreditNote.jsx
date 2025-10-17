@@ -14,11 +14,9 @@ function CreateCreditNote({ closeModal, refetch }) {
   return (
     <Formik
       initialValues={{
-        // customer details
         customer_name: "",
         customer_address: "",
         customer_email: "",
-        // transaction details
         transaction_date: "",
         check_number: "",
         amount: "",
@@ -55,19 +53,19 @@ function CreateCreditNote({ closeModal, refetch }) {
       }}
     >
       {({ setFieldValue }) => (
-        <Form className="container mx-auto overflow-y-auto ">
+        <Form className="w-full max-w-4xl mx-auto p-4">
           <section className="mb-3">
             <h2 className="text-3xl font-bold text-destructive">
               Create Credit Note
             </h2>
           </section>
 
-          {/* customer details */}
+          {/* Customer Details */}
           <div className="mb-6">
             <h3 className="text-xl font-bold text-destructive mb-3">
               Customer Details
             </h3>
-            <section className="mb-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
               <div>
                 <label
                   htmlFor="customer_name"
@@ -113,12 +111,12 @@ function CreateCreditNote({ closeModal, refetch }) {
             </section>
           </div>
 
-          {/* transaction details */}
+          {/* Transaction Details */}
           <div>
             <h3 className="text-xl font-bold text-destructive mb-3">
               Transaction Details
             </h3>
-            <section className="mb-3 grid grid-cols-1 md:grid-cols-3 gap-3">
+            <section className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
               <div>
                 <label
                   htmlFor="transaction_date"
@@ -133,7 +131,6 @@ function CreateCreditNote({ closeModal, refetch }) {
                   placeholder="Transaction Date"
                 />
               </div>
-
               <div>
                 <label
                   htmlFor="check_number"
@@ -148,7 +145,6 @@ function CreateCreditNote({ closeModal, refetch }) {
                   placeholder="Check Number"
                 />
               </div>
-
               <div>
                 <label
                   htmlFor="amount"
@@ -163,7 +159,6 @@ function CreateCreditNote({ closeModal, refetch }) {
                   placeholder="Amount"
                 />
               </div>
-
               <div>
                 <label
                   htmlFor="attachment"
@@ -181,7 +176,6 @@ function CreateCreditNote({ closeModal, refetch }) {
                   className="px-2 py-1 border border-border rounded w-full focus:ring-2 focus:ring-primary text-black text-sm"
                 />
               </div>
-
               <div>
                 <label
                   htmlFor="revenue_center"
@@ -202,7 +196,6 @@ function CreateCreditNote({ closeModal, refetch }) {
                   ))}
                 </Field>
               </div>
-
               <div>
                 <label
                   htmlFor="cashier_name"
@@ -218,7 +211,6 @@ function CreateCreditNote({ closeModal, refetch }) {
                 />
               </div>
             </section>
-
             <div>
               <label htmlFor="reason" className="block text-black text-sm mb-1">
                 Reason
@@ -233,7 +225,7 @@ function CreateCreditNote({ closeModal, refetch }) {
             </div>
           </div>
 
-          {/* buttons */}
+          {/* Buttons */}
           <div className="flex justify-end mt-4">
             <button
               type="button"

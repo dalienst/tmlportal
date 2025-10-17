@@ -69,11 +69,10 @@ function EmployeeDashboard() {
         </div>
       </section>
 
-      {/* modals */}
-      {/* White backgrounds for modals */}
+      {/* Modal */}
       {creditNoteModal && (
-        <div className="bg-white fixed inset-0 z-50">
-          <div className="p-4 ">
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <div className="p-4">
             <button
               className="absolute top-2 right-2 text-black hover:text-primary"
               onClick={() => setCreditNoteModal(false)}
