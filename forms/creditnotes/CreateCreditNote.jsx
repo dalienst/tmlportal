@@ -236,9 +236,10 @@ function CreateCreditNote({ closeModal, refetch }) {
             </button>
             <button
               type="submit"
+              disabled={loading}
               className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-hover"
             >
-              Create Credit Note
+              {loading ? "Creating..." : "Create Credit Note"}
             </button>
           </div>
         </Form>
