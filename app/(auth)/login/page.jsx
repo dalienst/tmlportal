@@ -31,6 +31,7 @@ function Login() {
       else if (session?.user?.is_finance) router.push("/finance");
       else if (session?.user?.is_reservations) router.push("/reservations");
       else if (session?.user?.is_manager) router.push("/manager");
+      else if (session?.user?.is_employee) router.push("/employees");
       else router.push("/");
     }
     setLoading(false);
