@@ -79,7 +79,7 @@ function EmployeeApprovalRequestTable({ approvalRequests }) {
   return (
     <div className="mb-6">
       <h3 className="text-xl font-semibold text-black mb-4">
-        Approval Requests
+        Your Approval Requests
       </h3>
 
       {/* Filter Section */}
@@ -167,7 +167,7 @@ function EmployeeApprovalRequestTable({ approvalRequests }) {
       {/* Table Section */}
       {paginatedRequests?.length > 0 ? (
         <>
-          <Table className="bg-white shadow-md rounded-lg">
+          <Table className="bg-white shadow-md rounded-lg border border-border">
             <TableHeader>
               <TableRow>
                 <TableHead>Title</TableHead>
