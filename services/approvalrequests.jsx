@@ -11,9 +11,9 @@ export const getApprovalRequests = async (axios) => {
   return response?.data?.results || [];
 };
 
-export const getApprovalRequest = async (axios, reference) => {
+export const getApprovalRequest = async (identity, axios) => {
   const response = await apiActions?.get(
-    `/api/v1/approvalrequests/${reference}/`,
+    `/api/v1/approvalrequests/${identity}/`,
     axios
   );
   return response?.data || {};
