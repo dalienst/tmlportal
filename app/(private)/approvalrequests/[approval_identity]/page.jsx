@@ -22,13 +22,15 @@ import {
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { updateApprovalRequest } from "@/services/approvalrequests";
+import useAxiosAuth from "@/hooks/general/useAxiosAuth";
+import { updateApprovalStep } from "@/services/approvalsteps";
 
 function ApprovalRequestDetail() {
   const { approval_identity } = useParams();
   const router = useRouter();
   const [creditNoteModal, setCreditNoteModal] = useState(false);
-  const [loadingStep, setLoadingStep] = useState(null); // Track loading state for each step
+  const [loadingStep, setLoadingStep] = useState(null);
+  const token = useAxiosAuth();
 
   const {
     isLoading: isLoadingApprovalRequest,
@@ -43,7 +45,7 @@ function ApprovalRequestDetail() {
   const handleApproveStep = async (stepReference) => {
     setLoadingStep(stepReference);
     try {
-      await updateApprovalRequest(stepReference, { status: "Approved" });
+      await updateApprovalStep(stepReference, { status: "Approved" }, token);
       toast.success("Step approved successfully");
       await refetchApprovalRequest();
     } catch (error) {
@@ -69,7 +71,7 @@ function ApprovalRequestDetail() {
         </h2>
       </section>
       <Card className="mb-6">
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 text-black">
           <div>
             <span className="font-semibold">Title:</span>{" "}
             {approvalRequest?.title}

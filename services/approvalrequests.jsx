@@ -20,7 +20,7 @@ export const getApprovalRequest = async (identity, axios) => {
 };
 
 export const updateApprovalRequest = async (axios, reference, formData) => {
-  await apiMultipartActions?.put(
+  await apiMultipartActions?.patch(
     `/api/v1/approvalrequests/${reference}/`,
     formData,
     axios
