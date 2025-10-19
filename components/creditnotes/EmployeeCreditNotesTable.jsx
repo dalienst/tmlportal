@@ -273,14 +273,6 @@ function EmployeeCreditNotesTable({ creditNotes }) {
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <span className="font-semibold">Identity:</span>{" "}
-                {selectedCreditNote.identity}
-              </div>
-              <div>
-                <span className="font-semibold">Reference:</span>{" "}
-                {selectedCreditNote.reference}
-              </div>
-              <div>
                 <span className="font-semibold">Customer Name:</span>{" "}
                 {selectedCreditNote.customer_name}
               </div>

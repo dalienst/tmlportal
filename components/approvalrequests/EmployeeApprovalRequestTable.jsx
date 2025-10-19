@@ -261,14 +261,6 @@ function EmployeeApprovalRequestTable({ approvalRequests }) {
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <span className="font-semibold">Identity:</span>{" "}
-                {selectedApprovalRequest.identity}
-              </div>
-              <div>
-                <span className="font-semibold">Reference:</span>{" "}
-                {selectedApprovalRequest.reference}
-              </div>
-              <div>
                 <span className="font-semibold">Title:</span>{" "}
                 {selectedApprovalRequest.title}
               </div>
