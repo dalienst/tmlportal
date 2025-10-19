@@ -15,3 +15,8 @@ export const getUsers = async (axios) => {
   const response = await apiActions?.get("/api/v1/auth/", axios);
   return response?.data?.results || [];
 };
+
+export const getManagers = async (axios) => {
+  const response = await apiActions?.get("/api/v1/auth/managers/list/", axios);
+  return response?.data?.results || [];
+};

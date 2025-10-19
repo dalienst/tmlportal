@@ -15,11 +15,11 @@ export function useFetchApprovalRequests() {
   });
 }
 
-export function useFetchApprovalRequest(reference) {
+export function useFetchApprovalRequest(identity) {
   const axios = useAxiosAuth();
   return useQuery({
-    queryKey: ["approvalRequest", reference],
-    queryFn: () => getApprovalRequest(axios, reference),
-    enabled: !!reference,
+    queryKey: ["approvalRequest", identity],
+    queryFn: () => getApprovalRequest( identity, axios),
+    enabled: !!identity,
   });
 }
