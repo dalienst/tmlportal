@@ -1,6 +1,7 @@
 "use client";
 
 import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
+import EmployeeApprovalRequestTable from "@/components/approvalrequests/EmployeeApprovalRequestTable";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import { Card, CardContent } from "@/components/ui/card";
 import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
@@ -25,7 +26,7 @@ function EmployeeDashboard() {
 
   const {
     isLoading: isLoadingApprovalRequest,
-    data: approvalRequest,
+    data: approvalRequests,
     refetch: refetchApprovalRequest,
   } = useFetchApprovalRequests();
 
@@ -43,7 +44,7 @@ function EmployeeDashboard() {
   }
 
   return (
-    <div className="container mx-auto p-4 min-h-screen">
+    <div className="container mx-auto p-4 min-h-screen bg-gray-100">
       <section className="mb-6 flex md:items-center flex-col md:flex-row gap-2 justify-between">
         <h2 className="text-2xl font-bold text-destructive">
           Hello {account?.name || "User"}
@@ -78,7 +79,7 @@ function EmployeeDashboard() {
               Approval Requests
             </h6>
             <p className="text-lg font-semibold text-black">
-              {approvalRequest?.length}
+              {approvalRequests?.length}
             </p>
           </div>
         </div>
@@ -88,6 +89,14 @@ function EmployeeDashboard() {
         <Card>
           <CardContent>
             <EmployeeCreditNotesTable creditNotes={creditNotes} />
+          </CardContent>
+        </Card>
+      </section>
+
+      <section id="approval-requests" className="mb-6">
+        <Card>
+          <CardContent>
+            <EmployeeApprovalRequestTable approvalRequests={approvalRequests} />
           </CardContent>
         </Card>
       </section>
