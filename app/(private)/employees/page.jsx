@@ -1,8 +1,9 @@
 "use client";
 
 import LoadingSpinner from "@/components/general/LoadingSpinner";
+import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
 import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
-import { useFetchAccount } from "@/hooks/accounts/actions";
+import { useFetchAccount, useFetchManagers } from "@/hooks/accounts/actions";
 import { useFetchApprovalRequests } from "@/hooks/approvalrequests/actions";
 import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 import React, { useState } from "react";
@@ -26,7 +27,14 @@ function EmployeeDashboard() {
     refetch: refetchApprovalRequest,
   } = useFetchApprovalRequests();
 
+  const {
+    isLoading: isLoadingManagers,
+    data: managers,
+    refetch: refetchManagers,
+  } = useFetchManagers();
+
   const [creditNoteModal, setCreditNoteModal] = useState(false);
+  const [approvalRequestModal, setApprovalRequestModal] = useState(false);
 
   if (isLoadingAccount || isLoadingCreditNotes || isLoadingApprovalRequest) {
     return <LoadingSpinner />;
@@ -46,7 +54,12 @@ function EmployeeDashboard() {
           >
             Credit Note
           </button>
-          <button>Request</button>
+          <button
+            className="bg-green-600 text-white p-1 rounded"
+            onClick={() => setApprovalRequestModal(true)}
+          >
+            Request
+          </button>
         </section>
       </section>
 
@@ -86,6 +99,13 @@ function EmployeeDashboard() {
           </div>
         </div>
       )}
+
+      <CreateApprovalRequest
+        isOpen={approvalRequestModal}
+        onClose={() => setApprovalRequestModal(false)}
+        creditNotes={creditNotes}
+        managers={managers}
+      />
     </div>
   );
 }

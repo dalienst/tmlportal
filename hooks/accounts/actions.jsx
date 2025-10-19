@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import useAxiosAuth from "@/hooks/general/useAxiosAuth";
 import useUserId from "@/hooks/general/useUserId";
-import { getUser, getUsers } from "@/services/accounts";
+import { getManagers, getUser, getUsers } from "@/services/accounts";
 
 export function useFetchAccount() {
   const userId = useUserId();
@@ -21,5 +21,14 @@ export function useFetchUsers() {
   return useQuery({
     queryKey: ["users"],
     queryFn: () => getUsers(axios),
+  });
+}
+
+export function useFetchManagers() {
+  const axios = useAxiosAuth();
+
+  return useQuery({
+    queryKey: ["managers"],
+    queryFn: () => getManagers(axios),
   });
 }
