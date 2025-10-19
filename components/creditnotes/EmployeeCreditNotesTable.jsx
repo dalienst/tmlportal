@@ -28,11 +28,14 @@ function EmployeeCreditNotesTable({ creditNotes }) {
     customer_name: "",
     transaction_date: "",
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   // Handle filter input changes
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
+    setCurrentPage(1); // Reset to first page on filter change
   };
 
   // Reset filters
@@ -44,6 +47,7 @@ function EmployeeCreditNotesTable({ creditNotes }) {
       customer_name: "",
       transaction_date: "",
     });
+    setCurrentPage(1); // Reset to first page
   };
 
   // Filter credit notes
@@ -67,6 +71,17 @@ function EmployeeCreditNotesTable({ creditNotes }) {
           new Date(filters.transaction_date).toLocaleDateString())
     );
   });
+
+  // Pagination logic
+  const totalItems = filteredCreditNotes?.length || 0;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedCreditNotes = filteredCreditNotes?.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="mb-6">
@@ -149,7 +164,7 @@ function EmployeeCreditNotesTable({ creditNotes }) {
           <Button
             variant="sm"
             onClick={resetFilters}
-            className="bg-destructive text-white"
+            className="bg-red-600 text-white hover:bg-red-700"
           >
             Reset Filters
           </Button>
@@ -157,52 +172,89 @@ function EmployeeCreditNotesTable({ creditNotes }) {
       </div>
 
       {/* Table Section */}
-      {filteredCreditNotes?.length > 0 ? (
-        <Table className="bg-white shadow-md rounded-lg">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Check Number</TableHead>
-              <TableHead>Customer Name</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredCreditNotes.map((creditNote) => (
-              <TableRow key={creditNote.identity}>
-                <TableCell>{creditNote.check_number}</TableCell>
-                <TableCell>{creditNote.customer_name}</TableCell>
-                <TableCell>
-                  {creditNote.currency}{" "}
-                  {parseFloat(creditNote.amount).toFixed(2)}
-                </TableCell>
-                <TableCell>
-                  <span
-                    className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                      creditNote.status === "Pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : creditNote.status === "Approved"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {creditNote.status}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="link"
-                    className="text-blue-600"
-                    onClick={() => setSelectedCreditNote(creditNote)}
-                  >
-                    View Details
-                  </Button>
-                </TableCell>
+      {paginatedCreditNotes?.length > 0 ? (
+        <>
+          <Table className="bg-white shadow-md rounded-lg">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Check Number</TableHead>
+                <TableHead>Customer Name</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {paginatedCreditNotes.map((creditNote) => (
+                <TableRow key={creditNote.identity}>
+                  <TableCell>{creditNote.check_number}</TableCell>
+                  <TableCell>{creditNote.customer_name}</TableCell>
+                  <TableCell>
+                    {creditNote.currency}{" "}
+                    {parseFloat(creditNote.amount).toFixed(2)}
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
+                        creditNote.status === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : creditNote.status === "Approved"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {creditNote.status}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="link"
+                      className="text-blue-600"
+                      onClick={() => setSelectedCreditNote(creditNote)}
+                    >
+                      View Details
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+          {/* Pagination Controls */}
+          <div className="mt-4 flex items-center justify-between">
+            <div className="text-sm text-gray-600">
+              Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of{" "}
+              {totalItems} credit notes
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                Previous
+              </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page}
+                  </Button>
+                )
+              )}
+              <Button
+                variant="sm"
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </>
       ) : (
         <p className="text-gray-600">No credit notes available.</p>
       )}

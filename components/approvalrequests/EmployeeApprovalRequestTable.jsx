@@ -27,11 +27,14 @@ function EmployeeApprovalRequestTable({ approvalRequests }) {
     request_type: "",
     created_at: "",
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   // Handle filter input changes
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
+    setCurrentPage(1); // Reset to first page on filter change
   };
 
   // Reset filters
@@ -42,6 +45,7 @@ function EmployeeApprovalRequestTable({ approvalRequests }) {
       request_type: "",
       created_at: "",
     });
+    setCurrentPage(1); // Reset to first page
   };
 
   // Filter approval requests
@@ -57,6 +61,20 @@ function EmployeeApprovalRequestTable({ approvalRequests }) {
           new Date(filters.created_at).toLocaleDateString())
     );
   });
+
+  // Pagination logic
+  const totalItems = filteredApprovalRequests?.length || 0;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedRequests = filteredApprovalRequests?.slice(
+    startIndex,
+    endIndex
+  );
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="mb-6">
@@ -147,47 +165,84 @@ function EmployeeApprovalRequestTable({ approvalRequests }) {
       </div>
 
       {/* Table Section */}
-      {filteredApprovalRequests?.length > 0 ? (
-        <Table className="bg-white shadow-md rounded-lg">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Request Type</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredApprovalRequests.map((request) => (
-              <TableRow key={request.identity}>
-                <TableCell>{request.title}</TableCell>
-                <TableCell>{request.request_type}</TableCell>
-                <TableCell>
-                  <span
-                    className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                      request.status === "PENDING"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : request.status === "APPROVED"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {request.status}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="link"
-                    className="text-blue-600"
-                    onClick={() => setSelectedApprovalRequest(request)}
-                  >
-                    View Details
-                  </Button>
-                </TableCell>
+      {paginatedRequests?.length > 0 ? (
+        <>
+          <Table className="bg-white shadow-md rounded-lg">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead>Request Type</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {paginatedRequests.map((request) => (
+                <TableRow key={request.identity}>
+                  <TableCell>{request.title}</TableCell>
+                  <TableCell>{request.request_type}</TableCell>
+                  <TableCell>
+                    <span
+                      className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
+                        request.status === "PENDING"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : request.status === "APPROVED"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {request.status}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="link"
+                      className="text-blue-600"
+                      onClick={() => setSelectedApprovalRequest(request)}
+                    >
+                      View Details
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+          {/* Pagination Controls */}
+          <div className="mt-4 flex items-center justify-between">
+            <div className="text-sm text-gray-600">
+              Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of{" "}
+              {totalItems} requests
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                Previous
+              </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page}
+                  </Button>
+                )
+              )}
+              <Button
+                variant="outline"
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </>
       ) : (
         <p className="text-gray-600">No approval requests available.</p>
       )}

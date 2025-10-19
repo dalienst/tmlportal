@@ -44,7 +44,7 @@ function EmployeeDashboard() {
   }
 
   return (
-    <div className="container mx-auto p-4 min-h-screen bg-gray-100">
+    <div className="container mx-auto p-4 min-h-screen bg-gray-200">
       <section className="mb-6 flex md:items-center flex-col md:flex-row gap-2 justify-between">
         <h2 className="text-2xl font-bold text-destructive">
           Hello {account?.name || "User"}
@@ -52,13 +52,13 @@ function EmployeeDashboard() {
 
         <section className="flex gap-4">
           <button
-            className="bg-accent text-accent-foreground p-1 rounded"
+            className="bg-accent text-accent-foreground p-2 rounded shadow-md"
             onClick={() => setCreditNoteModal(true)}
           >
             Credit Note
           </button>
           <button
-            className="bg-green-600 text-white p-1 rounded"
+            className="bg-green-600 text-white p-2 rounded shadow-md"
             onClick={() => setApprovalRequestModal(true)}
           >
             Request
