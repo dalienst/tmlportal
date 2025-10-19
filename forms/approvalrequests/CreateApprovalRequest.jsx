@@ -51,13 +51,11 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers }) {
               });
               formData.append("credit_note", values.credit_note);
 
-              console.log([...formData.entries()]); // Debug FormData contents
               await createApprovalRequest(formData, token);
               toast.success("Approval Request Created");
               setLoading(false);
               onClose();
             } catch (error) {
-              console.log(error);
               toast.error("Failed to create approval request");
             } finally {
               setLoading(false);
@@ -111,7 +109,8 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers }) {
                         key={creditNote.reference}
                         value={creditNote.identity}
                       >
-                        {creditNote.check_number} - {creditNote.customer_name}
+                        {creditNote.check_number} - {creditNote.customer_name} -{" "}
+                        {creditNote.amount} - {creditNote.status}
                       </option>
                     ))}
                   </Field>

@@ -1,6 +1,8 @@
 "use client";
 
+import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
+import { Card, CardContent } from "@/components/ui/card";
 import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
 import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
 import { useFetchAccount, useFetchManagers } from "@/hooks/accounts/actions";
@@ -80,6 +82,14 @@ function EmployeeDashboard() {
             </p>
           </div>
         </div>
+      </section>
+
+      <section id="credit-notes" className="mb-6">
+        <Card>
+          <CardContent>
+            <EmployeeCreditNotesTable creditNotes={creditNotes} />
+          </CardContent>
+        </Card>
       </section>
 
       {/* Modal */}
