@@ -6,78 +6,203 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import React, { useState } from "react";
 
 function EmployeeCreditNotesTable({ creditNotes }) {
   const [selectedCreditNote, setSelectedCreditNote] = useState(null);
+  const [filters, setFilters] = useState({
+    status: "",
+    check_number: "",
+    cashier_name: "",
+    customer_name: "",
+    transaction_date: "",
+  });
+
+  // Handle filter input changes
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Reset filters
+  const resetFilters = () => {
+    setFilters({
+      status: "",
+      check_number: "",
+      cashier_name: "",
+      customer_name: "",
+      transaction_date: "",
+    });
+  };
+
+  // Filter credit notes
+  const filteredCreditNotes = creditNotes?.filter((creditNote) => {
+    return (
+      (!filters.status || creditNote.status === filters.status) &&
+      (!filters.check_number ||
+        creditNote.check_number
+          .toLowerCase()
+          .includes(filters.check_number.toLowerCase())) &&
+      (!filters.cashier_name ||
+        creditNote.cashier_name
+          .toLowerCase()
+          .includes(filters.cashier_name.toLowerCase())) &&
+      (!filters.customer_name ||
+        creditNote.customer_name
+          .toLowerCase()
+          .includes(filters.customer_name.toLowerCase())) &&
+      (!filters.transaction_date ||
+        new Date(creditNote.transaction_date).toLocaleDateString() ===
+          new Date(filters.transaction_date).toLocaleDateString())
+    );
+  });
 
   return (
     <div className="mb-6">
       <h3 className="text-xl font-semibold text-black mb-4">Credit Notes</h3>
-      {creditNotes?.length > 0 ? (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse bg-white shadow-md rounded-lg">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="p-3 text-left text-sm font-medium text-gray-700">
-                  Reference
-                </th>
-                <th className="p-3 text-left text-sm font-medium text-gray-700">
-                  Customer Name
-                </th>
-                <th className="p-3 text-left text-sm font-medium text-gray-700">
-                  Amount
-                </th>
-                <th className="p-3 text-left text-sm font-medium text-gray-700">
-                  Status
-                </th>
-                <th className="p-3 text-left text-sm font-medium text-gray-700">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {creditNotes.map((creditNote) => (
-                <tr
-                  key={creditNote.identity}
-                  className="border-b border-gray-200 hover:bg-gray-50"
-                >
-                  <td className="p-3 text-sm text-gray-900">
-                    {creditNote.reference}
-                  </td>
-                  <td className="p-3 text-sm text-gray-900">
-                    {creditNote.customer_name}
-                  </td>
-                  <td className="p-3 text-sm text-gray-900">
-                    {creditNote.currency}{" "}
-                    {parseFloat(creditNote.amount).toFixed(2)}
-                  </td>
-                  <td className="p-3 text-sm text-gray-900">
-                    <span
-                      className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                        creditNote.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : creditNote.status === "Approved"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {creditNote.status}
-                    </span>
-                  </td>
-                  <td className="p-3 text-sm">
-                    <button
-                      className="text-blue-600 hover:underline"
-                      onClick={() => setSelectedCreditNote(creditNote)}
-                    >
-                      View Details
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+
+      {/* Filter Section */}
+      <div className="mb-6 p-4 bg-white rounded-lg shadow-md border border-border">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div>
+            <Label htmlFor="status" className="text-sm font-medium">
+              Status
+            </Label>
+            <select
+              id="status"
+              name="status"
+              value={filters.status}
+              onChange={handleFilterChange}
+              className="w-full border border-gray-300 rounded p-2 mt-1"
+            >
+              <option value="">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+          <div>
+            <Label htmlFor="check_number" className="text-sm font-medium">
+              Check Number
+            </Label>
+            <Input
+              id="check_number"
+              name="check_number"
+              value={filters.check_number}
+              onChange={handleFilterChange}
+              placeholder="Enter Check Number"
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="cashier_name" className="text-sm font-medium">
+              Cashier Name
+            </Label>
+            <Input
+              id="cashier_name"
+              name="cashier_name"
+              value={filters.cashier_name}
+              onChange={handleFilterChange}
+              placeholder="Enter Cashier Name"
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="customer_name" className="text-sm font-medium">
+              Customer Name
+            </Label>
+            <Input
+              id="customer_name"
+              name="customer_name"
+              value={filters.customer_name}
+              onChange={handleFilterChange}
+              placeholder="Enter Customer Name"
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="transaction_date" className="text-sm font-medium">
+              Transaction Date
+            </Label>
+            <Input
+              id="transaction_date"
+              name="transaction_date"
+              type="date"
+              value={filters.transaction_date}
+              onChange={handleFilterChange}
+              className="mt-1"
+            />
+          </div>
         </div>
+        <div className="mt-4">
+          <Button
+            variant="sm"
+            onClick={resetFilters}
+            className="bg-destructive text-white"
+          >
+            Reset Filters
+          </Button>
+        </div>
+      </div>
+
+      {/* Table Section */}
+      {filteredCreditNotes?.length > 0 ? (
+        <Table className="bg-white shadow-md rounded-lg">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Check Number</TableHead>
+              <TableHead>Customer Name</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredCreditNotes.map((creditNote) => (
+              <TableRow key={creditNote.identity}>
+                <TableCell>{creditNote.check_number}</TableCell>
+                <TableCell>{creditNote.customer_name}</TableCell>
+                <TableCell>
+                  {creditNote.currency}{" "}
+                  {parseFloat(creditNote.amount).toFixed(2)}
+                </TableCell>
+                <TableCell>
+                  <span
+                    className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
+                      creditNote.status === "Pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : creditNote.status === "Approved"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {creditNote.status}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="link"
+                    className="text-blue-600"
+                    onClick={() => setSelectedCreditNote(creditNote)}
+                  >
+                    View Details
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       ) : (
         <p className="text-gray-600">No credit notes available.</p>
       )}
