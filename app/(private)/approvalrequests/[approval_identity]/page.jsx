@@ -56,12 +56,19 @@ function ApprovalRequestDetail() {
 
   return (
     <div className="container mx-auto p-4 min-h-screen bg-gray-200">
+      <section className="mb-6 flex md:items-center flex-col md:flex-row gap-2">
+        <button
+          className="bg-primary text-primary-foreground px-3 py-1 rounded-lg hover:bg-opacity-90 transition-colors"
+          onClick={() => router.back()}
+        >
+          &larr; Back
+        </button>
+        <br />
+        <h2 className="text-2xl font-bold text-black">
+          Approval Request Details
+        </h2>
+      </section>
       <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">
-            Approval Request Details
-          </CardTitle>
-        </CardHeader>
         <CardContent className="space-y-4">
           <div>
             <span className="font-semibold">Title:</span>{" "}
