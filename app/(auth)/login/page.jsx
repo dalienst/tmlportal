@@ -40,7 +40,7 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 md:p-0">
+    <div className="min-h-screen bg-gray-200 flex items-center justify-center p-4 md:p-0">
       <div className="bg-card p-8 rounded-lg shadow-lg w-full max-w-md">
         <div className="flex justify-center mb-6">
           <Image

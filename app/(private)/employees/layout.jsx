@@ -1,3 +1,5 @@
+"use client";
+
 import EmployeeNavbar from "@/components/employees/Navbar";
 import React from "react";
 
