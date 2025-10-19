@@ -3,10 +3,17 @@
 import CentersTable from "@/components/centers/CentersTable";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import CreateCenter from "@/forms/centers/CreateCenter";
-import { useFetchAccount } from "@/hooks/accounts/actions";
+import { Card, CardContent } from "@/components/ui/card";
+import { useFetchAccount, useFetchManagers } from "@/hooks/accounts/actions";
+import { useFetchApprovalRequests } from "@/hooks/approvalrequests/actions";
+import { useFetchApprovalSteps } from "@/hooks/approvalsteps/actions";
+import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 import { useFetchCenters } from "@/hooks/centers/actions";
 import { useFetchFeedbackForms } from "@/hooks/feedbackforms/actions";
 import React, { useState } from "react";
+import EmployeeApprovalRequestTable from "@/components/approvalrequests/EmployeeApprovalRequestTable";
+import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
+import ApprovalStepsTable from "@/components/approvalsteps/ApprovalStepsTable";
 
 function GeneralManager() {
   const {
@@ -25,9 +32,34 @@ function GeneralManager() {
     refetch: refetchFeedbackForms,
   } = useFetchFeedbackForms();
 
+  const {
+    isLoading: isLoadingCreditNotes,
+    data: creditNotes,
+    refetch: refetchCreditNotes,
+  } = useFetchCreditNotes();
+
+  const {
+    isLoading: isLoadingApprovalRequest,
+    data: approvalRequests,
+    refetch: refetchApprovalRequest,
+  } = useFetchApprovalRequests();
+
+  const {
+    isLoading: isLoadingApprovalSteps,
+    data: approvalSteps,
+    refetch: refetchApprovalSteps,
+  } = useFetchApprovalSteps();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (isLoadingAccount || isLoadingCenters || isLoadingFeedbackForms) {
+  if (
+    isLoadingAccount ||
+    isLoadingCenters ||
+    isLoadingFeedbackForms ||
+    isLoadingCreditNotes ||
+    isLoadingApprovalRequest ||
+    isLoadingApprovalSteps
+  ) {
     return <LoadingSpinner />;
   }
   return (
@@ -79,6 +111,33 @@ function GeneralManager() {
             </div>
           )}
         </div>
+      </section>
+
+      <section id="approval-requests" className="mb-6">
+        <Card>
+          <CardContent>
+            <EmployeeApprovalRequestTable approvalRequests={approvalRequests} />
+          </CardContent>
+        </Card>
+      </section>
+
+      <section id="credit-notes" className="mb-6">
+        <Card>
+          <CardContent>
+            <EmployeeCreditNotesTable creditNotes={creditNotes} />
+          </CardContent>
+        </Card>
+      </section>
+
+      <section id="approval-steps" className="mb-6">
+        <Card>
+          <CardContent>
+            <ApprovalStepsTable
+              approvalSteps={approvalSteps}
+              account={account}
+            />
+          </CardContent>
+        </Card>
       </section>
 
       {isModalOpen && (
