@@ -4,12 +4,7 @@ import { useFetchAccount } from "@/hooks/accounts/actions";
 import { useFetchApprovalRequest } from "@/hooks/approvalrequests/actions";
 import { updateApprovalStep } from "@/services/approvalsteps";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,11 +27,15 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import useAxiosAuth from "@/hooks/general/useAxiosAuth";
 
-function ApprovalRequestDetail() {
+export default function ApprovalRequestDetail() {
   const { approval_identity } = useParams();
   const router = useRouter();
   const [creditNoteModal, setCreditNoteModal] = useState(false);
-  const [commentModal, setCommentModal] = useState({ open: false, action: null, stepReference: null });
+  const [commentModal, setCommentModal] = useState({
+    open: false,
+    action: null,
+    stepReference: null,
+  });
   const [comment, setComment] = useState("");
   const [loadingStep, setLoadingStep] = useState(null);
   const token = useAxiosAuth();
@@ -54,28 +53,26 @@ function ApprovalRequestDetail() {
     error: accountError,
   } = useFetchAccount();
 
-  if (isLoadingApprovalRequest || isLoadingAccount) return <LoadingSpinner />;
+  // Loading
+  if (isLoadingApprovalRequest || isLoadingAccount) {
+    return <LoadingSpinner />;
+  }
 
+  // Error
   if (approvalRequestError || accountError || !approvalRequest) {
     toast.error("Failed to load approval request or account details");
     router.push("/manager");
     return null;
   }
 
-  // Determine if the current user is the final approver
-  const maxStepOrder = Math.max(...approvalRequest.steps.map(step => step.step_order));
-  const isFinalApprover = approvalRequest.steps.some(
-    step => step.approver === account.email && step.step_order === maxStepOrder
-  );
+  const request = approvalRequest;
 
-  // Check if all prior steps are completed (Approved or Rejected)
-  const arePriorStepsCompleted = () => {
-    if (!isFinalApprover) return true; // Non-final approvers can act anytime
-    return approvalRequest.steps
-      .filter(step => step.step_order < maxStepOrder)
-      .every(step => step.status === "Approved" || step.status === "Rejected");
+  // Can current user act on this step?
+  const canActOnStep = (step) => {
+    return step.approver === account.email && step.status === "Pending";
   };
 
+  // Handle action
   const handleStepAction = async (stepReference, status, comments = null) => {
     setLoadingStep(stepReference);
     try {
@@ -97,81 +94,83 @@ function ApprovalRequestDetail() {
   };
 
   return (
-    <div className="container mx-auto p-4 min-h-screen bg-gray-200">
-      <section className="mb-6 flex md:items-center flex-col md:flex-row gap-2">
+    <div className="container mx-auto p-4 min-h-screen bg-gray-100">
+      {/* Header */}
+      <section className="mb-6 flex flex-col md:flex-row gap-3 items-start md:items-center">
         <button
-          className="bg-primary text-primary-foreground px-3 py-1 rounded-lg hover:bg-opacity-90 transition-colors"
           onClick={() => router.back()}
+          className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors flex items-center gap-2"
         >
-          &larr; Back
+          Back
         </button>
-        <br />
-        <h2 className="text-2xl font-bold text-black">
+        <h1 className="text-2xl md:text-3xl font-bold text-black">
           Approval Request Details
-        </h2>
+        </h1>
       </section>
-      <Card className="mb-6">
-        <CardContent className="space-y-4 text-black">
+
+      {/* Request Info */}
+      <Card className="mb-6 shadow-lg">
+        <CardContent className="p-6 space-y-4 text-gray-800">
           <div>
-            <span className="font-semibold">Title:</span>{" "}
-            {approvalRequest?.title}
+            <strong>Title:</strong> {request.title}
           </div>
           <div>
-            <span className="font-semibold">Request Type:</span>{" "}
-            {approvalRequest?.request_type}
+            <strong>Request Type:</strong> {request.request_type}
           </div>
           <div>
-            <span className="font-semibold">Description:</span>{" "}
-            {approvalRequest?.description || "N/A"}
+            <strong>Description:</strong> {request.description || "N/A"}
           </div>
-          <div>
-            <span className="font-semibold">Status:</span>{" "}
+
+          <div className="flex items-center gap-2">
+            <strong>Status:</strong>
             <span
-              className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                approvalRequest?.status === "PENDING"
+              className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                request.status === "PENDING"
                   ? "bg-yellow-100 text-yellow-800"
-                  : approvalRequest?.status === "APPROVED"
+                  : request.status === "APPROVED"
                   ? "bg-green-100 text-green-800"
-                  : "bg-red-100 text-red-800"
+                  : request.status === "REJECTED"
+                  ? "bg-red-100 text-red-800"
+                  : "bg-blue-100 text-blue-800"
               }`}
             >
-              {approvalRequest?.status}
+              {request.status}
             </span>
           </div>
+
           <div>
-            <span className="font-semibold">Created By:</span>{" "}
-            {approvalRequest?.created_by}
+            <strong>Created By:</strong> {request.created_by}
           </div>
+
           <div>
-            <span className="font-semibold">Approvers:</span>{" "}
-            {approvalRequest?.approvers.length > 0
-              ? approvalRequest?.approvers.join(", ")
+            <strong>Approvers:</strong>{" "}
+            {request.approvers?.length > 0
+              ? request.approvers.join(", ")
               : "None"}
           </div>
-          {approvalRequest?.credit_note && (
-            <div>
-              <span className="font-semibold">Credit Note:</span>{" "}
-              {approvalRequest?.credit_note}{" "}
+
+          {request.credit_note && (
+            <div className="flex items-center gap-2">
+              <strong>Credit Note:</strong> {request.credit_note}{" "}
               <Button
                 variant="link"
-                className="text-blue-600"
+                className="text-blue-600 p-0 h-auto font-normal"
                 onClick={() => setCreditNoteModal(true)}
               >
                 View Details
               </Button>
             </div>
           )}
+
           <div>
-            <span className="font-semibold">Steps:</span>{" "}
-            {approvalRequest?.steps
-              ? `${approvalRequest?.steps.length} step(s)`
-              : "N/A"}
+            <strong>Steps:</strong> {request.steps?.length || 0} step(s)
           </div>
-          {approvalRequest?.attachment && (
+
+          {request.attachment && (
             <div>
-              <span className="font-semibold">Attachment:</span>{" "}
+              <strong>Attachment:</strong>{" "}
               <a
-                href={approvalRequest?.attachment}
+                href={request.attachment}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline"
@@ -180,242 +179,273 @@ function ApprovalRequestDetail() {
               </a>
             </div>
           )}
+
           <div>
-            <span className="font-semibold">Created At:</span>{" "}
-            {new Date(approvalRequest?.created_at).toLocaleString()}
+            <strong>Created At:</strong>{" "}
+            {new Date(request.created_at).toLocaleString()}
           </div>
           <div>
-            <span className="font-semibold">Updated At:</span>{" "}
-            {new Date(approvalRequest?.updated_at).toLocaleString()}
+            <strong>Updated At:</strong>{" "}
+            {new Date(request.updated_at).toLocaleString()}
           </div>
         </CardContent>
       </Card>
 
       {/* Approval Steps Table */}
-      <Card>
+      <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="text-xl font-semibold">
             Approval Steps
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {approvalRequest?.steps?.length > 0 ? (
-            <Table className="bg-white shadow-md rounded-lg">
+          {request.steps?.length > 0 ? (
+            <Table className="bg-white rounded-lg shadow">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Step Order</TableHead>
+                  <TableHead className="w-16">#</TableHead>
                   <TableHead>Approver</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Comments</TableHead>
-                  <TableHead>Created At</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {approvalRequest?.steps.map((step) => (
-                  <TableRow key={step.reference}>
-                    <TableCell>{step.step_order}</TableCell>
-                    <TableCell>{step.approver}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                          step.status === "Pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : step.status === "Approved"
-                            ? "bg-green-100 text-green-800"
-                            : step.status === "Reviewed"
-                            ? "bg-blue-100 text-blue-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {step.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>{step.comments || "N/A"}</TableCell>
-                    <TableCell>
-                      {new Date(step.created_at).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      {step.approver === account.email &&
-                      step.status === "Pending" &&
-                      (!isFinalApprover || arePriorStepsCompleted()) ? (
-                        <div className="flex gap-2">
-                          <Button
-                            variant="default"
-                            onClick={() => handleStepAction(step.reference, "Approved")}
-                            disabled={loadingStep === step.reference}
-                          >
-                            {loadingStep === step.reference && commentModal.action === "Approved"
-                              ? "Approving..."
-                              : "Approve"}
-                          </Button>
-                          <Button
-                            variant="outline"
-                            onClick={() => openCommentModal("Reviewed", step.reference)}
-                            disabled={loadingStep === step.reference}
-                          >
-                            {loadingStep === step.reference && commentModal.action === "Reviewed"
-                              ? "Reviewing..."
-                              : "Review"}
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            onClick={() => openCommentModal("Rejected", step.reference)}
-                            disabled={loadingStep === step.reference}
-                          >
-                            {loadingStep === step.reference && commentModal.action === "Rejected"
-                              ? "Rejecting..."
-                              : "Reject"}
-                          </Button>
-                        </div>
-                      ) : (
-                        <span className="text-gray-500">
-                          {isFinalApprover && step.approver === account.email && step.status === "Pending" && !arePriorStepsCompleted()
-                            ? "Waiting for prior steps"
-                            : "No action"}
+                {request.steps.map((step) => {
+                  const canAct = canActOnStep(step);
+                  return (
+                    <TableRow key={step.reference} className="hover:bg-gray-50">
+                      <TableCell className="font-medium">
+                        {step.step_order}
+                      </TableCell>
+                      <TableCell>{step.approver}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
+                            step.status === "Pending"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : step.status === "Approved"
+                              ? "bg-green-100 text-green-800"
+                              : step.status === "Reviewed"
+                              ? "bg-blue-100 text-blue-800"
+                              : step.status === "Rejected"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-gray-100 text-gray-800"
+                          }`}
+                        >
+                          {step.status}
                         </span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      </TableCell>
+                      <TableCell className="max-w-xs truncate">
+                        {step.comments || "—"}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(step.created_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {canAct ? (
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              size="sm"
+                              onClick={() =>
+                                handleStepAction(step.reference, "Approved")
+                              }
+                              disabled={loadingStep === step.reference}
+                            >
+                              {loadingStep === step.reference
+                                ? "Approving…"
+                                : "Approve"}
+                            </Button>
+
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() =>
+                                openCommentModal("Reviewed", step.reference)
+                              }
+                              disabled={loadingStep === step.reference}
+                            >
+                              {loadingStep === step.reference
+                                ? "Reviewing…"
+                                : "Review"}
+                            </Button>
+
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() =>
+                                openCommentModal("Rejected", step.reference)
+                              }
+                              disabled={loadingStep === step.reference}
+                            >
+                              {loadingStep === step.reference
+                                ? "Rejecting…"
+                                : "Reject"}
+                            </Button>
+                          </div>
+                        ) : (
+                          <span className="text-gray-500 text-sm">
+                            No action
+                          </span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           ) : (
-            <p className="text-gray-600">No approval steps available.</p>
+            <p className="text-center text-gray-600 py-8">
+              No approval steps found.
+            </p>
           )}
         </CardContent>
       </Card>
 
       {/* Credit Note Modal */}
-      {approvalRequest?.credit_note && (
+      {request.credit_note && request.credit_note_details && (
         <Dialog open={creditNoteModal} onOpenChange={setCreditNoteModal}>
-          <DialogContent className="sm:max-w-3xl">
+          <DialogContent className="sm:max-w-3xl max-h-screen overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold">
                 Credit Note Details
               </DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
+            <div className="space-y-3 text-sm">
               <div>
-                <span className="font-semibold">Identity:</span>{" "}
-                {approvalRequest?.credit_note_details?.identity || "N/A"}
+                <strong>Identity:</strong>{" "}
+                {request.credit_note_details.identity}
               </div>
               <div>
-                <span className="font-semibold">Check Number:</span>{" "}
-                {approvalRequest?.credit_note_details?.check_number || "N/A"}
+                <strong>Check #:</strong>{" "}
+                {request.credit_note_details.check_number || "N/A"}
               </div>
               <div>
-                <span className="font-semibold">Customer Name:</span>{" "}
-                {approvalRequest?.credit_note_details?.customer_name || "N/A"}
+                <strong>Customer:</strong>{" "}
+                {request.credit_note_details.customer_name}
               </div>
               <div>
-                <span className="font-semibold">Customer Email:</span>{" "}
-                {approvalRequest?.credit_note_details?.customer_email || "N/A"}
+                <strong>Email:</strong>{" "}
+                {request.credit_note_details.customer_email}
               </div>
               <div>
-                <span className="font-semibold">Customer Address:</span>{" "}
-                {approvalRequest?.credit_note_details?.customer_address || "N/A"}
+                <strong>Phone:</strong>{" "}
+                {request.credit_note_details.customer_phone}
               </div>
               <div>
-                <span className="font-semibold">Customer Phone:</span>{" "}
-                {approvalRequest?.credit_note_details?.customer_phone || "N/A"}
+                <strong>Address:</strong>{" "}
+                {request.credit_note_details.customer_address}
               </div>
               <div>
-                <span className="font-semibold">Amount:</span>{" "}
-                {approvalRequest?.credit_note_details?.currency}{" "}
-                {approvalRequest?.credit_note_details?.amount
-                  ? parseFloat(approvalRequest?.credit_note_details.amount).toFixed(2)
-                  : "N/A"}
+                <strong>Amount:</strong> {request.credit_note_details.currency}{" "}
+                {parseFloat(request.credit_note_details.amount || "0").toFixed(
+                  2
+                )}
               </div>
               <div>
-                <span className="font-semibold">Status:</span>{" "}
-                <span
-                  className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                    approvalRequest?.credit_note_details?.status === "Pending"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : approvalRequest?.credit_note_details?.status === "Approved"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {approvalRequest?.credit_note_details?.status || "N/A"}
-                </span>
+                <strong>Status:</strong> {request.credit_note_details.status}
               </div>
               <div>
-                <span className="font-semibold">Cashier Name:</span>{" "}
-                {approvalRequest?.credit_note_details?.cashier_name || "N/A"}
+                <strong>Cashier:</strong>{" "}
+                {request.credit_note_details.cashier_name}
               </div>
               <div>
-                <span className="font-semibold">Revenue Center:</span>{" "}
-                {approvalRequest?.credit_note_details?.revenue_center || "N/A"}
+                <strong>Revenue Center:</strong>{" "}
+                {request.credit_note_details.revenue_center}
               </div>
               <div>
-                <span className="font-semibold">Transaction Date:</span>{" "}
-                {approvalRequest?.credit_note_details?.transaction_date
-                  ? new Date(approvalRequest?.credit_note_details.transaction_date).toLocaleDateString()
-                  : "N/A"}
+                <strong>Date:</strong>{" "}
+                {new Date(
+                  request.credit_note_details.transaction_date
+                ).toLocaleDateString()}
               </div>
-              <div>
-                <span className="font-semibold">Created At:</span>{" "}
-                {approvalRequest?.credit_note_details?.created_at
-                  ? new Date(approvalRequest?.credit_note_details.created_at).toLocaleString()
-                  : "N/A"}
-              </div>
-              <div>
-                <span className="font-semibold">Updated At:</span>{" "}
-                {approvalRequest?.credit_note_details?.updated_at
-                  ? new Date(approvalRequest?.credit_note_details.updated_at).toLocaleString()
-                  : "N/A"}
-              </div>
-              {approvalRequest?.credit_note_details?.attachment && (
+              {request.credit_note_details.attachment && (
                 <div>
-                  <span className="font-semibold">Attachment:</span>{" "}
+                  <strong>Attachment:</strong>{" "}
                   <a
-                    href={approvalRequest?.credit_note_details.attachment}
+                    href={request.credit_note_details.attachment}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:underline"
                   >
-                    View Attachment
+                    View File
                   </a>
                 </div>
               )}
+              <div className="text-xs text-gray-500 pt-4 border-t">
+                Created:{" "}
+                {new Date(
+                  request.credit_note_details.created_at
+                ).toLocaleString()}
+                <br />
+                Updated:{" "}
+                {new Date(
+                  request.credit_note_details.updated_at
+                ).toLocaleString()}
+              </div>
             </div>
           </DialogContent>
         </Dialog>
       )}
 
-      {/* Comment Modal for Review/Reject */}
-      <Dialog open={commentModal.open} onOpenChange={() => setCommentModal({ open: false, action: null, stepReference: null })}>
+      {/* Comment Modal */}
+      <Dialog
+        open={commentModal.open}
+        onOpenChange={(open) =>
+          !open &&
+          setCommentModal({ open: false, action: null, stepReference: null })
+        }
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>{commentModal.action} Step</DialogTitle>
+            <DialogTitle>
+              {commentModal.action === "Reviewed" ? "Review" : "Reject"} Step
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="comment">Comment</Label>
+              <Label htmlFor="comment">Comment (required)</Label>
               <Input
                 id="comment"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                placeholder="Enter your comment"
+                placeholder="Enter your comment..."
                 className="mt-1"
               />
             </div>
             <div className="flex justify-end gap-2">
               <Button
                 variant="outline"
-                onClick={() => setCommentModal({ open: false, action: null, stepReference: null })}
+                onClick={() =>
+                  setCommentModal({
+                    open: false,
+                    action: null,
+                    stepReference: null,
+                  })
+                }
               >
                 Cancel
               </Button>
               <Button
-                variant={commentModal.action === "Reviewed" ? "default" : "destructive"}
-                onClick={() => handleStepAction(commentModal.stepReference, commentModal.action, comment)}
-                disabled={loadingStep === commentModal.stepReference}
+                variant={
+                  commentModal.action === "Reviewed" ? "default" : "destructive"
+                }
+                onClick={() => {
+                  if (commentModal.stepReference && commentModal.action) {
+                    handleStepAction(
+                      commentModal.stepReference,
+                      commentModal.action,
+                      comment
+                    );
+                  }
+                }}
+                disabled={
+                  loadingStep === commentModal.stepReference || !comment.trim()
+                }
               >
                 {loadingStep === commentModal.stepReference
-                  ? `${commentModal.action}...`
+                  ? `${commentModal.action}…`
                   : commentModal.action}
               </Button>
             </div>
@@ -425,5 +455,3 @@ function ApprovalRequestDetail() {
     </div>
   );
 }
-
-export default ApprovalRequestDetail;
