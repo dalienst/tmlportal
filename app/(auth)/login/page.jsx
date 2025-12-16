@@ -24,6 +24,7 @@ function Login() {
     });
     const session = await getSession();
 
+
     if (response?.error) {
       toast.error("Invalid email or password");
     } else {
@@ -34,6 +35,7 @@ function Login() {
       else if (session?.user?.is_reservations) router.push("/reservations");
       else if (session?.user?.is_manager) router.push("/managers");
       else if (session?.user?.is_employee) router.push("/employees");
+      else if (session?.user?.is_auditor) router.push("/auditor");
       else router.push("/");
     }
     setLoading(false);
