@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 function Feedback({ params }) {
   const { form_identity } = use(params);
-  const router = useRouter();
+  // const router = useRouter();
 
   const {
     isLoading: isLoadingFeedbackForm,
@@ -122,7 +122,17 @@ function Feedback({ params }) {
 
     try {
       await createFeedback(submissionData);
-      router.push("/success");
+      // CLEAR THE FORM
+      setFormData({
+        feedback_form: form_identity,
+        guest_name: "",
+        date: "",
+        apartment_no: "",
+        arrival_date: "",
+        checkout_date: "",
+        answers: [],
+      });
+      refetchFeedbackForm();
     } catch (err) {
       router.push("/error");
     } finally {
@@ -165,9 +175,7 @@ function Feedback({ params }) {
           </div>
           {/* date */}
           <div>
-            <label className="block text-sm font-medium text-black">
-              Date
-            </label>
+            <label className="block text-sm font-medium text-black">Date</label>
             <input
               type="date"
               name="date"

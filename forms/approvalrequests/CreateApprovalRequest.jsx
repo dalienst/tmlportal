@@ -7,19 +7,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import useAxiosAuth from "@/hooks/general/useAxiosAuth";
 import { createApprovalRequest } from "@/services/approvalrequests";
 import { Field, Form, Formik } from "formik";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
-function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers }) {
+function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers, refetch }) {
   const [loading, setLoading] = useState(false);
   const token = useAxiosAuth();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-3xl">
+      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             Create Approval Request
@@ -55,6 +59,7 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers }) {
               toast.success("Approval Request Created");
               setLoading(false);
               onClose();
+              if (refetch) refetch();
             } catch (error) {
               toast.error("Failed to create approval request");
             } finally {
@@ -63,18 +68,13 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers }) {
           }}
         >
           {({ values, setFieldValue }) => (
-            <Form className="space-y-6">
-              <div className="space-y-4">
-                <label
-                  htmlFor="request_type"
-                  className="block text-base font-medium"
-                >
-                  Request Type
-                </label>
+            <Form className="space-y-6 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="request_type">Request Type</Label>
                 <Field
                   as="select"
                   name="request_type"
-                  className="w-full border border-gray-300 rounded p-2 block"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="">Select Request Type</option>
                   <option value="LPO">Local Purchase Order (LPO)</option>
@@ -91,17 +91,12 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers }) {
               </div>
 
               {values.request_type === "Credit Note" && (
-                <div className="space-y-4">
-                  <label
-                    htmlFor="credit_note"
-                    className="block text-base font-medium"
-                  >
-                    Credit Note
-                  </label>
+                <div className="grid gap-2">
+                  <Label htmlFor="credit_note">Credit Note</Label>
                   <Field
                     as="select"
                     name="credit_note"
-                    className="w-full border border-gray-300 rounded p-2 block"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <option value="">Select Credit Note</option>
                     {creditNotes?.map((creditNote) => (
@@ -117,65 +112,47 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers }) {
                 </div>
               )}
 
-              <div className="space-y-4">
-                <label htmlFor="title" className="block text-base font-medium">
-                  Title
-                </label>
+              <div className="grid gap-2">
+                <Label htmlFor="title">Title</Label>
                 <Field
+                  as={Input}
                   type="text"
                   name="title"
-                  className="w-full border border-gray-300 rounded p-2 block"
                   placeholder="Enter Title"
                 />
               </div>
 
               {values.request_type !== "Credit Note" && (
-                <div className="space-y-4">
-                  <label
-                    htmlFor="description"
-                    className="block text-base font-medium"
-                  >
-                    Description
-                  </label>
+                <div className="grid gap-2">
+                  <Label htmlFor="description">Description</Label>
                   <Field
-                    as="textarea"
+                    as={Textarea}
                     name="description"
-                    className="w-full border border-gray-300 rounded p-2 block"
                     placeholder="Enter Description"
+                    className="min-h-[100px]"
                   />
                 </div>
               )}
 
-              <div className="space-y-4">
-                <label
-                  htmlFor="attachment"
-                  className="block text-base font-medium"
-                >
-                  Attachment
-                </label>
-                <input
+              <div className="grid gap-2">
+                <Label htmlFor="attachment">Attachment</Label>
+                <Input
                   type="file"
                   name="attachment"
                   id="attachment"
                   onChange={(e) =>
                     setFieldValue("attachment", e.target.files[0])
                   }
-                  className="mt-1 block w-full border-gray-600 border rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
                 />
               </div>
 
-              <div className="space-y-4">
-                <label
-                  htmlFor="approvers"
-                  className="block text-base font-medium"
-                >
-                  Approvers
-                </label>
+              <div className="grid gap-2">
+                <Label htmlFor="approvers">Approvers</Label>
                 <Field
                   as="select"
                   name="approvers"
                   multiple
-                  className="w-full border border-gray-300 rounded p-2 block"
+                  className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="">Select Approvers</option>
                   {managers?.map((manager) => (
@@ -184,24 +161,25 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers }) {
                     </option>
                   ))}
                 </Field>
+                <p className="text-xs text-muted-foreground">
+                  Hold Ctrl (Cmd) to select multiple approvers.
+                </p>
               </div>
 
-              <DialogFooter className="flex flex-col sm:flex-row gap-3 mt-6">
-                <button
-                  type="submit"
-                  className="bg-primary text-white px-4 py-2 rounded disabled:opacity-50"
-                  disabled={loading}
-                >
-                  {loading ? "Submitting..." : "Submit Request"}
-                </button>
-
-                <button
+              <DialogFooter className="gap-2 sm:gap-0">
+                 <Button
                   type="button"
-                  className="bg-red-600 text-white px-4 py-2 rounded"
+                  variant="outline"
                   onClick={onClose}
                 >
                   Cancel
-                </button>
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                >
+                  {loading ? "Submitting..." : "Submit Request"}
+                </Button>
               </DialogFooter>
             </Form>
           )}

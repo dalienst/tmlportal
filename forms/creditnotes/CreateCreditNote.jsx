@@ -6,6 +6,10 @@ import { createCreditNote } from "@/services/creditnotes";
 import { Field, Form, Formik } from "formik";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 function CreateCreditNote({ closeModal, refetch }) {
   const [loading, setLoading] = useState(false);
@@ -53,140 +57,105 @@ function CreateCreditNote({ closeModal, refetch }) {
       }}
     >
       {({ setFieldValue }) => (
-        <Form className="w-full max-w-4xl mx-auto p-4">
-          <section className="mb-3">
-            <h2 className="text-3xl font-bold text-destructive">
+        <Form className="w-full max-w-4xl mx-auto space-y-6">
+          <section className="mb-6">
+            <h2 className="text-2xl font-bold text-foreground">
               Create Credit Note
             </h2>
+            <p className="text-muted-foreground text-sm">
+              Fill in the details to create a new credit note.
+            </p>
           </section>
 
           {/* Customer Details */}
-          <div className="mb-6">
-            <h3 className="text-xl font-bold text-destructive mb-3">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">
               Customer Details
             </h3>
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
-              <div>
-                <label
-                  htmlFor="customer_name"
-                  className="block text-black text-sm mb-1"
-                >
-                  Customer Name
-                </label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="customer_name">Customer Name</Label>
                 <Field
+                  as={Input}
                   type="text"
                   name="customer_name"
-                  className="px-2 py-1 border border-border rounded w-full focus:ring-2 focus:ring-primary text-black text-sm"
                   placeholder="Customer Name"
                 />
               </div>
-              <div>
-                <label
-                  htmlFor="customer_address"
-                  className="block text-black text-sm mb-1"
-                >
-                  Customer Address
-                </label>
+              <div className="grid gap-2">
+                <Label htmlFor="customer_address">Customer Address</Label>
                 <Field
+                  as={Input}
                   type="text"
                   name="customer_address"
-                  className="px-2 py-1 border border-border rounded w-full focus:ring-2 focus:ring-primary text-black text-sm"
                   placeholder="Customer Address"
                 />
               </div>
-              <div>
-                <label
-                  htmlFor="customer_email"
-                  className="block text-black text-sm mb-1"
-                >
-                  Customer Email
-                </label>
+              <div className="grid gap-2">
+                <Label htmlFor="customer_email">Customer Email</Label>
                 <Field
+                  as={Input}
                   type="email"
                   name="customer_email"
-                  className="px-2 py-1 border border-border rounded w-full focus:ring-2 focus:ring-primary text-black text-sm"
                   placeholder="Customer Email"
                 />
               </div>
-            </section>
+            </div>
           </div>
 
+          <div className="border-t"></div>
+
           {/* Transaction Details */}
-          <div>
-            <h3 className="text-xl font-bold text-destructive mb-3">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">
               Transaction Details
             </h3>
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-              <div>
-                <label
-                  htmlFor="transaction_date"
-                  className="block text-black text-sm mb-1"
-                >
-                  Transaction Date
-                </label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="transaction_date">Transaction Date</Label>
                 <Field
+                  as={Input}
                   type="date"
                   name="transaction_date"
-                  className="px-2 py-1 border border-border rounded w-full focus:ring-2 focus:ring-primary text-black text-sm"
-                  placeholder="Transaction Date"
+                  className="block"
                 />
               </div>
-              <div>
-                <label
-                  htmlFor="check_number"
-                  className="block text-black text-sm mb-1"
-                >
-                  Check Number
-                </label>
+              <div className="grid gap-2">
+                <Label htmlFor="check_number">Check Number</Label>
                 <Field
+                  as={Input}
                   type="text"
                   name="check_number"
-                  className="px-2 py-1 border border-border rounded w-full focus:ring-2 focus:ring-primary text-black text-sm"
                   placeholder="Check Number"
                 />
               </div>
-              <div>
-                <label
-                  htmlFor="amount"
-                  className="block text-black text-sm mb-1"
-                >
-                  Amount
-                </label>
+              <div className="grid gap-2">
+                <Label htmlFor="amount">Amount</Label>
                 <Field
+                  as={Input}
                   type="number"
                   name="amount"
-                  className="px-2 py-1 border border-border rounded w-full focus:ring-2 focus:ring-primary text-black text-sm"
                   placeholder="Amount"
                 />
               </div>
-              <div>
-                <label
-                  htmlFor="attachment"
-                  className="block text-black text-sm mb-1"
-                >
-                  Attachment
-                </label>
-                <input
+              <div className="grid gap-2">
+                <Label htmlFor="attachment">Attachment</Label>
+                <Input
                   type="file"
                   name="attachment"
                   id="attachment"
                   onChange={(e) =>
                     setFieldValue("attachment", e.target.files[0])
                   }
-                  className="px-2 py-1 border border-border rounded w-full focus:ring-2 focus:ring-primary text-black text-sm"
+                  className="file:text-foreground"
                 />
               </div>
-              <div>
-                <label
-                  htmlFor="revenue_center"
-                  className="block text-black text-sm mb-1"
-                >
-                  Revenue Center
-                </label>
+              <div className="grid gap-2">
+                <Label htmlFor="revenue_center">Revenue Center</Label>
                 <Field
                   as="select"
                   name="revenue_center"
-                  className="px-2 py-1 border border-border rounded w-full focus:ring-2 focus:ring-primary text-black text-sm"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="">Select Revenue Center</option>
                   {revenueCenters?.map((center) => (
@@ -196,51 +165,43 @@ function CreateCreditNote({ closeModal, refetch }) {
                   ))}
                 </Field>
               </div>
-              <div>
-                <label
-                  htmlFor="cashier_name"
-                  className="block text-black text-sm mb-1"
-                >
-                  Cashier Name
-                </label>
+              <div className="grid gap-2">
+                <Label htmlFor="cashier_name">Cashier Name</Label>
                 <Field
+                  as={Input}
                   type="text"
                   name="cashier_name"
-                  className="px-2 py-1 border border-border rounded w-full focus:ring-2 focus:ring-primary text-black text-sm"
                   placeholder="Cashier Name"
                 />
               </div>
-            </section>
-            <div>
-              <label htmlFor="reason" className="block text-black text-sm mb-1">
-                Reason
-              </label>
+            </div>
+            
+            <div className="grid gap-2 pt-2">
+              <Label htmlFor="reason">Reason</Label>
               <Field
-                as="textarea"
+                as={Textarea}
                 name="reason"
-                className="px-2 py-1 border border-border rounded w-full focus:ring-2 focus:ring-primary text-black text-sm"
                 placeholder="Credit Note Reason"
-                rows="4"
+                rows={4}
               />
             </div>
           </div>
 
           {/* Buttons */}
-          <div className="flex justify-end mt-4">
-            <button
+          <div className="flex justify-end gap-2 pt-4">
+            <Button
               type="button"
+              variant="outline"
               onClick={closeModal}
-              className="px-4 py-2 bg-destructive text-white rounded hover:bg-destructive-hover mr-2"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-hover"
             >
               {loading ? "Creating..." : "Create Credit Note"}
-            </button>
+            </Button>
           </div>
         </Form>
       )}
