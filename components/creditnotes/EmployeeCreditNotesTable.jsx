@@ -17,7 +17,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import React, { useState } from "react";
+import { CheckCircle2, XCircle, Clock, FileText } from "lucide-react";
 
 function EmployeeCreditNotesTable({ creditNotes }) {
   const [selectedCreditNote, setSelectedCreditNote] = useState(null);
@@ -83,23 +85,50 @@ function EmployeeCreditNotesTable({ creditNotes }) {
     setCurrentPage(page);
   };
 
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "Approved":
+        return (
+          <Badge className="bg-green-600 hover:bg-green-700">
+            <CheckCircle2 className="w-3 h-3 mr-1" />
+            Approved
+          </Badge>
+        );
+      case "Rejected":
+        return (
+          <Badge variant="destructive">
+            <XCircle className="w-3 h-3 mr-1" />
+            Rejected
+          </Badge>
+        );
+      case "Pending":
+      default:
+        return (
+          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
+            <Clock className="w-3 h-3 mr-1" />
+            Pending
+          </Badge>
+        );
+    }
+  };
+
   return (
-    <div className="mb-6">
-      <h3 className="text-xl font-semibold text-black mb-4">Credit Notes</h3>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-xl font-semibold tracking-tight">Credit Notes</h3>
+      </div>
 
       {/* Filter Section */}
-      <div className="mb-6 p-4 bg-white rounded-lg shadow-md border border-border">
+      <div className="p-4 bg-background rounded-lg border shadow-sm space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <div>
-            <Label htmlFor="status" className="text-sm font-medium">
-              Status
-            </Label>
+          <div className="space-y-2">
+            <Label htmlFor="status">Status</Label>
             <select
               id="status"
               name="status"
               value={filters.status}
               onChange={handleFilterChange}
-              className="w-full border border-gray-300 rounded p-2 mt-1"
+              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
               <option value="">All Statuses</option>
               <option value="Pending">Pending</option>
@@ -107,64 +136,57 @@ function EmployeeCreditNotesTable({ creditNotes }) {
               <option value="Rejected">Rejected</option>
             </select>
           </div>
-          <div>
-            <Label htmlFor="check_number" className="text-sm font-medium">
-              Check Number
-            </Label>
+          <div className="space-y-2">
+            <Label htmlFor="check_number">Check Number</Label>
             <Input
               id="check_number"
               name="check_number"
               value={filters.check_number}
               onChange={handleFilterChange}
-              placeholder="Enter Check Number"
-              className="mt-1"
+              placeholder="Filter by Check #"
+              className="h-9"
             />
           </div>
-          <div>
-            <Label htmlFor="cashier_name" className="text-sm font-medium">
-              Cashier Name
-            </Label>
+          <div className="space-y-2">
+            <Label htmlFor="cashier_name">Cashier Name</Label>
             <Input
               id="cashier_name"
               name="cashier_name"
               value={filters.cashier_name}
               onChange={handleFilterChange}
-              placeholder="Enter Cashier Name"
-              className="mt-1"
+              placeholder="Filter by Cashier"
+              className="h-9"
             />
           </div>
-          <div>
-            <Label htmlFor="customer_name" className="text-sm font-medium">
-              Customer Name
-            </Label>
+          <div className="space-y-2">
+            <Label htmlFor="customer_name">Customer Name</Label>
             <Input
               id="customer_name"
               name="customer_name"
               value={filters.customer_name}
               onChange={handleFilterChange}
-              placeholder="Enter Customer Name"
-              className="mt-1"
+              placeholder="Filter by Customer"
+              className="h-9"
             />
           </div>
-          <div>
-            <Label htmlFor="transaction_date" className="text-sm font-medium">
-              Transaction Date
-            </Label>
+          <div className="space-y-2">
+            <Label htmlFor="transaction_date">Date</Label>
             <Input
               id="transaction_date"
               name="transaction_date"
               type="date"
               value={filters.transaction_date}
               onChange={handleFilterChange}
-              className="mt-1"
+              className="h-9"
             />
           </div>
         </div>
-        <div className="mt-4">
+        <div className="flex justify-end">
           <Button
-            variant="sm"
+            variant="ghost"
+            size="sm"
             onClick={resetFilters}
-            className="bg-red-600 text-white hover:bg-red-700"
+            className="text-muted-foreground hover:text-foreground"
           >
             Reset Filters
           </Button>
@@ -172,91 +194,92 @@ function EmployeeCreditNotesTable({ creditNotes }) {
       </div>
 
       {/* Table Section */}
-      {paginatedCreditNotes?.length > 0 ? (
-        <>
-          <Table className="bg-white shadow-md rounded-lg">
-            <TableHeader>
-              <TableRow>
-                <TableHead>Check Number</TableHead>
-                <TableHead>Customer Name</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedCreditNotes.map((creditNote) => (
+      <div className="rounded-md border bg-white">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Check Number</TableHead>
+              <TableHead>Customer Name</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginatedCreditNotes?.length > 0 ? (
+              paginatedCreditNotes.map((creditNote) => (
                 <TableRow key={creditNote.identity}>
-                  <TableCell>{creditNote.check_number}</TableCell>
+                  <TableCell className="font-medium">{creditNote.check_number}</TableCell>
                   <TableCell>{creditNote.customer_name}</TableCell>
                   <TableCell>
                     {creditNote.currency}{" "}
                     {parseFloat(creditNote.amount).toFixed(2)}
                   </TableCell>
-                  <TableCell>
-                    <span
-                      className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                        creditNote.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : creditNote.status === "Approved"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {creditNote.status}
-                    </span>
-                  </TableCell>
-                  <TableCell>
+                  <TableCell>{getStatusBadge(creditNote.status)}</TableCell>
+                  <TableCell className="text-right">
                     <Button
-                      variant="link"
-                      className="text-blue-600"
+                      variant="ghost"
+                      size="sm"
                       onClick={() => setSelectedCreditNote(creditNote)}
                     >
-                      View Details
+                      View
                     </Button>
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                  No credit notes found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
-          {/* Pagination Controls */}
-          <div className="mt-4 flex items-center justify-between">
-            <div className="text-sm text-gray-600">
-              Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of{" "}
-              {totalItems} credit notes
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                disabled={currentPage === 1}
-                onClick={() => handlePageChange(currentPage - 1)}
-              >
-                Previous
-              </Button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+      {/* Pagination Controls */}
+      {paginatedCreditNotes?.length > 0 && (
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of{" "}
+            {totalItems} entries
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+            >
+              Previous
+            </Button>
+            <div className="flex items-center gap-1">
+               {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                 (page) => (
                   <Button
                     key={page}
-                    variant={currentPage === page ? "default" : "outline"}
+                    variant={currentPage === page ? "default" : "ghost"}
+                    size="sm"
+                    className="w-8 p-0"
                     onClick={() => handlePageChange(page)}
                   >
                     {page}
                   </Button>
                 )
               )}
-              <Button
-                variant="sm"
-                disabled={currentPage === totalPages}
-                onClick={() => handlePageChange(currentPage + 1)}
-              >
-                Next
-              </Button>
             </div>
+           
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
+            >
+              Next
+            </Button>
           </div>
-        </>
-      ) : (
-        <p className="text-gray-600">No credit notes available.</p>
+        </div>
       )}
 
       {/* Details Dialog */}
@@ -265,91 +288,112 @@ function EmployeeCreditNotesTable({ creditNotes }) {
           open={!!selectedCreditNote}
           onOpenChange={() => setSelectedCreditNote(null)}
         >
-          <DialogContent className="sm:max-w-3xl">
+          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold">
-                Credit Note Details
+              <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                 <FileText className="h-6 w-6" />
+                 Credit Note Details
               </DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <span className="font-semibold">Customer Name:</span>{" "}
-                {selectedCreditNote.customer_name}
-              </div>
-              <div>
-                <span className="font-semibold">Customer Email:</span>{" "}
-                {selectedCreditNote.customer_email || "N/A"}
-              </div>
-              <div>
-                <span className="font-semibold">Customer Address:</span>{" "}
-                {selectedCreditNote.customer_address || "N/A"}
-              </div>
-              <div>
-                <span className="font-semibold">Customer Phone:</span>{" "}
-                {selectedCreditNote.customer_phone || "N/A"}
-              </div>
-              <div>
-                <span className="font-semibold">Amount:</span>{" "}
-                {selectedCreditNote.currency}{" "}
-                {parseFloat(selectedCreditNote.amount).toFixed(2)}
-              </div>
-              <div>
-                <span className="font-semibold">Status:</span>{" "}
-                <span
-                  className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                    selectedCreditNote.status === "Pending"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : selectedCreditNote.status === "Approved"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {selectedCreditNote.status}
-                </span>
-              </div>
-              <div>
-                <span className="font-semibold">Reason:</span>{" "}
-                {selectedCreditNote.reason}
-              </div>
-              <div>
-                <span className="font-semibold">Cashier Name:</span>{" "}
-                {selectedCreditNote.cashier_name}
-              </div>
-              <div>
-                <span className="font-semibold">Check Number:</span>{" "}
-                {selectedCreditNote.check_number}
-              </div>
-              <div>
-                <span className="font-semibold">Revenue Center:</span>{" "}
-                {selectedCreditNote.revenue_center}
-              </div>
-              <div>
-                <span className="font-semibold">Transaction Date:</span>{" "}
-                {new Date(
-                  selectedCreditNote.transaction_date
-                ).toLocaleDateString()}
-              </div>
-              <div>
-                <span className="font-semibold">Created At:</span>{" "}
-                {new Date(selectedCreditNote.created_at).toLocaleString()}
-              </div>
-              <div>
-                <span className="font-semibold">Updated At:</span>{" "}
-                {new Date(selectedCreditNote.updated_at).toLocaleString()}
-              </div>
-              {selectedCreditNote.attachment && (
+            
+            <div className="grid gap-6 py-4">
+              {/* Header Status Section */}
+              <div className="flex items-center justify-between bg-muted/40 p-3 rounded-lg border">
                 <div>
-                  <span className="font-semibold">Attachment:</span>{" "}
-                  <a
-                    href={selectedCreditNote.attachment}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
-                  >
-                    View Attachment
-                  </a>
+                   <span className="text-sm font-medium text-muted-foreground">Reference</span>
+                   <p className="font-mono text-sm">{selectedCreditNote.reference || "N/A"}</p>
+                </div>
+                <div>
+                   <span className="text-sm font-medium text-muted-foreground block mb-1">Status</span>
+                   {getStatusBadge(selectedCreditNote.status)}
+                </div>
+              </div>
+
+               {/* Main Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                 
+                 {/* Customer Info */}
+                 <div className="space-y-4">
+                    <h4 className="font-semibold text-foreground border-b pb-2">Customer Information</h4>
+                    <div className="space-y-3">
+                       <div className="grid grid-cols-3 gap-2 text-sm">
+                          <span className="text-muted-foreground">Name:</span>
+                          <span className="col-span-2 font-medium">{selectedCreditNote.customer_name}</span>
+                       </div>
+                       <div className="grid grid-cols-3 gap-2 text-sm">
+                          <span className="text-muted-foreground">Email:</span>
+                          <span className="col-span-2">{selectedCreditNote.customer_email || "N/A"}</span>
+                       </div>
+                       <div className="grid grid-cols-3 gap-2 text-sm">
+                          <span className="text-muted-foreground">Address:</span>
+                          <span className="col-span-2">{selectedCreditNote.customer_address || "N/A"}</span>
+                       </div>
+                    </div>
+                 </div>
+
+                 {/* Transaction Info */}
+                 <div className="space-y-4">
+                    <h4 className="font-semibold text-foreground border-b pb-2">Transaction Details</h4>
+                     <div className="space-y-3">
+                       <div className="grid grid-cols-3 gap-2 text-sm">
+                          <span className="text-muted-foreground">Total:</span>
+                          <span className="col-span-2 font-bold text-lg">
+                             {selectedCreditNote.currency} {parseFloat(selectedCreditNote.amount).toFixed(2)}
+                          </span>
+                       </div>
+                       <div className="grid grid-cols-3 gap-2 text-sm">
+                          <span className="text-muted-foreground">Check #:</span>
+                          <span className="col-span-2">{selectedCreditNote.check_number}</span>
+                       </div>
+                       <div className="grid grid-cols-3 gap-2 text-sm">
+                          <span className="text-muted-foreground">Cashier:</span>
+                          <span className="col-span-2">{selectedCreditNote.cashier_name}</span>
+                       </div>
+                        <div className="grid grid-cols-3 gap-2 text-sm">
+                          <span className="text-muted-foreground">Rev. Ctr:</span>
+                          <span className="col-span-2">{selectedCreditNote.revenue_center}</span>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+
+              {/* Full Width Sections */}
+              <div className="space-y-2">
+                 <h4 className="font-semibold text-foreground border-b pb-2">Additional Info</h4>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                       <span className="text-muted-foreground block">Transaction Date</span>
+                       <span>{new Date(selectedCreditNote.transaction_date).toLocaleDateString()}</span>
+                    </div>
+                    <div>
+                       <span className="text-muted-foreground block">Created At</span>
+                       <span>{new Date(selectedCreditNote.created_at).toLocaleString()}</span>
+                    </div>
+                 </div>
+                 
+                 <div className="mt-3">
+                     <span className="text-muted-foreground block mb-1">Reason</span>
+                     <div className="p-3 bg-muted/30 rounded-md text-sm italic">
+                        {selectedCreditNote.reason || "No reason provided."}
+                     </div>
+                 </div>
+              </div>
+
+               {selectedCreditNote.attachment && (
+                <div className="flex justify-end pt-2">
+                  <Button asChild variant="outline" className="gap-2">
+                    <a
+                      href={selectedCreditNote.attachment}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FileText className="h-4 w-4" />
+                      View Attachment
+                    </a>
+                  </Button>
                 </div>
               )}
+
             </div>
           </DialogContent>
         </Dialog>
