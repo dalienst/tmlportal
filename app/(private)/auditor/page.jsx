@@ -176,6 +176,7 @@ function AuditorDashboard() {
         onClose={() => setApprovalRequestModal(false)}
         creditNotes={creditNotes}
         managers={managers}
+        refetch={refetchApprovalRequest}
       />
     </div>
   );
