@@ -6,6 +6,10 @@ import { Field, Form, Formik } from "formik";
 import Image from "next/image";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 function CreateCenter({ refetch, closeModal }) {
   const [loading, setLoading] = useState(false);
@@ -41,99 +45,103 @@ function CreateCenter({ refetch, closeModal }) {
         }
       }}
     >
-      {({ setFieldValue }) => (
-        <Form className="w-full max-w-md p-4 bg-card border border-border rounded-lg shadow-md max-h-[80vh] overflow-y-auto">
-          <Image
-            className="mx-auto mb-3"
-            src="/logo.png"
-            alt="Tamarind Logo"
-            width={100}
-            height={100}
-          />
-          <h2 className="mb-4 text-xl font-bold text-center text-black">
-            Create Center
-          </h2>
-          <div className="mb-3">
-            <label htmlFor="logo" className="block text-black text-sm mb-1">
-              Center Logo
-            </label>
-            <input
-              type="file"
-              id="logo"
-              name="logo"
-              onChange={(e) => setFieldValue("logo", e.target.files[0])}
-              className="block w-full text-sm text-black border border-border rounded-lg cursor-pointer bg-muted focus:outline-none py-1 px-2"
+      {({ setFieldValue, values }) => (
+        <Form className="w-full max-w-md p-6 bg-card border border-border rounded-lg shadow-xl max-h-[85vh] overflow-y-auto">
+          <div className="flex flex-col items-center mb-6">
+            <Image
+              className="mb-3 object-contain"
+              src="/logo.png"
+              alt="Tamarind Logo"
+              width={80}
+              height={80}
             />
+            <h2 className="text-2xl font-bold text-center text-foreground">
+              Create Center
+            </h2>
+            <p className="text-sm text-muted-foreground text-center">
+              Add a new operational center/branch
+            </p>
           </div>
-          <div className="mb-3">
-            <label htmlFor="name" className="block text-black text-sm mb-1">
-              Center Name
-            </label>
-            <Field
-              type="text"
-              id="name"
-              name="name"
-              className="w-full px-2 py-1 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black text-sm"
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="contact" className="block text-black text-sm mb-1">
-              Contact
-            </label>
-            <Field
-              type="text"
-              id="contact"
-              name="contact"
-              className="w-full px-2 py-1 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black text-sm"
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="location" className="block text-black text-sm mb-1">
-              Location
-            </label>
-            <Field
-              type="text"
-              id="location"
-              name="location"
-              className="w-full px-2 py-1 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black text-sm"
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label
-              htmlFor="description"
-              className="block text-black text-sm mb-1"
-            >
-              Description
-            </label>
-            <Field
-              as="textarea"
-              id="description"
-              name="description"
-              className="w-full px-2 py-1 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black text-sm h-20 resize-none"
-              required
-            />
-          </div>
-          <div className="flex flex-col gap-2 mt-4 md:flex-row md:gap-4">
-            <button
-              type="submit"
-              className={`w-full bg-accent text-accent-foreground py-2 rounded-lg hover:bg-opacity-90 transition-colors ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={loading}
-            >
-              {loading ? "Creating..." : "Create"}
-            </button>
 
-            <button
-              type="button"
-              className="w-full bg-secondary text-secondary-foreground py-2 rounded-lg hover:bg-opacity-90 transition-colors"
-              onClick={closeModal}
-            >
-              Cancel
-            </button>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="logo">Center Logo</Label>
+              <Input
+                type="file"
+                id="logo"
+                name="logo"
+                onChange={(e) => setFieldValue("logo", e.target.files?.[0])}
+                className="cursor-pointer file:cursor-pointer text-muted-foreground"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="name">Center Name</Label>
+              <Field
+                as={Input}
+                type="text"
+                id="name"
+                name="name"
+                placeholder="e.g. Tamarind Nairobi"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <div className="space-y-2">
+                <Label htmlFor="contact">Contact</Label>
+                <Field
+                  as={Input}
+                  type="text"
+                  id="contact"
+                  name="contact"
+                  placeholder="Phone or Email"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="location">Location</Label>
+                <Field
+                  as={Input}
+                  type="text"
+                  id="location"
+                  name="location"
+                  placeholder="City, Street"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Field
+                as={Textarea}
+                id="description"
+                name="description"
+                placeholder="Brief description of the center..."
+                className="min-h-[100px] resize-none"
+                required
+              />
+            </div>
+
+            <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full sm:w-1/2"
+                onClick={closeModal}
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="w-full sm:w-1/2"
+                disabled={loading}
+              >
+                {loading ? "Creating..." : "Create Center"}
+              </Button>
+            </div>
           </div>
         </Form>
       )}
