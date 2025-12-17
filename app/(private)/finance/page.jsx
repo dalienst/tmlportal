@@ -12,6 +12,8 @@ import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, CheckSquare, ListChecks } from "lucide-react";
+import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
+import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
 
 function Manager() {
   const {
@@ -22,11 +24,13 @@ function Manager() {
   const {
     isLoading: isLoadingCreditNotes,
     data: creditNotes,
+    refetch: refetchCreditNotes,
   } = useFetchCreditNotes();
 
   const {
     isLoading: isLoadingApprovalRequest,
     data: approvalRequests,
+    refetch: refetchApprovalRequest,
   } = useFetchApprovalRequests();
 
   const {
@@ -36,6 +40,8 @@ function Manager() {
 
   const {
     isLoading: isLoadingManagers,
+    data: managers,
+    refetch: refetchManagers,
   } = useFetchManagers();
 
   const [creditNoteModal, setCreditNoteModal] = useState(false);
@@ -164,6 +170,33 @@ function Manager() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {creditNoteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="relative w-full max-w-4xl bg-background rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
+            <button
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground z-10"
+              onClick={() => setCreditNoteModal(false)}
+            >
+             ✕
+            </button>
+            <div className="p-6">
+              <CreateCreditNote
+                refetch={refetchCreditNotes}
+                closeModal={() => setCreditNoteModal(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      <CreateApprovalRequest
+        isOpen={approvalRequestModal}
+        onClose={() => setApprovalRequestModal(false)}
+        creditNotes={creditNotes}
+        managers={managers}
+        refetch={refetchApprovalRequest}
+      />
     </div>
   );
 }
