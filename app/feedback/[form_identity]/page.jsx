@@ -6,6 +6,11 @@ import Image from "next/image";
 import React, { use, useState } from "react";
 import RatingButtons from "@/components/general/RatingButtons";
 import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 function Feedback({ params }) {
   const { form_identity } = use(params);
@@ -133,8 +138,10 @@ function Feedback({ params }) {
         answers: [],
       });
       refetchFeedbackForm();
+      // Optional: Add a success message or redirect
     } catch (err) {
-      router.push("/error");
+       // Assuming router is uncommented if needed
+      // router.push("/error");
     } finally {
       setIsSubmitting(false);
     }
@@ -143,208 +150,232 @@ function Feedback({ params }) {
   if (isLoadingFeedbackForm) return <LoadingSpinner />;
 
   return (
-    <div className="flex items-center justify-center min-h-screen py-4 px-4 bg-gradient-to-b from-[#e54c23] to-[#e20715]">
-      <div className="w-full max-w-xl p-6 bg-white border border-gray-200 rounded-lg shadow-md">
-        <Image
-          className="mx-auto mb-4"
-          src={`${feedbackForm?.logo || "/logo.png"}`}
-          alt="Tamarind Logo"
-          width={100}
-          height={100}
-        />
-        <h2 className="text-xl font-semibold text-black mb-4 text-center">
-          {feedbackForm?.title}
-        </h2>
-        <p className="text-muted-foreground mb-6 text-center">
-          {feedbackForm?.description}
-        </p>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-black">
-              Guest Name *
-            </label>
-            <input
-              type="text"
-              placeholder="Enter your name"
-              name="guest_name"
-              value={formData.guest_name}
-              onChange={handleInputChange}
-              className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-black bg-white"
-              required
-            />
-          </div>
-          {/* date */}
-          <div>
-            <label className="block text-sm font-medium text-black">Date</label>
-            <input
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleInputChange}
-              className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-black bg-white"
-              required
-            />
-          </div>
-          {feedbackForm?.is_accomodation && (
-            <>
-              <div>
-                <label className="block text-sm font-medium text-black">
-                  Apartment No *
-                </label>
-                <input
-                  type="text"
-                  name="apartment_no"
-                  value={formData.apartment_no}
-                  onChange={handleInputChange}
-                  className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-black bg-white"
-                  required
+    <div className="flex items-center justify-center min-h-screen py-8 px-4 bg-gradient-to-br from-[#e54c23]/10 to-[#e20715]/10">
+      <Card className="w-full max-w-2xl shadow-xl">
+        <CardHeader className="text-center pb-2">
+           <div className="flex justify-center mb-4">
+               <Image
+                src={`${feedbackForm?.logo || "/logo.png"}`}
+                alt="Logo"
+                width={120}
+                height={120}
+                className="object-contain"
                 />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-black">
-                    Arrival Date *
-                  </label>
-                  <input
-                    type="date"
-                    name="arrival_date"
-                    value={formData.arrival_date}
-                    onChange={handleInputChange}
-                    className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-black bg-white"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-black">
-                    Checkout Date *
-                  </label>
-                  <input
-                    type="date"
-                    name="checkout_date"
-                    value={formData.checkout_date}
-                    onChange={handleInputChange}
-                    className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-black bg-white"
-                    required
-                  />
-                </div>
-              </div>
-            </>
-          )}
-          {feedbackForm?.questions?.map((question) => (
-            <div key={question.reference} className="space-y-2">
-              <label className="block text-sm font-medium text-black">
-                {question.text}
-              </label>
-              {question.type === "RATING" && (
-                <RatingButtons
-                  value={
-                    formData.answers.find(
-                      (a) => a.question === question.identity
-                    )?.rating || 0
-                  }
-                  onChange={(rating) =>
-                    handleAnswerChange(question.identity, rating)
-                  }
-                />
-              )}
-              {question.type === "YES_NO" && (
-                <div className="mt-2 flex space-x-6">
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name={`yesno-${question.identity}`}
-                      value="true"
-                      checked={
-                        formData.answers.find(
-                          (a) => a.question === question.identity
-                        )?.yes_no === true
-                      }
-                      onChange={() =>
-                        handleAnswerChange(question.identity, {
-                          yes_no: true,
-                        })
-                      }
-                      className="w-4 h-4 text-accent border-gray-300 focus:ring-2 focus:ring-accent"
-                    />
-                    <span className="ml-2 text-sm text-black">Yes</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name={`yesno-${question.identity}`}
-                      value="false"
-                      checked={
-                        formData.answers.find(
-                          (a) => a.question === question.identity
-                        )?.yes_no === false
-                      }
-                      onChange={() =>
-                        handleAnswerChange(question.identity, {
-                          yes_no: false,
-                        })
-                      }
-                      className="w-4 h-4 text-accent border-gray-300 focus:ring-2 focus:ring-accent"
-                    />
-                    <span className="ml-2 text-sm text-black">No</span>
-                  </label>
-                </div>
-              )}
-              {question.type === "TEXT" && (
-                <textarea
-                  value={
-                    formData.answers.find(
-                      (a) => a.question === question.identity
-                    )?.text || ""
-                  }
-                  onChange={(e) =>
-                    handleAnswerChange(question.identity, {
-                      text: e.target.value,
-                    })
-                  }
-                  className="mt-2 block w-full border border-gray-300 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-black bg-white"
-                  rows="3"
-                  placeholder="Enter your comments"
-                />
-              )}
-              {question.sub_questions.length > 0 && (
-                <div className="ml-4 mt-2 space-y-2">
-                  {question.sub_questions.map((subQ) => (
-                    <div key={subQ.reference}>
-                      <label className="block text-sm font-medium text-black">
-                        {subQ.text}
-                      </label>
-                      <RatingButtons
-                        value={
-                          formData.answers.find(
-                            (a) => a.question === question.identity
-                          )?.sub_responses?.[subQ.identity]?.rating || 0
-                        }
-                        onChange={(rating) =>
-                          handleAnswerChange(
-                            question.identity,
-                            rating,
-                            subQ.identity
-                          )
-                        }
-                      />
+           </div>
+          <CardTitle className="text-2xl font-bold text-gray-900">{feedbackForm?.title}</CardTitle>
+          <CardDescription className="text-base text-gray-500 max-w-lg mx-auto">
+            {feedbackForm?.description}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+             <form onSubmit={handleSubmit} className="space-y-6">
+                 {/* Personal Info Section */}
+                 <div className="space-y-4 rounded-lg bg-gray-50 p-4 border border-gray-100">
+                    <h3 className="font-semibold text-gray-900">Guest Information</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                         <div className="space-y-2">
+                             <Label htmlFor="guest_name">Guest Name *</Label>
+                             <Input
+                                id="guest_name"
+                                name="guest_name"
+                                value={formData.guest_name}
+                                onChange={handleInputChange}
+                                placeholder="Enter your full name"
+                                required
+                                className="bg-white"
+                             />
+                         </div>
+                         <div className="space-y-2">
+                             <Label htmlFor="date">Date *</Label>
+                             <Input
+                                id="date"
+                                type="date"
+                                name="date"
+                                value={formData.date}
+                                onChange={handleInputChange}
+                                required
+                                className="bg-white"
+                             />
+                         </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-          {error && <p className="text-red-600 text-center">{error}</p>}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full text-white bg-accent font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:bg-opacity-90 transition-colors ${
-              isSubmitting && "opacity-50 cursor-not-allowed"
-            }`}
-          >
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </button>
-        </form>
-      </div>
+
+                     {feedbackForm?.is_accomodation && (
+                        <>
+                            <div className="space-y-2">
+                                <Label htmlFor="apartment_no">Apartment No *</Label>
+                                <Input
+                                    id="apartment_no"
+                                    name="apartment_no"
+                                    value={formData.apartment_no}
+                                    onChange={handleInputChange}
+                                    placeholder="Apartment Number"
+                                    required
+                                    className="bg-white"
+                                />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="arrival_date">Arrival Date *</Label>
+                                    <Input
+                                        id="arrival_date"
+                                        type="date"
+                                        name="arrival_date"
+                                        value={formData.arrival_date}
+                                        onChange={handleInputChange}
+                                        required
+                                        className="bg-white"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="checkout_date">Checkout Date *</Label>
+                                    <Input
+                                        id="checkout_date"
+                                        type="date"
+                                        name="checkout_date"
+                                        value={formData.checkout_date}
+                                        onChange={handleInputChange}
+                                        required
+                                        className="bg-white"
+                                    />
+                                </div>
+                            </div>
+                        </>
+                    )}
+                 </div>
+
+                 {/* Questions Section */}
+                 <div className="space-y-8">
+                     {feedbackForm?.questions?.map((question, index) => (
+                         <div key={question.reference} className="space-y-3 pb-6 border-b last:border-0 last:pb-0">
+                             <div className="flex items-start gap-2">
+                                 <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold mt-0.5">
+                                    {index + 1}
+                                 </span>
+                                 <Label className="text-base text-gray-900 leading-normal pt-0.5">
+                                     {question.text}
+                                 </Label>
+                             </div>
+                             
+                             <div className="pl-8">
+                                 {question.type === "RATING" && (
+                                     <RatingButtons
+                                        value={
+                                            formData.answers.find(
+                                            (a) => a.question === question.identity
+                                            )?.rating || 0
+                                        }
+                                        onChange={(rating) =>
+                                            handleAnswerChange(question.identity, rating)
+                                        }
+                                     />
+                                 )}
+                                 
+                                {question.type === "YES_NO" && (
+                                    <div className="flex gap-4">
+                                        <label className="flex items-center gap-2 cursor-pointer p-2 rounded-md hover:bg-gray-100 transition-colors border border-transparent has-[:checked]:border-primary/20 has-[:checked]:bg-primary/5">
+                                            <input
+                                                type="radio"
+                                                name={`yesno-${question.identity}`}
+                                                value="true"
+                                                checked={
+                                                    formData.answers.find(
+                                                        (a) => a.question === question.identity
+                                                    )?.yes_no === true
+                                                }
+                                                onChange={() =>
+                                                    handleAnswerChange(question.identity, {
+                                                        yes_no: true,
+                                                    })
+                                                }
+                                                className="w-4 h-4 text-primary focus:ring-primary"
+                                            />
+                                            <span className="text-sm">Yes</span>
+                                        </label>
+                                        <label className="flex items-center gap-2 cursor-pointer p-2 rounded-md hover:bg-gray-100 transition-colors border border-transparent has-[:checked]:border-primary/20 has-[:checked]:bg-primary/5">
+                                            <input
+                                                type="radio"
+                                                name={`yesno-${question.identity}`}
+                                                value="false"
+                                                checked={
+                                                    formData.answers.find(
+                                                        (a) => a.question === question.identity
+                                                    )?.yes_no === false
+                                                }
+                                                onChange={() =>
+                                                    handleAnswerChange(question.identity, {
+                                                        yes_no: false,
+                                                    })
+                                                }
+                                                className="w-4 h-4 text-primary focus:ring-primary"
+                                            />
+                                            <span className="text-sm">No</span>
+                                        </label>
+                                    </div>
+                                )}
+
+                                {question.type === "TEXT" && (
+                                    <Textarea
+                                        value={
+                                            formData.answers.find(
+                                            (a) => a.question === question.identity
+                                            )?.text || ""
+                                        }
+                                        onChange={(e) =>
+                                            handleAnswerChange(question.identity, {
+                                            text: e.target.value,
+                                            })
+                                        }
+                                        placeholder="Enter your comments here..."
+                                        className="min-h-[100px] bg-white resize-y"
+                                    />
+                                )}
+
+                                {question.sub_questions?.length > 0 && (
+                                    <div className="mt-4 space-y-4 pl-4 border-l-2 border-gray-100">
+                                        {question.sub_questions.map((subQ) => (
+                                            <div key={subQ.reference} className="space-y-2">
+                                                <Label className="text-sm text-gray-700 font-medium block">
+                                                    {subQ.text}
+                                                </Label>
+                                                <RatingButtons
+                                                    value={
+                                                    formData.answers.find(
+                                                        (a) => a.question === question.identity
+                                                    )?.sub_responses?.[subQ.identity]?.rating || 0
+                                                    }
+                                                    onChange={(rating) =>
+                                                    handleAnswerChange(
+                                                        question.identity,
+                                                        rating,
+                                                        subQ.identity
+                                                    )
+                                                    }
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                             </div>
+                         </div>
+                     ))}
+                 </div>
+
+                 {error && (
+                     <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm text-center">
+                         {error}
+                     </div>
+                 )}
+
+                 <Button 
+                    type="submit" 
+                    className="w-full h-12 text-lg font-medium"
+                    disabled={isSubmitting}
+                 >
+                    {isSubmitting ? "Submitting..." : "Submit Feedback"}
+                 </Button>
+             </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }
