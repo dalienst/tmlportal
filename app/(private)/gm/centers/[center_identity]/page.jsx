@@ -62,7 +62,6 @@ function CenterDetail({ params }) {
                 <TableHeader>
                 <TableRow>
                     <TableHead>Title</TableHead>
-                    <TableHead>Description</TableHead>
                     <TableHead>Questions</TableHead>
                     <TableHead>Submissions</TableHead>
                     <TableHead>Accommodation</TableHead>
@@ -73,7 +72,6 @@ function CenterDetail({ params }) {
                 {center?.feedback_forms?.map((feedbackForm) => (
                     <TableRow key={feedbackForm?.reference}>
                     <TableCell className="font-medium">{feedbackForm?.title}</TableCell>
-                    <TableCell className="text-muted-foreground">{feedbackForm?.description}</TableCell>
                     <TableCell>{feedbackForm?.questions?.length}</TableCell>
                     <TableCell>{feedbackForm?.form_submissions?.length}</TableCell>
                      <TableCell>
