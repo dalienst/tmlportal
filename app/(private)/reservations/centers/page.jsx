@@ -5,6 +5,9 @@ import LoadingSpinner from "@/components/general/LoadingSpinner";
 import CreateCenter from "@/forms/centers/CreateCenter";
 import { useFetchCenters } from "@/hooks/centers/actions";
 import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 function Centers() {
   const {
@@ -19,43 +22,43 @@ function Centers() {
   }
 
   return (
-    <div className="container mx-auto p-4 bg-background min-h-screen">
-      <section className="mb-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-black">Centers Overview</h2>
-          <p className="text-2xl font-bold text-black">
-            {centers?.length} Centers
+    <div className="container mx-auto p-6 bg-gray-50/50 min-h-screen">
+       <section className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+            Centers Overview
+          </h2>
+          <p className="text-muted-foreground mt-1">
+            Manage your {centers?.length || 0} centers
           </p>
         </div>
+        <Button onClick={() => setIsModalOpen(true)} className="gap-2">
+            <Plus className="h-4 w-4" /> Create Center
+        </Button>
       </section>
 
-      <section className="mb-6 py-4">
-        <div className="p-4 rounded-lg shadow-md bg-white border border-border">
-          <div className="mb-4 flex flex-col md:flex-row justify-between md:items-center gap-4 border-b border-border pb-4">
-            <h6 className="text-xl font-semibold text-black">Centers</h6>
-            <button
-              className="bg-accent text-accent-foreground px-3 py-1 rounded-lg hover:bg-opacity-90 transition-colors"
-              onClick={() => setIsModalOpen(true)}
-            >
-              Create Center
-            </button>
-          </div>
-
-          {centers?.length > 0 ? (
-            <CentersTable centers={centers} role="reservations" />
-          ) : (
-            <div className="p-4 text-center text-black bg-muted">
-              No centers available
-            </div>
-          )}
-        </div>
+      <section className="mb-8">
+         <Card>
+          <CardHeader>
+             <CardTitle>Centers List</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {centers?.length > 0 ? (
+                <CentersTable centers={centers} role="reservations" />
+            ) : (
+                <div className="p-8 text-center text-muted-foreground bg-muted/50 rounded-md border border-dashed">
+                No centers available
+                </div>
+            )}
+           </CardContent>
+        </Card>
       </section>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto">
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-card p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto relative border">
             <button
-              className="absolute top-2 right-2 text-black hover:text-primary"
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
               onClick={() => setIsModalOpen(false)}
             >
               ✕

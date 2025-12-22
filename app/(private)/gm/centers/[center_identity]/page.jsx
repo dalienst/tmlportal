@@ -5,6 +5,18 @@ import CreateFeedbackForm from "@/forms/feedbackforms/CreateFeedbackForm";
 import { useFetchCenter } from "@/hooks/centers/actions";
 import Link from "next/link";
 import React, { use, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Plus, ArrowRight } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 function CenterDetail({ params }) {
   const { center_identity } = use(params);
@@ -22,97 +34,80 @@ function CenterDetail({ params }) {
   }
 
   return (
-    <section
+    <div
       id="center"
-      className="container mx-auto p-4 bg-background min-h-screen"
+      className="container mx-auto p-6 bg-gray-50/50 min-h-screen"
     >
-      <div className="mb-3 mt-3">
-        <h2 className="text-2xl font-bold text-black">
-          {center?.name} Overview
-        </h2>
-      </div>
-      <div className="mb-6 p-4 rounded-lg shadow-md bg-card border border-border mt-3">
-        <div className="mb-4 flex justify-between items-center border-b border-border pb-4">
-          <h6 className="text-xl font-semibold text-black">Feedback Forms</h6>
-          <button
-            className="bg-accent text-accent-foreground px-3 py-1 rounded-lg hover:bg-opacity-90 transition-colors"
-            onClick={() => setIsModalOpen(true)}
-          >
-            Create Form
-          </button>
+      <section className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+           <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+            {center?.name}
+          </h2>
+           <p className="text-muted-foreground mt-1">
+            Center Overview and Feedback Forms
+          </p>
         </div>
+      </section>
 
-        {center?.feedback_forms?.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full table-auto border rounded-lg border-border">
-              <thead>
-                <tr className="bg-muted text-black font-semibold text-sm">
-                  <th className="px-2 py-2 text-left min-w-[120px] border-b border-border">
-                    Title
-                  </th>
-                  <th className="px-2 py-2 text-left min-w-[150px] border-b border-border">
-                    Description
-                  </th>
-                  <th className="px-2 py-2 text-left min-w-[80px] border-b border-border">
-                    Questions
-                  </th>
-                  <th className="px-2 py-2 text-left min-w-[80px] border-b border-border">
-                    Submissions
-                  </th>
-                  <th className="px-2 py-2 text-left min-w-[100px] border-b border-border">
-                    Accommodation
-                  </th>
-                  <th className="px-2 py-2 text-left min-w-[80px] border-b border-border">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {center?.feedback_forms?.map((feedbackForm, index) => (
-                  <tr
-                    key={feedbackForm?.reference}
-                    className="bg-card hover:bg-muted/50 transition-colors"
-                  >
-                    <td className="px-2 py-2 border-t border-border text-black text-sm">
-                      {feedbackForm?.title}
-                    </td>
-                    <td className="px-2 py-2 border-t border-border text-black text-sm">
-                      {feedbackForm?.description}
-                    </td>
-                    <td className="px-2 py-2 border-t border-border text-black text-sm">
-                      {feedbackForm?.questions?.length}
-                    </td>
-                    <td className="px-2 py-2 border-t border-border text-black text-sm">
-                      {feedbackForm?.form_submissions?.length}
-                    </td>
-                    <td className="px-2 py-2 border-t border-border text-black text-sm">
-                      {feedbackForm?.is_accomodation ? "Yes" : "No"}
-                    </td>
-                    <td className="px-2 py-2 border-t border-border text-sm">
-                      <Link
-                        href={`/gm/centers/${center_identity}/${feedbackForm?.form_identity}`}
-                        className="text-primary hover:underline"
-                      >
-                        Manage
-                      </Link>
-                    </td>
-                  </tr>
+      <Card className="mb-6">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle>Feedback Forms</CardTitle>
+             <Button onClick={() => setIsModalOpen(true)} className="gap-2" size="sm">
+                <Plus className="h-4 w-4" /> Create Form
+            </Button>
+        </CardHeader>
+        <CardContent>
+            {center?.feedback_forms?.length > 0 ? (
+            <Table>
+                <TableHeader>
+                <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Questions</TableHead>
+                    <TableHead>Submissions</TableHead>
+                    <TableHead>Accommodation</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                </TableRow>
+                </TableHeader>
+                <TableBody>
+                {center?.feedback_forms?.map((feedbackForm) => (
+                    <TableRow key={feedbackForm?.reference}>
+                    <TableCell className="font-medium">{feedbackForm?.title}</TableCell>
+                    <TableCell>{feedbackForm?.questions?.length}</TableCell>
+                    <TableCell>{feedbackForm?.form_submissions?.length}</TableCell>
+                     <TableCell>
+                        {feedbackForm?.is_accomodation ? (
+                            <Badge variant="default">Yes</Badge>
+                        ) : (
+                             <Badge variant="secondary">No</Badge>
+                        )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                        <Button asChild variant="ghost" size="sm">
+                             <Link
+                                href={`/gm/centers/${center_identity}/${feedbackForm?.form_identity}`}
+                                className="flex items-center gap-1"
+                                >
+                                Manage <ArrowRight className="h-4 w-4" />
+                            </Link>
+                        </Button>
+                    </TableCell>
+                    </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="p-4 text-center text-black bg-muted">
-            No feedback forms available for this center
-          </div>
-        )}
-      </div>
+                </TableBody>
+            </Table>
+            ) : (
+            <div className="p-8 text-center text-muted-foreground bg-muted/50 rounded-md border border-dashed">
+                No feedback forms available for this center
+            </div>
+            )}
+        </CardContent>
+      </Card>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto">
+       <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-card p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto relative border">
             <button
-              className="absolute top-2 right-2 text-black hover:text-primary"
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
               onClick={() => setIsModalOpen(false)}
             >
               ✕
@@ -125,7 +120,7 @@ function CenterDetail({ params }) {
           </div>
         </div>
       )}
-    </section>
+    </div>
   );
 }
 
