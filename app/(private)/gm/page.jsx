@@ -74,45 +74,7 @@ function GeneralManager() {
         </div>
       </section>
 
-      <section className="mb-8 grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Centers</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoadingCenters ? (
-                <Skeleton className="h-8 w-16" />
-              ) : (
-                centers?.length || 0
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Active operational centers
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Feedback Forms
-            </CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoadingFeedbackForms ? (
-                <Skeleton className="h-8 w-16" />
-              ) : (
-                feedbackForms?.length || 0
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Customer feedback entries
-            </p>
-          </CardContent>
-        </Card>
+      <section className="mb-8 grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">My Actions</CardTitle>
@@ -131,10 +93,28 @@ function GeneralManager() {
             </p>
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Centers</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingCenters ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                centers?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Active operational centers
+            </p>
+          </CardContent>
+        </Card>
       </section>
 
       <Tabs defaultValue="steps" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 lg:w-[600px]">
+        <TabsList className="grid w-full grid-cols-3 lg:w-[600px]">
           <TabsTrigger value="steps">Approvals</TabsTrigger>
           <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
           <TabsTrigger value="centers">Centers</TabsTrigger>
