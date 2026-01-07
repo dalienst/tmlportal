@@ -71,6 +71,24 @@ function IT() {
       <section className="mb-8 grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">My Actions</CardTitle>
+            <ListChecks className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingApprovalSteps ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                userPendingSteps?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Steps requiring your attention
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Pending Requests
             </CardTitle>
@@ -81,11 +99,11 @@ function IT() {
               {isLoadingApprovalRequest ? (
                 <Skeleton className="h-8 w-16" />
               ) : (
-                userPendingSteps?.length || 0
+                approvalRequests?.length || 0
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Total active approval requests
+              Total active approval requests to be processed
             </p>
           </CardContent>
         </Card>
@@ -104,24 +122,6 @@ function IT() {
             </div>
             <p className="text-xs text-muted-foreground">
               Total credit notes processed
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">My Actions</CardTitle>
-            <ListChecks className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoadingApprovalSteps ? (
-                <Skeleton className="h-8 w-16" />
-              ) : (
-                userPendingSteps?.length || 0
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Steps requiring your attention
             </p>
           </CardContent>
         </Card>
