@@ -4,7 +4,7 @@ import EmployeeApprovalRequestTable from "@/components/approvalrequests/Employee
 import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
 import ApprovalStepsTable from "@/components/approvalsteps/ApprovalStepsTable";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFetchAccount, useFetchManagers } from "@/hooks/accounts/actions";
 import { useFetchApprovalRequests } from "@/hooks/approvalrequests/actions";
 import { useFetchApprovalSteps } from "@/hooks/approvalsteps/actions";
