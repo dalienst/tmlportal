@@ -15,82 +15,76 @@ import EmployeeApprovalRequestTable from "@/components/approvalrequests/Employee
 import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
 import ApprovalStepsTable from "@/components/approvalsteps/ApprovalStepsTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, MessageSquare, FileText, CheckSquare, ListChecks } from "lucide-react";
+import {
+  Building2,
+  MessageSquare,
+  FileText,
+  CheckSquare,
+  ListChecks,
+} from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function AdminDashboard() {
-  const {
-    isLoading: isLoadingAccount,
-    data: account,
-  } = useFetchAccount();
+  const { isLoading: isLoadingAccount, data: account } = useFetchAccount();
   const {
     isLoading: isLoadingCenters,
     data: centers,
     refetch: refetchCenters,
   } = useFetchCenters();
-  const {
-    isLoading: isLoadingFeedbackForms,
-    data: feedbackForms,
-  } = useFetchFeedbackForms();
+  const { isLoading: isLoadingFeedbackForms, data: feedbackForms } =
+    useFetchFeedbackForms();
 
-  const {
-    isLoading: isLoadingCreditNotes,
-    data: creditNotes,
-  } = useFetchCreditNotes();
+  const { isLoading: isLoadingCreditNotes, data: creditNotes } =
+    useFetchCreditNotes();
 
-  const {
-    isLoading: isLoadingApprovalRequest,
-    data: approvalRequests,
-  } = useFetchApprovalRequests();
+  const { isLoading: isLoadingApprovalRequest, data: approvalRequests } =
+    useFetchApprovalRequests();
 
-  const {
-    isLoading: isLoadingApprovalSteps,
-    data: approvalSteps,
-  } = useFetchApprovalSteps();
+  const { isLoading: isLoadingApprovalSteps, data: approvalSteps } =
+    useFetchApprovalSteps();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (
-    isLoadingAccount ||
-    isLoadingCenters ||
-    isLoadingFeedbackForms ||
-    isLoadingCreditNotes ||
-    isLoadingApprovalRequest ||
-    isLoadingApprovalSteps
-  ) {
-    return <LoadingSpinner />;
-  }
   return (
     <div className="container mx-auto p-6 bg-gray-50/50 min-h-screen">
       <section className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-            Welcome back, {account?.name || "Admin"}
+            {isLoadingAccount ? (
+              <Skeleton className="h-9 w-64" />
+            ) : (
+              `Welcome back, ${account?.name || "Admin"}`
+            )}
           </h2>
           <p className="text-muted-foreground mt-1">
             Oversee centers, feedback, and approvals.
           </p>
         </div>
         <div>
-            <button
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 shadow"
-              onClick={() => setIsModalOpen(true)}
-            >
-              Create Center
-            </button>
+          <button
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 shadow"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Create Center
+          </button>
         </div>
       </section>
 
       <section className="mb-8 grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Centers
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total Centers</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{centers?.length || 0}</div>
-             <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold">
+              {isLoadingCenters ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                centers?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
               Active operational centers
             </p>
           </CardContent>
@@ -103,22 +97,32 @@ function AdminDashboard() {
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{feedbackForms?.length || 0}</div>
-             <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold">
+              {isLoadingFeedbackForms ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                feedbackForms?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
               Customer feedback entries
             </p>
           </CardContent>
         </Card>
-         <Card>
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              My Actions
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">My Actions</CardTitle>
             <ListChecks className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{approvalSteps?.length || 0}</div>
-             <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold">
+              {isLoadingApprovalSteps ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                approvalSteps?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
               Steps requiring your attention
             </p>
           </CardContent>
@@ -134,56 +138,88 @@ function AdminDashboard() {
         </TabsList>
 
         <TabsContent value="centers" className="mt-4">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Centers Management</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {centers?.length > 0 ? (
-                        <CentersTable centers={centers} role="admin" />
-                    ) : (
-                        <div className="p-4 text-center text-muted-foreground bg-muted rounded-md">
-                        No centers available
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Centers Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingCenters ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : centers?.length > 0 ? (
+                <CentersTable centers={centers} role="admin" />
+              ) : (
+                <div className="p-4 text-center text-muted-foreground bg-muted rounded-md">
+                  No centers available
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="requests" className="mt-4">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Approval Requests</CardTitle>
-                </CardHeader>
-                 <CardContent>
-                    <EmployeeApprovalRequestTable approvalRequests={approvalRequests} />
-                </CardContent>
-            </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Approval Requests</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingApprovalRequest ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <EmployeeApprovalRequestTable
+                  approvalRequests={approvalRequests}
+                />
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="credit-notes" className="mt-4">
-             <Card>
-                <CardHeader>
-                    <CardTitle>Credit Notes</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <EmployeeCreditNotesTable creditNotes={creditNotes} />
-                </CardContent>
-            </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Credit Notes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingCreditNotes ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <EmployeeCreditNotesTable creditNotes={creditNotes} />
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="steps" className="mt-4">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Approval Steps</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <ApprovalStepsTable
-                    approvalSteps={approvalSteps}
-                    account={account}
-                    />
-                </CardContent>
-            </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Approval Steps</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingApprovalSteps ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <ApprovalStepsTable
+                  approvalSteps={approvalSteps}
+                  account={account}
+                />
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
 

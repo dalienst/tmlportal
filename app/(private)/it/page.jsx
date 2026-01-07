@@ -12,6 +12,7 @@ import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, CheckSquare, ListChecks } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
 import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
 
@@ -37,22 +38,16 @@ function IT() {
 
   const [approvalRequestModal, setApprovalRequestModal] = useState(false);
 
-  if (
-    isLoadingAccount ||
-    isLoadingCreditNotes ||
-    isLoadingApprovalRequest ||
-    isLoadingManagers ||
-    isLoadingApprovalSteps
-  ) {
-    return <LoadingSpinner />;
-  }
-
   return (
     <div className="container mx-auto p-6 min-h-screen bg-gray-50/50">
       <section className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-            Welcome back, {account?.name || "Manager"}
+            {isLoadingAccount ? (
+              <Skeleton className="h-9 w-64" />
+            ) : (
+              `Welcome back, ${account?.name || "Manager"}`
+            )}
           </h2>
           <p className="text-muted-foreground mt-1">
             Manage your approval requests and credit notes.
@@ -79,7 +74,11 @@ function IT() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {approvalRequests?.length || 0}
+              {isLoadingApprovalRequest ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                approvalRequests?.length || 0
+              )}
             </div>
             <p className="text-xs text-muted-foreground">
               Total active approval requests
@@ -92,7 +91,13 @@ function IT() {
             <CheckSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{creditNotes?.length || 0}</div>
+            <div className="text-2xl font-bold">
+              {isLoadingCreditNotes ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                creditNotes?.length || 0
+              )}
+            </div>
             <p className="text-xs text-muted-foreground">
               Total credit notes processed
             </p>
@@ -105,7 +110,11 @@ function IT() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {approvalSteps?.length || 0}
+              {isLoadingApprovalSteps ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                approvalSteps?.length || 0
+              )}
             </div>
             <p className="text-xs text-muted-foreground">
               Steps requiring your attention
@@ -128,11 +137,19 @@ function IT() {
               <CardTitle>Credit Notes</CardTitle>
             </CardHeader>
             <CardContent>
-              <EmployeeCreditNotesTable
-                creditNotes={creditNotes}
-                isIT={account?.is_it}
-                refetch={refetchCreditNotes}
-              />
+              {isLoadingCreditNotes ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <EmployeeCreditNotesTable
+                  creditNotes={creditNotes}
+                  isIT={account?.is_it}
+                  refetch={refetchCreditNotes}
+                />
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -144,9 +161,17 @@ function IT() {
               <CardTitle>Approval Requests</CardTitle>
             </CardHeader>
             <CardContent>
-              <EmployeeApprovalRequestTable
-                approvalRequests={approvalRequests}
-              />
+              {isLoadingApprovalRequest ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <EmployeeApprovalRequestTable
+                  approvalRequests={approvalRequests}
+                />
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -158,10 +183,18 @@ function IT() {
               <CardTitle>Approval Steps</CardTitle>
             </CardHeader>
             <CardContent>
-              <ApprovalStepsTable
-                approvalSteps={approvalSteps}
-                account={account}
-              />
+              {isLoadingApprovalSteps ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <ApprovalStepsTable
+                  approvalSteps={approvalSteps}
+                  account={account}
+                />
+              )}
             </CardContent>
           </Card>
         </TabsContent>
