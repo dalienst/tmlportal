@@ -10,10 +10,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useFetchAccount } from "@/hooks/accounts/actions";
 
-function CreateCreditNote({ closeModal, refetch }) {
+function CreateCreditNote({ closeModal, refetch, managers }) {
   const [loading, setLoading] = useState(false);
   const token = useAxiosAuth();
+
+  // Fetch current logged-in user to exclude them from approvers
+  const { data: currentUser } = useFetchAccount();
+
+  // Filter out the current user from the list of possible approvers
+  const availableApprovers = managers?.filter(
+    (manager) => manager.email !== currentUser?.email
+  );
 
   return (
     <Formik
@@ -28,6 +37,7 @@ function CreateCreditNote({ closeModal, refetch }) {
         revenue_center: "",
         cashier_name: "",
         reason: "",
+        approvers: [],
       }}
       onSubmit={async (values) => {
         setLoading(true);
@@ -44,6 +54,10 @@ function CreateCreditNote({ closeModal, refetch }) {
           formData.append("reason", values?.reason);
           formData.append("revenue_center", values?.revenue_center);
           formData.append("cashier_name", values?.cashier_name);
+          values.approvers.forEach((approver) => {
+            formData.append("approvers", approver);
+          });
+
           await createCreditNote(formData, token);
           toast.success("Credit note created successfully!");
           closeModal();
@@ -175,7 +189,7 @@ function CreateCreditNote({ closeModal, refetch }) {
                 />
               </div>
             </div>
-            
+
             <div className="grid gap-2 pt-2">
               <Label htmlFor="reason">Reason</Label>
               <Field
@@ -187,19 +201,48 @@ function CreateCreditNote({ closeModal, refetch }) {
             </div>
           </div>
 
+          <div className="grid gap-2 pt-2">
+            <Label htmlFor="approvers">Approvers</Label>
+            <div className="max-h-60 overflow-y-auto rounded-md border border-input bg-background p-4">
+              {availableApprovers && availableApprovers.length > 0 ? (
+                availableApprovers.map((manager) => (
+                  <div
+                    key={manager.email}
+                    className="flex items-center space-x-3 py-2"
+                  >
+                    <Field
+                      type="checkbox"
+                      name="approvers"
+                      value={manager.email}
+                      id={`approver-${manager.email}`}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <label
+                      htmlFor={`approver-${manager.email}`}
+                      className="text-sm font-medium leading-none cursor-pointer select-none"
+                    >
+                      {manager.name || manager.email}{" "}
+                      {manager.email === currentUser?.email && "(You)"}
+                    </label>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground py-4 text-center">
+                  No available approvers found.
+                </p>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Select at least one approver. You cannot select yourself.
+            </p>
+          </div>
+
           {/* Buttons */}
           <div className="flex justify-end gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={closeModal}
-            >
+            <Button type="button" variant="outline" onClick={closeModal}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-            >
+            <Button type="submit" disabled={loading}>
               {loading ? "Creating..." : "Create Credit Note"}
             </Button>
           </div>
