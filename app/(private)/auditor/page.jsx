@@ -159,10 +159,11 @@ function AuditorDashboard() {
               className="absolute top-4 right-4 text-muted-foreground hover:text-foreground z-10"
               onClick={() => setCreditNoteModal(false)}
             >
-             ✕
+              ✕
             </button>
             <div className="p-6">
               <CreateCreditNote
+                managers={managers}
                 refetch={refetchCreditNotes}
                 closeModal={() => setCreditNoteModal(false)}
               />

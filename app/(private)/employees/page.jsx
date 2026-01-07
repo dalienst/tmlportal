@@ -163,6 +163,7 @@ function EmployeeDashboard() {
             </button>
             <div className="p-6">
               <CreateCreditNote
+                managers={managers}
                 refetch={refetchCreditNotes}
                 closeModal={() => setCreditNoteModal(false)}
               />

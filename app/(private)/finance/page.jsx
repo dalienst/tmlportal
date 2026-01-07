@@ -16,10 +16,7 @@ import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
 import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
 
 function Manager() {
-  const {
-    isLoading: isLoadingAccount,
-    data: account,
-  } = useFetchAccount();
+  const { isLoading: isLoadingAccount, data: account } = useFetchAccount();
 
   const {
     isLoading: isLoadingCreditNotes,
@@ -33,10 +30,8 @@ function Manager() {
     refetch: refetchApprovalRequest,
   } = useFetchApprovalRequests();
 
-  const {
-    isLoading: isLoadingApprovalSteps,
-    data: approvalSteps,
-  } = useFetchApprovalSteps();
+  const { isLoading: isLoadingApprovalSteps, data: approvalSteps } =
+    useFetchApprovalSteps();
 
   const {
     isLoading: isLoadingManagers,
@@ -94,7 +89,9 @@ function Manager() {
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{approvalRequests?.length || 0}</div>
+            <div className="text-2xl font-bold">
+              {approvalRequests?.length || 0}
+            </div>
             <p className="text-xs text-muted-foreground">
               Total active approval requests
             </p>
@@ -102,9 +99,7 @@ function Manager() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Credit Notes
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Credit Notes</CardTitle>
             <CheckSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -116,13 +111,13 @@ function Manager() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              My Actions
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">My Actions</CardTitle>
             <ListChecks className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{approvalSteps?.length || 0}</div>
+            <div className="text-2xl font-bold">
+              {approvalSteps?.length || 0}
+            </div>
             <p className="text-xs text-muted-foreground">
               Steps requiring your attention
             </p>
@@ -139,17 +134,19 @@ function Manager() {
         <TabsContent value="requests" className="mt-4">
           <Card>
             <CardHeader>
-                <CardTitle>Approval Requests</CardTitle>
+              <CardTitle>Approval Requests</CardTitle>
             </CardHeader>
             <CardContent>
-              <EmployeeApprovalRequestTable approvalRequests={approvalRequests} />
+              <EmployeeApprovalRequestTable
+                approvalRequests={approvalRequests}
+              />
             </CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="credit-notes" className="mt-4">
           <Card>
             <CardHeader>
-                <CardTitle>Credit Notes</CardTitle>
+              <CardTitle>Credit Notes</CardTitle>
             </CardHeader>
             <CardContent>
               <EmployeeCreditNotesTable creditNotes={creditNotes} />
@@ -159,7 +156,7 @@ function Manager() {
         <TabsContent value="steps" className="mt-4">
           <Card>
             <CardHeader>
-                <CardTitle>Approval Steps</CardTitle>
+              <CardTitle>Approval Steps</CardTitle>
             </CardHeader>
             <CardContent>
               <ApprovalStepsTable
@@ -178,10 +175,11 @@ function Manager() {
               className="absolute top-4 right-4 text-muted-foreground hover:text-foreground z-10"
               onClick={() => setCreditNoteModal(false)}
             >
-             ✕
+              ✕
             </button>
             <div className="p-6">
               <CreateCreditNote
+                managers={managers}
                 refetch={refetchCreditNotes}
                 closeModal={() => setCreditNoteModal(false)}
               />
