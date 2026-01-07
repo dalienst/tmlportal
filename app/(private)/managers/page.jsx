@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
 import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
 import React, { useState } from "react";
+import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 
 function Manager() {
   const {
