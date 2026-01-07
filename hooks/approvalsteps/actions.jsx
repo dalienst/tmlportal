@@ -9,6 +9,7 @@ export function useFetchApprovalSteps() {
   return useQuery({
     queryKey: ["approvalSteps"],
     queryFn: () => getApprovalSteps(axios),
+    enabled: !!axios,
   });
 }
 

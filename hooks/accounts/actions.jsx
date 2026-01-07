@@ -11,7 +11,7 @@ export function useFetchAccount() {
   return useQuery({
     queryKey: ["account", userId],
     queryFn: () => getUser(userId, axios),
-    enabled: !!userId,
+    enabled: !!userId && !!axios,
   });
 }
 
@@ -21,6 +21,7 @@ export function useFetchUsers() {
   return useQuery({
     queryKey: ["users"],
     queryFn: () => getUsers(axios),
+    enabled: !!axios,
   });
 }
 
@@ -30,5 +31,6 @@ export function useFetchManagers() {
   return useQuery({
     queryKey: ["managers"],
     queryFn: () => getManagers(axios),
+    enabled: !!axios,
   });
 }
