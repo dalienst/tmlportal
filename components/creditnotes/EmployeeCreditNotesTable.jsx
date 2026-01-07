@@ -112,6 +112,13 @@ function EmployeeCreditNotesTable({ creditNotes, isIT, refetch }) {
             Approved
           </Badge>
         );
+      case "Resolved":
+        return (
+          <Badge className="bg-blue-600 hover:bg-blue-700">
+            <CheckCircle2 className="w-3 h-3 mr-1" />
+            Resolved
+          </Badge>
+        );
       case "Rejected":
         return (
           <Badge variant="destructive">
@@ -154,6 +161,7 @@ function EmployeeCreditNotesTable({ creditNotes, isIT, refetch }) {
               <option value="">All Statuses</option>
               <option value="Pending">Pending</option>
               <option value="Approved">Approved</option>
+              <option value="Resolved">Resolved</option>
               <option value="Rejected">Rejected</option>
             </select>
           </div>

@@ -129,13 +129,32 @@ function GeneralManager() {
         </Card>
       </section>
 
-      <Tabs defaultValue="centers" className="w-full">
+      <Tabs defaultValue="credit-notes" className="w-full">
         <TabsList className="grid w-full grid-cols-4 lg:w-[600px]">
+          <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
           <TabsTrigger value="centers">Centers</TabsTrigger>
           <TabsTrigger value="requests">Requests</TabsTrigger>
-          <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
           <TabsTrigger value="steps">Approvals</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="credit-notes" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Credit Notes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingCreditNotes ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <EmployeeCreditNotesTable creditNotes={creditNotes} />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="centers" className="mt-4">
           <Card>
@@ -176,25 +195,6 @@ function GeneralManager() {
                 <EmployeeApprovalRequestTable
                   approvalRequests={approvalRequests}
                 />
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="credit-notes" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Credit Notes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoadingCreditNotes ? (
-                <div className="space-y-2">
-                  <Skeleton className="h-8 w-full" />
-                  <Skeleton className="h-8 w-full" />
-                  <Skeleton className="h-8 w-full" />
-                </div>
-              ) : (
-                <EmployeeCreditNotesTable creditNotes={creditNotes} />
               )}
             </CardContent>
           </Card>
