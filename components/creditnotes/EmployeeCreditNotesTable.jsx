@@ -19,10 +19,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import React, { useState } from "react";
-import { CheckCircle2, XCircle, Clock, FileText } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, FileText, Check } from "lucide-react";
+import { resolveCreditNote } from "@/services/creditnotes";
+import useAxiosAuth from "@/hooks/general/useAxiosAuth";
 
-function EmployeeCreditNotesTable({ creditNotes }) {
+function EmployeeCreditNotesTable({ creditNotes, isIT, refetch }) {
+  const axios = useAxiosAuth();
   const [selectedCreditNote, setSelectedCreditNote] = useState(null);
+  const [isResolving, setIsResolving] = useState(false);
   const [filters, setFilters] = useState({
     status: "",
     check_number: "",
@@ -85,6 +89,20 @@ function EmployeeCreditNotesTable({ creditNotes }) {
     setCurrentPage(page);
   };
 
+  const handleResolve = async () => {
+    if (!selectedCreditNote) return;
+    setIsResolving(true);
+    try {
+      await resolveCreditNote(selectedCreditNote.reference, axios);
+      if (refetch) await refetch();
+      setSelectedCreditNote(null);
+    } catch (error) {
+      console.error("Failed to resolve credit note:", error);
+    } finally {
+      setIsResolving(false);
+    }
+  };
+
   const getStatusBadge = (status) => {
     switch (status) {
       case "Approved":
@@ -92,6 +110,13 @@ function EmployeeCreditNotesTable({ creditNotes }) {
           <Badge className="bg-green-600 hover:bg-green-700">
             <CheckCircle2 className="w-3 h-3 mr-1" />
             Approved
+          </Badge>
+        );
+      case "Resolved":
+        return (
+          <Badge className="bg-blue-600 hover:bg-blue-700">
+            <CheckCircle2 className="w-3 h-3 mr-1" />
+            Resolved
           </Badge>
         );
       case "Rejected":
@@ -104,7 +129,10 @@ function EmployeeCreditNotesTable({ creditNotes }) {
       case "Pending":
       default:
         return (
-          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">
+          <Badge
+            variant="secondary"
+            className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+          >
             <Clock className="w-3 h-3 mr-1" />
             Pending
           </Badge>
@@ -133,6 +161,7 @@ function EmployeeCreditNotesTable({ creditNotes }) {
               <option value="">All Statuses</option>
               <option value="Pending">Pending</option>
               <option value="Approved">Approved</option>
+              <option value="Resolved">Resolved</option>
               <option value="Rejected">Rejected</option>
             </select>
           </div>
@@ -209,7 +238,9 @@ function EmployeeCreditNotesTable({ creditNotes }) {
             {paginatedCreditNotes?.length > 0 ? (
               paginatedCreditNotes.map((creditNote) => (
                 <TableRow key={creditNote.identity}>
-                  <TableCell className="font-medium">{creditNote.check_number}</TableCell>
+                  <TableCell className="font-medium">
+                    {creditNote.check_number}
+                  </TableCell>
                   <TableCell>{creditNote.customer_name}</TableCell>
                   <TableCell>
                     {creditNote.currency}{" "}
@@ -229,7 +260,10 @@ function EmployeeCreditNotesTable({ creditNotes }) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={5}
+                  className="h-24 text-center text-muted-foreground"
+                >
                   No credit notes found.
                 </TableCell>
               </TableRow>
@@ -255,7 +289,7 @@ function EmployeeCreditNotesTable({ creditNotes }) {
               Previous
             </Button>
             <div className="flex items-center gap-1">
-               {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                 (page) => (
                   <Button
                     key={page}
@@ -269,7 +303,7 @@ function EmployeeCreditNotesTable({ creditNotes }) {
                 )
               )}
             </div>
-           
+
             <Button
               variant="outline"
               size="sm"
@@ -291,95 +325,131 @@ function EmployeeCreditNotesTable({ creditNotes }) {
           <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-                 <FileText className="h-6 w-6" />
-                 Credit Note Details
+                <FileText className="h-6 w-6" />
+                Credit Note Details
               </DialogTitle>
             </DialogHeader>
-            
+
             <div className="grid gap-6 py-4">
               {/* Header Status Section */}
               <div className="flex items-center justify-between bg-muted/40 p-3 rounded-lg border">
                 <div>
-                   <span className="text-sm font-medium text-muted-foreground">Reference</span>
-                   <p className="font-mono text-sm">{selectedCreditNote.reference || "N/A"}</p>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Reference
+                  </span>
+                  <p className="font-mono text-sm">
+                    {selectedCreditNote.reference || "N/A"}
+                  </p>
                 </div>
                 <div>
-                   <span className="text-sm font-medium text-muted-foreground block mb-1">Status</span>
-                   {getStatusBadge(selectedCreditNote.status)}
+                  <span className="text-sm font-medium text-muted-foreground block mb-1">
+                    Status
+                  </span>
+                  {getStatusBadge(selectedCreditNote.status)}
                 </div>
               </div>
 
-               {/* Main Grid */}
+              {/* Main Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                 
-                 {/* Customer Info */}
-                 <div className="space-y-4">
-                    <h4 className="font-semibold text-foreground border-b pb-2">Customer Information</h4>
-                    <div className="space-y-3">
-                       <div className="grid grid-cols-3 gap-2 text-sm">
-                          <span className="text-muted-foreground">Name:</span>
-                          <span className="col-span-2 font-medium">{selectedCreditNote.customer_name}</span>
-                       </div>
-                       <div className="grid grid-cols-3 gap-2 text-sm">
-                          <span className="text-muted-foreground">Email:</span>
-                          <span className="col-span-2">{selectedCreditNote.customer_email || "N/A"}</span>
-                       </div>
-                       <div className="grid grid-cols-3 gap-2 text-sm">
-                          <span className="text-muted-foreground">Address:</span>
-                          <span className="col-span-2">{selectedCreditNote.customer_address || "N/A"}</span>
-                       </div>
+                {/* Customer Info */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-foreground border-b pb-2">
+                    Customer Information
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-3 gap-2 text-sm">
+                      <span className="text-muted-foreground">Name:</span>
+                      <span className="col-span-2 font-medium">
+                        {selectedCreditNote.customer_name}
+                      </span>
                     </div>
-                 </div>
+                    <div className="grid grid-cols-3 gap-2 text-sm">
+                      <span className="text-muted-foreground">Email:</span>
+                      <span className="col-span-2">
+                        {selectedCreditNote.customer_email || "N/A"}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-sm">
+                      <span className="text-muted-foreground">Address:</span>
+                      <span className="col-span-2">
+                        {selectedCreditNote.customer_address || "N/A"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
-                 {/* Transaction Info */}
-                 <div className="space-y-4">
-                    <h4 className="font-semibold text-foreground border-b pb-2">Transaction Details</h4>
-                     <div className="space-y-3">
-                       <div className="grid grid-cols-3 gap-2 text-sm">
-                          <span className="text-muted-foreground">Total:</span>
-                          <span className="col-span-2 font-bold text-lg">
-                             {selectedCreditNote.currency} {parseFloat(selectedCreditNote.amount).toFixed(2)}
-                          </span>
-                       </div>
-                       <div className="grid grid-cols-3 gap-2 text-sm">
-                          <span className="text-muted-foreground">Check #:</span>
-                          <span className="col-span-2">{selectedCreditNote.check_number}</span>
-                       </div>
-                       <div className="grid grid-cols-3 gap-2 text-sm">
-                          <span className="text-muted-foreground">Cashier:</span>
-                          <span className="col-span-2">{selectedCreditNote.cashier_name}</span>
-                       </div>
-                        <div className="grid grid-cols-3 gap-2 text-sm">
-                          <span className="text-muted-foreground">Rev. Ctr:</span>
-                          <span className="col-span-2">{selectedCreditNote.revenue_center}</span>
-                       </div>
+                {/* Transaction Info */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-foreground border-b pb-2">
+                    Transaction Details
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-3 gap-2 text-sm">
+                      <span className="text-muted-foreground">Total:</span>
+                      <span className="col-span-2 font-bold text-lg">
+                        {selectedCreditNote.currency}{" "}
+                        {parseFloat(selectedCreditNote.amount).toFixed(2)}
+                      </span>
                     </div>
-                 </div>
+                    <div className="grid grid-cols-3 gap-2 text-sm">
+                      <span className="text-muted-foreground">Check #:</span>
+                      <span className="col-span-2">
+                        {selectedCreditNote.check_number}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-sm">
+                      <span className="text-muted-foreground">Cashier:</span>
+                      <span className="col-span-2">
+                        {selectedCreditNote.cashier_name}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-sm">
+                      <span className="text-muted-foreground">Rev. Ctr:</span>
+                      <span className="col-span-2">
+                        {selectedCreditNote.revenue_center}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Full Width Sections */}
               <div className="space-y-2">
-                 <h4 className="font-semibold text-foreground border-b pb-2">Additional Info</h4>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div>
-                       <span className="text-muted-foreground block">Transaction Date</span>
-                       <span>{new Date(selectedCreditNote.transaction_date).toLocaleDateString()}</span>
-                    </div>
-                    <div>
-                       <span className="text-muted-foreground block">Created At</span>
-                       <span>{new Date(selectedCreditNote.created_at).toLocaleString()}</span>
-                    </div>
-                 </div>
-                 
-                 <div className="mt-3">
-                     <span className="text-muted-foreground block mb-1">Reason</span>
-                     <div className="p-3 bg-muted/30 rounded-md text-sm italic">
-                        {selectedCreditNote.reason || "No reason provided."}
-                     </div>
-                 </div>
+                <h4 className="font-semibold text-foreground border-b pb-2">
+                  Additional Info
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground block">
+                      Transaction Date
+                    </span>
+                    <span>
+                      {new Date(
+                        selectedCreditNote.transaction_date
+                      ).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block">
+                      Created At
+                    </span>
+                    <span>
+                      {new Date(selectedCreditNote.created_at).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-3">
+                  <span className="text-muted-foreground block mb-1">
+                    Reason
+                  </span>
+                  <div className="p-3 bg-muted/30 rounded-md text-sm italic">
+                    {selectedCreditNote.reason || "No reason provided."}
+                  </div>
+                </div>
               </div>
 
-               {selectedCreditNote.attachment && (
+              {selectedCreditNote.attachment && (
                 <div className="flex justify-end pt-2">
                   <Button asChild variant="outline" className="gap-2">
                     <a
@@ -394,6 +464,31 @@ function EmployeeCreditNotesTable({ creditNotes }) {
                 </div>
               )}
 
+              {isIT && selectedCreditNote.status === "Approved" && (
+                <div className="flex justify-end pt-4 border-t gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => setSelectedCreditNote(null)}
+                    disabled={isResolving}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="bg-green-600 hover:bg-green-700 text-white gap-2"
+                    onClick={handleResolve}
+                    disabled={isResolving}
+                  >
+                    {isResolving ? (
+                      "Resolving..."
+                    ) : (
+                      <>
+                        <Check className="h-4 w-4" />
+                        Mark as Resolved
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
           </DialogContent>
         </Dialog>

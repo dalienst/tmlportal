@@ -20,6 +20,8 @@ import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
 import { useFetchAccount, useFetchManagers } from "@/hooks/accounts/actions";
 import { useFetchApprovalRequests } from "@/hooks/approvalrequests/actions";
 import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
+import { useFetchApprovalSteps } from "@/hooks/approvalsteps/actions";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function AuditorDashboard() {
   const {
@@ -46,24 +48,26 @@ function AuditorDashboard() {
     refetch: refetchManagers,
   } = useFetchManagers();
 
+  const { isLoading: isLoadingApprovalSteps, data: approvalSteps } =
+    useFetchApprovalSteps();
+
+  const userPendingSteps = approvalSteps?.filter(
+    (step) => step.approver === account?.email && step.status === "Pending"
+  );
+
   const [creditNoteModal, setCreditNoteModal] = useState(false);
   const [approvalRequestModal, setApprovalRequestModal] = useState(false);
-
-  if (
-    isLoadingAccount ||
-    isLoadingCreditNotes ||
-    isLoadingApprovalRequest ||
-    isLoadingManagers
-  ) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <div className="container mx-auto p-6 min-h-screen bg-muted/30 space-y-8">
       <section className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Hello, {account?.name || "User"}
+            {isLoadingAccount ? (
+              <Skeleton className="h-9 w-64" />
+            ) : (
+              `Hello, ${account?.name || "User"}`
+            )}
           </h1>
           <p className="text-muted-foreground mt-1">
             Welcome back to your auditor dashboard.
@@ -89,31 +93,39 @@ function AuditorDashboard() {
       <section id="summary" className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Credit Notes
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">My Actions</CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{creditNotes?.length || 0}</div>
+            <div className="text-2xl font-bold">
+              {isLoadingApprovalSteps ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                userPendingSteps?.length || 0
+              )}
+            </div>
             <p className="text-xs text-muted-foreground">
-              Recorded in the system
+              Steps requiring your attention
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Approval Requests
+              Total Credit Notes
             </CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {approvalRequests?.length || 0}
+              {isLoadingCreditNotes ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                creditNotes?.length || 0
+              )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Waiting for your review
+              Recorded in the system
             </p>
           </CardContent>
         </Card>
@@ -129,7 +141,15 @@ function AuditorDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <EmployeeCreditNotesTable creditNotes={creditNotes} />
+              {isLoadingCreditNotes ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <EmployeeCreditNotesTable creditNotes={creditNotes} />
+              )}
             </CardContent>
           </Card>
         </section>
@@ -143,9 +163,17 @@ function AuditorDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <EmployeeApprovalRequestTable
-                approvalRequests={approvalRequests}
-              />
+              {isLoadingApprovalRequest ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <EmployeeApprovalRequestTable
+                  approvalRequests={approvalRequests}
+                />
+              )}
             </CardContent>
           </Card>
         </section>

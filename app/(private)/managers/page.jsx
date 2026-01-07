@@ -4,12 +4,17 @@ import EmployeeApprovalRequestTable from "@/components/approvalrequests/Employee
 import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
 import ApprovalStepsTable from "@/components/approvalsteps/ApprovalStepsTable";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFetchAccount, useFetchManagers } from "@/hooks/accounts/actions";
 import { useFetchApprovalRequests } from "@/hooks/approvalrequests/actions";
 import { useFetchApprovalSteps } from "@/hooks/approvalsteps/actions";
-import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
+import { FileText, CheckSquare, ListChecks } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
+import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
 import React, { useState } from "react";
+import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 
 function Manager() {
   const {
@@ -42,98 +47,198 @@ function Manager() {
     refetch: refetchManagers,
   } = useFetchManagers();
 
+  const userPendingSteps = approvalSteps?.filter(
+    (step) => step.approver === account?.email && step.status === "Pending"
+  );
+
   const [creditNoteModal, setCreditNoteModal] = useState(false);
   const [approvalRequestModal, setApprovalRequestModal] = useState(false);
 
-  if (
-    isLoadingAccount ||
-    isLoadingCreditNotes ||
-    isLoadingApprovalRequest ||
-    isLoadingManagers ||
-    isLoadingApprovalSteps
-  ) {
-    return <LoadingSpinner />;
-  }
-
   return (
-    <div className="container mx-auto p-4 min-h-screen bg-gray-200">
-      <section className="mb-6 flex md:items-center flex-col md:flex-row gap-2 justify-between">
+    <div className="container mx-auto p-6 min-h-screen bg-gray-50/50">
+      <section className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-primary">
-            Hello {account?.name || "User"}
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+            {isLoadingAccount ? (
+              <Skeleton className="h-9 w-64" />
+            ) : (
+              `Welcome back, ${account?.name || "Manager"}`
+            )}
           </h2>
-          <p>Welcome to the Manager Dashboard</p>
+          <p className="text-muted-foreground mt-1">
+            Manage your approval requests and credit notes.
+          </p>
         </div>
 
-        <div>
-          <section className="flex gap-4">
+        <div className="flex gap-3">
+          <button
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 border shadow-sm"
+            onClick={() => setCreditNoteModal(true)}
+          >
+            Create Credit Note
+          </button>
+          <button
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 shadow"
+            onClick={() => setApprovalRequestModal(true)}
+          >
+            New Request
+          </button>
+        </div>
+      </section>
+
+      <section className="mb-8 grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">My Actions</CardTitle>
+            <ListChecks className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingApprovalSteps ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                userPendingSteps?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Steps requiring your attention
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Pending Requests
+            </CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingApprovalRequest ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                approvalRequests?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total active approval requests to be processed
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Credit Notes</CardTitle>
+            <CheckSquare className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingCreditNotes ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                creditNotes?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total credit notes processed
+            </p>
+          </CardContent>
+        </Card>
+      </section>
+
+      <Tabs defaultValue="steps" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
+          <TabsTrigger value="steps">Approvals</TabsTrigger>
+          <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
+          <TabsTrigger value="requests">Requests</TabsTrigger>
+        </TabsList>
+        <TabsContent value="requests" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Approval Requests</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingApprovalRequest ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <EmployeeApprovalRequestTable
+                  approvalRequests={approvalRequests}
+                />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="credit-notes" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Credit Notes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingCreditNotes ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <EmployeeCreditNotesTable creditNotes={creditNotes} />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="steps" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Approval Steps</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingApprovalSteps ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <ApprovalStepsTable
+                  approvalSteps={approvalSteps}
+                  account={account}
+                />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {creditNoteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="relative w-full max-w-4xl bg-background rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
             <button
-              className="bg-accent text-accent-foreground p-2 rounded shadow-md"
-              onClick={() => setCreditNoteModal(true)}
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground z-10"
+              onClick={() => setCreditNoteModal(false)}
             >
-              Credit Note
+              ✕
             </button>
-            <button
-              className="bg-green-600 text-white p-2 rounded shadow-md"
-              onClick={() => setApprovalRequestModal(true)}
-            >
-              Request
-            </button>
-          </section>
-        </div>
-      </section>
-
-      <section id="summary" className="mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-4 rounded-lg shadow-md bg-white border border-border">
-            <h6 className="text-xl font-semibold text-black">Credit Notes</h6>
-            <p className="text-lg font-semibold text-black">
-              {creditNotes?.length}
-            </p>
-          </div>
-          <div className="p-4 rounded-lg shadow-md bg-white border border-border">
-            <h6 className="text-xl font-semibold text-black">
-              Approval Requests
-            </h6>
-            <p className="text-lg font-semibold text-black">
-              {approvalRequests?.length}
-            </p>
-          </div>
-          <div className="p-4 rounded-lg shadow-md bg-white border border-border">
-            <h6 className="text-xl font-semibold text-black">Approval Steps</h6>
-            <p className="text-lg font-semibold text-black">
-              {approvalSteps?.length}
-            </p>
+            <div className="p-6">
+              <CreateCreditNote
+                managers={managers}
+                refetch={refetchCreditNotes}
+                closeModal={() => setCreditNoteModal(false)}
+              />
+            </div>
           </div>
         </div>
-      </section>
+      )}
 
-      <section id="approval-requests" className="mb-6">
-        <Card>
-          <CardContent>
-            <EmployeeApprovalRequestTable approvalRequests={approvalRequests} />
-          </CardContent>
-        </Card>
-      </section>
-
-      <section id="credit-notes" className="mb-6">
-        <Card>
-          <CardContent>
-            <EmployeeCreditNotesTable creditNotes={creditNotes} />
-          </CardContent>
-        </Card>
-      </section>
-
-      <section id="approval-steps" className="mb-6">
-        <Card>
-          <CardContent>
-            <ApprovalStepsTable
-              approvalSteps={approvalSteps}
-              account={account}
-            />
-          </CardContent>
-        </Card>
-      </section>
+      <CreateApprovalRequest
+        isOpen={approvalRequestModal}
+        onClose={() => setApprovalRequestModal(false)}
+        creditNotes={creditNotes}
+        managers={managers}
+        refetch={refetchApprovalRequest}
+      />
     </div>
   );
 }

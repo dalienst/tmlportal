@@ -10,6 +10,7 @@ export function useFetchCreditNotes() {
   return useQuery({
     queryKey: ["creditnotes"],
     queryFn: () => getCreditNotes(token),
+    enabled: !!token,
   });
 }
 

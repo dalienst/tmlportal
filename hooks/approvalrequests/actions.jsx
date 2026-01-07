@@ -12,6 +12,7 @@ export function useFetchApprovalRequests() {
   return useQuery({
     queryKey: ["approvalRequests"],
     queryFn: () => getApprovalRequests(axios),
+    enabled: !!axios,
   });
 }
 
@@ -19,7 +20,7 @@ export function useFetchApprovalRequest(identity) {
   const axios = useAxiosAuth();
   return useQuery({
     queryKey: ["approvalRequest", identity],
-    queryFn: () => getApprovalRequest( identity, axios),
+    queryFn: () => getApprovalRequest(identity, axios),
     enabled: !!identity,
   });
 }

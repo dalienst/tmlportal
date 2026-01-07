@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
 import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
 
-function Manager() {
+function IT() {
   const { isLoading: isLoadingAccount, data: account } = useFetchAccount();
 
   const {
@@ -38,13 +38,8 @@ function Manager() {
     (step) => step.approver === account?.email && step.status === "Pending"
   );
 
-  const {
-    isLoading: isLoadingManagers,
-    data: managers,
-    refetch: refetchManagers,
-  } = useFetchManagers();
+  const { isLoading: isLoadingManagers, data: managers } = useFetchManagers();
 
-  const [creditNoteModal, setCreditNoteModal] = useState(false);
   const [approvalRequestModal, setApprovalRequestModal] = useState(false);
 
   return (
@@ -64,12 +59,6 @@ function Manager() {
         </div>
 
         <div className="flex gap-3">
-          <button
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 border shadow-sm"
-            onClick={() => setCreditNoteModal(true)}
-          >
-            Create Credit Note
-          </button>
           <button
             className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 shadow"
             onClick={() => setApprovalRequestModal(true)}
@@ -138,12 +127,38 @@ function Manager() {
         </Card>
       </section>
 
-      <Tabs defaultValue="steps" className="w-full">
+      <Tabs defaultValue="credit-notes" className="w-full">
         <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
-          <TabsTrigger value="steps">Approvals</TabsTrigger>
           <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
           <TabsTrigger value="requests">Requests</TabsTrigger>
+          <TabsTrigger value="steps">My Approvals</TabsTrigger>
         </TabsList>
+
+        {/* Credit Notes */}
+        <TabsContent value="credit-notes" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Credit Notes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingCreditNotes ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <EmployeeCreditNotesTable
+                  creditNotes={creditNotes}
+                  isIT={account?.is_it}
+                  refetch={refetchCreditNotes}
+                />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Requests */}
         <TabsContent value="requests" className="mt-4">
           <Card>
             <CardHeader>
@@ -164,24 +179,8 @@ function Manager() {
             </CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="credit-notes" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Credit Notes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoadingCreditNotes ? (
-                <div className="space-y-2">
-                  <Skeleton className="h-8 w-full" />
-                  <Skeleton className="h-8 w-full" />
-                  <Skeleton className="h-8 w-full" />
-                </div>
-              ) : (
-                <EmployeeCreditNotesTable creditNotes={creditNotes} />
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+
+        {/* My Approvals */}
         <TabsContent value="steps" className="mt-4">
           <Card>
             <CardHeader>
@@ -205,26 +204,6 @@ function Manager() {
         </TabsContent>
       </Tabs>
 
-      {creditNoteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-4xl bg-background rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
-            <button
-              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground z-10"
-              onClick={() => setCreditNoteModal(false)}
-            >
-              ✕
-            </button>
-            <div className="p-6">
-              <CreateCreditNote
-                managers={managers}
-                refetch={refetchCreditNotes}
-                closeModal={() => setCreditNoteModal(false)}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
       <CreateApprovalRequest
         isOpen={approvalRequestModal}
         onClose={() => setApprovalRequestModal(false)}
@@ -236,4 +215,4 @@ function Manager() {
   );
 }
 
-export default Manager;
+export default IT;
