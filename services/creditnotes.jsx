@@ -12,7 +12,10 @@ export const getCreditNotes = async (token) => {
 };
 
 export const getCreditNote = async (reference, token) => {
-  const response = await apiActions?.get(`/api/v1/creditnotes/${reference}/`, token);
+  const response = await apiActions?.get(
+    `/api/v1/creditnotes/${reference}/`,
+    token
+  );
   return response?.data || {};
 };
 
@@ -20,6 +23,16 @@ export const updateCreditNote = async (reference, formData, token) => {
   await apiMultipartActions?.patch(
     `/api/v1/creditnotes/${reference}/`,
     formData,
+    token
+  );
+};
+
+export const resolveCreditNote = async (reference, token) => {
+  await apiActions?.patch(
+    `/api/v1/creditnotes/${reference}/`,
+    {
+      status: "Resolved",
+    },
     token
   );
 };

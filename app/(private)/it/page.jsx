@@ -114,12 +114,30 @@ function IT() {
         </Card>
       </section>
 
-      <Tabs defaultValue="requests" className="w-full">
+      <Tabs defaultValue="credit-notes" className="w-full">
         <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
-          <TabsTrigger value="requests">Requests</TabsTrigger>
           <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
+          <TabsTrigger value="requests">Requests</TabsTrigger>
           <TabsTrigger value="steps">My Approvals</TabsTrigger>
         </TabsList>
+
+        {/* Credit Notes */}
+        <TabsContent value="credit-notes" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Credit Notes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <EmployeeCreditNotesTable
+                creditNotes={creditNotes}
+                isIT={account?.is_it}
+                refetch={refetchCreditNotes}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Requests */}
         <TabsContent value="requests" className="mt-4">
           <Card>
             <CardHeader>
@@ -132,16 +150,8 @@ function IT() {
             </CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="credit-notes" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Credit Notes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <EmployeeCreditNotesTable creditNotes={creditNotes} />
-            </CardContent>
-          </Card>
-        </TabsContent>
+
+        {/* My Approvals */}
         <TabsContent value="steps" className="mt-4">
           <Card>
             <CardHeader>
