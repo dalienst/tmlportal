@@ -9,18 +9,33 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 function ApprovalStepsTable({ approvalSteps, account }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [filterType, setFilterType] = useState("");
   const itemsPerPage = 5;
   const router = useRouter();
 
-  // Filter approval steps for those requiring manager's action
-  const pendingSteps = approvalSteps?.filter(
-    (step) => step.approver === account?.email && step.status === "Pending"
-  );
+  // Get unique request types for the filter dropdown
+  const requestTypes = [
+    ...new Set(
+      approvalSteps
+        ?.map((step) => step.request_info?.request_type)
+        .filter(Boolean)
+    ),
+  ];
+
+  // Filter approval steps for those requiring manager's action AND the selected request type
+  const pendingSteps = approvalSteps?.filter((step) => {
+    const isPendingForUser =
+      step.approver === account?.email && step.status === "Pending";
+    const matchesType =
+      !filterType || step.request_info?.request_type === filterType;
+    return isPendingForUser && matchesType;
+  });
 
   // Pagination logic
   const totalItems = pendingSteps?.length || 0;
@@ -33,11 +48,38 @@ function ApprovalStepsTable({ approvalSteps, account }) {
     setCurrentPage(page);
   };
 
+  const handleFilterChange = (e) => {
+    setFilterType(e.target.value);
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
+
   return (
-    <div className="mb-6">
-      <h3 className="text-xl font-semibold text-black mb-4">
-        Pending Approval Steps
-      </h3>
+    <div className="mb-6 space-y-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <h3 className="text-xl font-semibold text-black">
+          Pending Approval Steps
+        </h3>
+
+        {/* Filter Section */}
+        <div className="flex items-center gap-2">
+          <Label htmlFor="request_type" className="shrink-0">
+            Filter Type:
+          </Label>
+          <select
+            id="request_type"
+            value={filterType}
+            onChange={handleFilterChange}
+            className="flex h-9 w-[200px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          >
+            <option value="">All Types</option>
+            {requestTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
       {/* Table Section */}
       {paginatedSteps?.length > 0 ? (
