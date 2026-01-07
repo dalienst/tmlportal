@@ -43,6 +43,10 @@ function GeneralManager() {
   const { isLoading: isLoadingApprovalSteps, data: approvalSteps } =
     useFetchApprovalSteps();
 
+  const userPendingSteps = approvalSteps?.filter(
+    (step) => step.approver === account?.email && step.status === "Pending"
+  );
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -119,7 +123,7 @@ function GeneralManager() {
               {isLoadingApprovalSteps ? (
                 <Skeleton className="h-8 w-16" />
               ) : (
-                approvalSteps?.length || 0
+                userPendingSteps?.length || 0
               )}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -129,12 +133,12 @@ function GeneralManager() {
         </Card>
       </section>
 
-      <Tabs defaultValue="credit-notes" className="w-full">
+      <Tabs defaultValue="steps" className="w-full">
         <TabsList className="grid w-full grid-cols-4 lg:w-[600px]">
           <TabsTrigger value="steps">Approvals</TabsTrigger>
           <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
           <TabsTrigger value="centers">Centers</TabsTrigger>
-          <TabsTrigger value="requests">Requests</TabsTrigger>
+          {/* <TabsTrigger value="requests">Requests</TabsTrigger> */}
         </TabsList>
 
         <TabsContent value="steps" className="mt-4">
@@ -201,7 +205,7 @@ function GeneralManager() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="requests" className="mt-4">
+        {/* <TabsContent value="requests" className="mt-4">
           <Card>
             <CardHeader>
               <CardTitle>Approval Requests</CardTitle>
@@ -220,7 +224,7 @@ function GeneralManager() {
               )}
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
 
       {isModalOpen && (

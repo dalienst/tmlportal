@@ -34,6 +34,10 @@ function Manager() {
   const { isLoading: isLoadingApprovalSteps, data: approvalSteps } =
     useFetchApprovalSteps();
 
+  const userPendingSteps = approvalSteps?.filter(
+    (step) => step.approver === account?.email && step.status === "Pending"
+  );
+
   const {
     isLoading: isLoadingManagers,
     data: managers,
@@ -78,6 +82,24 @@ function Manager() {
       <section className="mb-8 grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">My Actions</CardTitle>
+            <ListChecks className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingApprovalSteps ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                userPendingSteps?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Steps requiring your attention
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Pending Requests
             </CardTitle>
@@ -92,7 +114,7 @@ function Manager() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Total active approval requests
+              Total active approval requests to be processed
             </p>
           </CardContent>
         </Card>
@@ -114,31 +136,13 @@ function Manager() {
             </p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">My Actions</CardTitle>
-            <ListChecks className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoadingApprovalSteps ? (
-                <Skeleton className="h-8 w-16" />
-              ) : (
-                approvalSteps?.length || 0
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Steps requiring your attention
-            </p>
-          </CardContent>
-        </Card>
       </section>
 
-      <Tabs defaultValue="requests" className="w-full">
+      <Tabs defaultValue="steps" className="w-full">
         <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
-          <TabsTrigger value="requests">Requests</TabsTrigger>
+          <TabsTrigger value="steps">Approvals</TabsTrigger>
           <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
-          <TabsTrigger value="steps">My Approvals</TabsTrigger>
+          <TabsTrigger value="requests">Requests</TabsTrigger>
         </TabsList>
         <TabsContent value="requests" className="mt-4">
           <Card>

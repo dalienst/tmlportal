@@ -34,6 +34,10 @@ function IT() {
   const { isLoading: isLoadingApprovalSteps, data: approvalSteps } =
     useFetchApprovalSteps();
 
+  const userPendingSteps = approvalSteps?.filter(
+    (step) => step.approver === account?.email && step.status === "Pending"
+  );
+
   const { isLoading: isLoadingManagers, data: managers } = useFetchManagers();
 
   const [approvalRequestModal, setApprovalRequestModal] = useState(false);
@@ -77,7 +81,7 @@ function IT() {
               {isLoadingApprovalRequest ? (
                 <Skeleton className="h-8 w-16" />
               ) : (
-                approvalRequests?.length || 0
+                userPendingSteps?.length || 0
               )}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -113,7 +117,7 @@ function IT() {
               {isLoadingApprovalSteps ? (
                 <Skeleton className="h-8 w-16" />
               ) : (
-                approvalSteps?.length || 0
+                userPendingSteps?.length || 0
               )}
             </div>
             <p className="text-xs text-muted-foreground">
