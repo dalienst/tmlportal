@@ -22,7 +22,7 @@ export default function ResetPassword() {
   const [formData, setFormData] = useState({
     email: "",
     code: "",
-    password: "",
+    new_password: "",
   });
   const router = useRouter();
 
@@ -139,7 +139,7 @@ export default function ResetPassword() {
             {/* New Password */}
             <div className="space-y-2">
               <label
-                htmlFor="password"
+                htmlFor="new_password"
                 className="text-xs font-medium text-white/60 ml-1 uppercase tracking-wider"
               >
                 New Passphrase
@@ -147,9 +147,9 @@ export default function ResetPassword() {
               <div className="relative group">
                 <input
                   type={showPassword ? "text" : "password"}
-                  id="password"
+                  id="new_password"
                   placeholder="••••••••"
-                  value={formData.password}
+                  value={formData.new_password}
                   onChange={handleChange}
                   className="w-full bg-white/5 border border-white/10 rounded-2xl px-12 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-transparent transition-all backdrop-blur-sm text-sm"
                   required

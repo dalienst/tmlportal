@@ -119,7 +119,7 @@ function Login() {
                 htmlFor="password"
                 className="text-xs font-medium text-white/60 ml-1 uppercase tracking-wider"
               >
-                Passphrase
+                Passphrase/Password
               </label>
               <div className="relative group">
                 <input
