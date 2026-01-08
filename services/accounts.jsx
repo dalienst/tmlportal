@@ -20,3 +20,14 @@ export const getManagers = async (axios) => {
   const response = await apiActions?.get("/api/v1/auth/managers/list/", axios);
   return response?.data?.results || [];
 };
+
+// Password
+export const forgotPassword = async (values) => {
+  // user enters their email
+  await apiActions?.post("/api/v1/auth/password/forgot/", values);
+};
+
+export const resetPassword = async (values) => {
+  // user enters their email, code, and new password
+  await apiActions?.post("/api/v1/auth/password/reset/", values);
+};
