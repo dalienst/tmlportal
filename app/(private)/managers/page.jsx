@@ -13,8 +13,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
 import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
+import CreatePosting from "@/forms/postings/CreatePosting";
 import React, { useState } from "react";
 import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
+import { useFetchPostings } from "@/hooks/postings/actions";
 
 function Manager() {
   const {
@@ -47,11 +49,18 @@ function Manager() {
     refetch: refetchManagers,
   } = useFetchManagers();
 
+  const {
+    isLoading: isLoadingPostings,
+    data: postings,
+    refetch: refetchPostings,
+  } = useFetchPostings();
+
   const userPendingSteps = approvalSteps?.filter(
     (step) => step.approver === account?.email && step.status === "Pending"
   );
 
   const [creditNoteModal, setCreditNoteModal] = useState(false);
+  const [postingModal, setPostingModal] = useState(false);
   const [approvalRequestModal, setApprovalRequestModal] = useState(false);
 
   return (
@@ -76,6 +85,12 @@ function Manager() {
             onClick={() => setCreditNoteModal(true)}
           >
             Create Credit Note
+          </button>
+          <button
+            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 border shadow-sm"
+            onClick={() => setPostingModal(true)}
+          >
+            Create Posting
           </button>
           <button
             className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 shadow"
@@ -226,6 +241,26 @@ function Manager() {
                 managers={managers}
                 refetch={refetchCreditNotes}
                 closeModal={() => setCreditNoteModal(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {postingModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="relative w-full max-w-4xl bg-background rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
+            <button
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground z-10"
+              onClick={() => setPostingModal(false)}
+            >
+              ✕
+            </button>
+            <div className="p-6">
+              <CreatePosting
+                managers={managers}
+                refetch={refetchPostings}
+                closeModal={() => setPostingModal(false)}
               />
             </div>
           </div>
