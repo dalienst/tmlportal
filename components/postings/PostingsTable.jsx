@@ -80,13 +80,32 @@ function PostingsTable({ postings, refetch }) {
     setCurrentPage(page);
   };
 
+  const [resolveReason, setResolveReason] = useState("");
+  const [showResolveInput, setShowResolveInput] = useState(false);
+
+  // ... (keeping existing filters/pagination logic)
+
   const handleResolve = async () => {
     if (!selectedPosting) return;
+
+    // If input not shown yet, show it
+    if (!showResolveInput) {
+      setShowResolveInput(true);
+      return;
+    }
+
+    if (!resolveReason.trim()) {
+      // You might want to show an error toast here
+      return;
+    }
+
     setIsResolving(true);
     try {
-      await resolvePosting(selectedPosting.reference, axios);
+      await resolvePosting(selectedPosting.reference, resolveReason, axios);
       if (refetch) await refetch();
       setSelectedPosting(null);
+      setResolveReason("");
+      setShowResolveInput(false);
     } catch (error) {
       console.error("Failed to resolve posting:", error);
     } finally {
@@ -94,7 +113,14 @@ function PostingsTable({ postings, refetch }) {
     }
   };
 
+  const closeDialog = () => {
+    setSelectedPosting(null);
+    setResolveReason("");
+    setShowResolveInput(false);
+  };
+
   const getStatusBadge = (status) => {
+    // ... (existing badge logic)
     switch (status) {
       case "Approved":
         return (
@@ -133,12 +159,14 @@ function PostingsTable({ postings, refetch }) {
 
   return (
     <div className="space-y-4">
+      {/* ... (existing UI code up to Dialog) ... */}
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-semibold tracking-tight">Postings</h3>
       </div>
 
       {/* Filter Section */}
       <div className="p-4 bg-background rounded-lg border shadow-sm space-y-4">
+        {/* ... (existing filter inputs) ... */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
@@ -291,10 +319,7 @@ function PostingsTable({ postings, refetch }) {
 
       {/* Details Dialog */}
       {selectedPosting && (
-        <Dialog
-          open={!!selectedPosting}
-          onOpenChange={() => setSelectedPosting(null)}
-        >
+        <Dialog open={!!selectedPosting} onOpenChange={closeDialog}>
           <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold flex items-center gap-2">
@@ -349,6 +374,17 @@ function PostingsTable({ postings, refetch }) {
                 </div>
               </div>
 
+              {selectedPosting.reason && (
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-foreground border-b pb-2">
+                    Resolution Reason
+                  </h4>
+                  <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-md">
+                    {selectedPosting.reason}
+                  </p>
+                </div>
+              )}
+
               {/* Attachments */}
               <div className="space-y-2">
                 <h4 className="font-semibold text-foreground border-b pb-2">
@@ -390,28 +426,58 @@ function PostingsTable({ postings, refetch }) {
 
               {/* Action Buttons for Resolving */}
               {selectedPosting.status === "Approved" && (
-                <div className="flex justify-end pt-4 border-t gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => setSelectedPosting(null)}
-                    disabled={isResolving}
-                  >
-                    Close
-                  </Button>
-                  <Button
-                    className="bg-green-600 hover:bg-green-700 text-white gap-2"
-                    onClick={handleResolve}
-                    disabled={isResolving}
-                  >
-                    {isResolving ? (
-                      "Resolving..."
-                    ) : (
-                      <>
+                <div className="pt-4 border-t space-y-4">
+                  {showResolveInput ? (
+                    <div className="space-y-3">
+                      <div className="space-y-1">
+                        <Label htmlFor="reason">Resolution Reason</Label>
+                        <textarea
+                          id="reason"
+                          className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          placeholder="Please enter the reason for resolving this posting..."
+                          value={resolveReason}
+                          onChange={(e) => setResolveReason(e.target.value)}
+                        />
+                      </div>
+                      <div className="flex justify-end gap-3">
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setShowResolveInput(false);
+                            setResolveReason("");
+                          }}
+                          disabled={isResolving}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          className="bg-green-600 hover:bg-green-700 text-white gap-2"
+                          onClick={handleResolve}
+                          disabled={isResolving || !resolveReason.trim()}
+                        >
+                          {isResolving ? "Resolving..." : "Confirm Resolution"}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex justify-end gap-3">
+                      <Button
+                        variant="outline"
+                        onClick={closeDialog}
+                        disabled={isResolving}
+                      >
+                        Close
+                      </Button>
+                      <Button
+                        className="bg-green-600 hover:bg-green-700 text-white gap-2"
+                        onClick={handleResolve}
+                        disabled={isResolving}
+                      >
                         <Check className="h-4 w-4" />
                         Mark as Resolved
-                      </>
-                    )}
-                  </Button>
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

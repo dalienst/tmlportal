@@ -27,11 +27,12 @@ export const updatePosting = async (reference, formData, token) => {
   );
 };
 
-export const resolvePosting = async (reference, token) => {
+export const resolvePosting = async (reference, reason, token) => {
   await apiActions?.patch(
     `/api/v1/postings/${reference}/`,
     {
       status: "Resolved",
+      reason: reason,
     },
     token
   );
