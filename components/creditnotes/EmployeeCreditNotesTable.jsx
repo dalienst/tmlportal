@@ -223,7 +223,7 @@ function EmployeeCreditNotesTable({ creditNotes, isIT, refetch }) {
       </div>
 
       {/* Table Section */}
-      <div className="rounded-md border bg-white">
+      <div className="rounded-md border bg-white overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

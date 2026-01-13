@@ -167,46 +167,48 @@ function EmployeeApprovalRequestTable({ approvalRequests }) {
       {/* Table Section */}
       {paginatedRequests?.length > 0 ? (
         <>
-          <Table className="bg-white shadow-md rounded-lg border border-border">
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Request Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedRequests.map((request) => (
-                <TableRow key={request.identity}>
-                  <TableCell>{request.title}</TableCell>
-                  <TableCell>{request.request_type}</TableCell>
-                  <TableCell>
-                    <span
-                      className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                        request.status === "PENDING"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : request.status === "APPROVED"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {request.status}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="link"
-                      className="text-blue-600"
-                      onClick={() => setSelectedApprovalRequest(request)}
-                    >
-                      View Details
-                    </Button>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table className="bg-white shadow-md rounded-lg border border-border">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Request Type</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {paginatedRequests.map((request) => (
+                  <TableRow key={request.identity}>
+                    <TableCell>{request.title}</TableCell>
+                    <TableCell>{request.request_type}</TableCell>
+                    <TableCell>
+                      <span
+                        className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
+                          request.status === "PENDING"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : request.status === "APPROVED"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {request.status}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="link"
+                        className="text-blue-600"
+                        onClick={() => setSelectedApprovalRequest(request)}
+                      >
+                        View Details
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
 
           {/* Pagination Controls */}
           <div className="mt-4 flex items-center justify-between">

@@ -69,47 +69,49 @@ function CenterDetail({ params }) {
         </CardHeader>
         <CardContent>
           {center?.feedback_forms?.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Questions</TableHead>
-                  <TableHead>Submissions</TableHead>
-                  <TableHead>Accommodation</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {center?.feedback_forms?.map((feedbackForm) => (
-                  <TableRow key={feedbackForm?.reference}>
-                    <TableCell className="font-medium">
-                      {feedbackForm?.title}
-                    </TableCell>
-                    <TableCell>{feedbackForm?.questions?.length}</TableCell>
-                    <TableCell>
-                      {feedbackForm?.form_submissions?.length}
-                    </TableCell>
-                    <TableCell>
-                      {feedbackForm?.is_accomodation ? (
-                        <Badge variant="default">Yes</Badge>
-                      ) : (
-                        <Badge variant="secondary">No</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button asChild variant="ghost" size="sm">
-                        <Link
-                          href={`/gm/centers/${center_identity}/${feedbackForm?.form_identity}`}
-                          className="flex items-center gap-1"
-                        >
-                          Manage <ArrowRight className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Questions</TableHead>
+                    <TableHead>Submissions</TableHead>
+                    <TableHead>Accommodation</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {center?.feedback_forms?.map((feedbackForm) => (
+                    <TableRow key={feedbackForm?.reference}>
+                      <TableCell className="font-medium">
+                        {feedbackForm?.title}
+                      </TableCell>
+                      <TableCell>{feedbackForm?.questions?.length}</TableCell>
+                      <TableCell>
+                        {feedbackForm?.form_submissions?.length}
+                      </TableCell>
+                      <TableCell>
+                        {feedbackForm?.is_accomodation ? (
+                          <Badge variant="default">Yes</Badge>
+                        ) : (
+                          <Badge variant="secondary">No</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button asChild variant="ghost" size="sm">
+                          <Link
+                            href={`/gm/centers/${center_identity}/${feedbackForm?.form_identity}`}
+                            className="flex items-center gap-1"
+                          >
+                            Manage <ArrowRight className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           ) : (
             <div className="p-8 text-center text-muted-foreground bg-muted/50 rounded-md border border-dashed">
               No feedback forms available for this center

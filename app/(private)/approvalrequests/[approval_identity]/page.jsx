@@ -253,89 +253,100 @@ export default function ApprovalRequestDetail() {
             </CardHeader>
             <CardContent>
               {request.steps?.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-12">#</TableHead>
-                      <TableHead>Approver</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Comments</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {request.steps.map((step) => {
-                      const canAct = canActOnStep(step);
-                      return (
-                        <TableRow key={step.reference}>
-                          <TableCell className="font-medium text-muted-foreground">
-                            {step.step_order}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <User className="h-3 w-3 text-muted-foreground" />
-                              <span className="text-sm">{step.approver}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {renderStatusBadge(step.status)}
-                          </TableCell>
-                          <TableCell className="max-w-[200px] truncate text-sm text-muted-foreground">
-                            {step.comments || "—"}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {canAct ? (
-                              <div className="flex justify-end gap-2">
-                                <Button
-                                  size="sm"
-                                  className="h-8"
-                                  onClick={() =>
-                                    handleStepAction(step.reference, "Approved")
-                                  }
-                                  disabled={loadingStep === step.reference}
-                                >
-                                  {loadingStep === step.reference
-                                    ? "..."
-                                    : "Approve"}
-                                </Button>
-
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-8"
-                                  onClick={() =>
-                                    openCommentModal("Reviewed", step.reference)
-                                  }
-                                  disabled={loadingStep === step.reference}
-                                >
-                                  Review
-                                </Button>
-
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  className="h-8"
-                                  onClick={() =>
-                                    openCommentModal("Rejected", step.reference)
-                                  }
-                                  disabled={loadingStep === step.reference}
-                                >
-                                  Reject
-                                </Button>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-12">#</TableHead>
+                        <TableHead>Approver</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Comments</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {request.steps.map((step) => {
+                        const canAct = canActOnStep(step);
+                        return (
+                          <TableRow key={step.reference}>
+                            <TableCell className="font-medium text-muted-foreground">
+                              {step.step_order}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <User className="h-3 w-3 text-muted-foreground" />
+                                <span className="text-sm">{step.approver}</span>
                               </div>
-                            ) : (
-                              <span className="text-muted-foreground text-xs italic">
-                                {step.status === "Pending"
-                                  ? "Waiting"
-                                  : "Completed"}
-                              </span>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
+                            </TableCell>
+                            <TableCell>
+                              {renderStatusBadge(step.status)}
+                            </TableCell>
+                            <TableCell className="max-w-[200px] truncate text-sm text-muted-foreground">
+                              {step.comments || "—"}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {canAct ? (
+                                <div className="flex justify-end gap-2">
+                                  <Button
+                                    size="sm"
+                                    className="h-8"
+                                    onClick={() =>
+                                      handleStepAction(
+                                        step.reference,
+                                        "Approved"
+                                      )
+                                    }
+                                    disabled={loadingStep === step.reference}
+                                  >
+                                    {loadingStep === step.reference
+                                      ? "..."
+                                      : "Approve"}
+                                  </Button>
+
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-8"
+                                    onClick={() =>
+                                      openCommentModal(
+                                        "Reviewed",
+                                        step.reference
+                                      )
+                                    }
+                                    disabled={loadingStep === step.reference}
+                                  >
+                                    Review
+                                  </Button>
+
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    className="h-8"
+                                    onClick={() =>
+                                      openCommentModal(
+                                        "Rejected",
+                                        step.reference
+                                      )
+                                    }
+                                    disabled={loadingStep === step.reference}
+                                  >
+                                    Reject
+                                  </Button>
+                                </div>
+                              ) : (
+                                <span className="text-muted-foreground text-xs italic">
+                                  {step.status === "Pending"
+                                    ? "Waiting"
+                                    : "Completed"}
+                                </span>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
                   <Clock className="h-8 w-8 mb-2 opacity-50" />
