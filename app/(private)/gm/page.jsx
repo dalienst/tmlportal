@@ -10,7 +10,7 @@ import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNot
 import PostingsTable from "@/components/postings/PostingsTable";
 import ApprovalStepsTable from "@/components/approvalsteps/ApprovalStepsTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ListChecks } from "lucide-react";
+import { FileText, ListChecks } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 function GeneralManager() {
