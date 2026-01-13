@@ -83,6 +83,7 @@ function ApprovalStepsTable({ approvalSteps, account }) {
 
       {/* Table Section */}
       {paginatedSteps?.length > 0 ? (
+        <>
         <div className="overflow-x-auto">
           <Table className="bg-white shadow-md rounded-lg">
             <TableHeader>
@@ -124,7 +125,6 @@ function ApprovalStepsTable({ approvalSteps, account }) {
           </Table>
         </div>
 
-          {/* Pagination Controls */}
           <div className="mt-4 flex items-center justify-between">
             <div className="text-sm text-gray-600">
               Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of{" "}
