@@ -5,14 +5,11 @@ import LoadingSpinner from "@/components/general/LoadingSpinner";
 import CreateCenter from "@/forms/centers/CreateCenter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFetchAccount } from "@/hooks/accounts/actions";
-import { useFetchApprovalRequests } from "@/hooks/approvalrequests/actions";
 import { useFetchApprovalSteps } from "@/hooks/approvalsteps/actions";
 import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 import { useFetchCenters } from "@/hooks/centers/actions";
-import { useFetchFeedbackForms } from "@/hooks/feedbackforms/actions";
 import { useFetchPostings } from "@/hooks/postings/actions";
 import React, { useState } from "react";
-import EmployeeApprovalRequestTable from "@/components/approvalrequests/EmployeeApprovalRequestTable";
 import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
 import PostingsTable from "@/components/postings/PostingsTable";
 import ApprovalStepsTable from "@/components/approvalsteps/ApprovalStepsTable";
@@ -33,14 +30,9 @@ function GeneralManager() {
     data: centers,
     refetch: refetchCenters,
   } = useFetchCenters();
-  const { isLoading: isLoadingFeedbackForms, data: feedbackForms } =
-    useFetchFeedbackForms();
 
   const { isLoading: isLoadingCreditNotes, data: creditNotes } =
     useFetchCreditNotes();
-
-  const { isLoading: isLoadingApprovalRequest, data: approvalRequests } =
-    useFetchApprovalRequests();
 
   const { isLoading: isLoadingApprovalSteps, data: approvalSteps } =
     useFetchApprovalSteps();
