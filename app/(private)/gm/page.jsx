@@ -49,7 +49,7 @@ function GeneralManager() {
         </div>
       </section>
 
-      <section className="mb-8 grid gap-4 md:grid-cols-2">
+      <section className="mb-8 grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">My Actions</CardTitle>
@@ -68,10 +68,50 @@ function GeneralManager() {
             </p>
           </CardContent>
         </Card>
+
+        {/* credit notes */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Credit Notes</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingCreditNotes ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                creditNotes?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total credit notes
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* postings */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Postings</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingPostings ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                postings?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total postings
+            </p>
+          </CardContent>
+        </Card>
       </section>
 
       <Tabs defaultValue="steps" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 lg:w-[600px]">
+        <TabsList className="grid w-full grid-cols-3 lg:w-[600px]">
           <TabsTrigger value="steps">Approvals</TabsTrigger>
           <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
           <TabsTrigger value="postings">Postings</TabsTrigger>
