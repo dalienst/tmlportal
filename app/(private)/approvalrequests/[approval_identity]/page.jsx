@@ -81,7 +81,7 @@ export default function ApprovalRequestDetail() {
   // Error
   if (approvalRequestError || accountError || !approvalRequest) {
     toast.error("Failed to load approval request or account details");
-    router.push("/manager");
+    router.push("/managers");
     return null;
   }
 
