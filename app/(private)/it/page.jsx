@@ -138,9 +138,9 @@ function IT() {
       <Tabs defaultValue="credit-notes" className="w-full">
         <TabsList className="grid w-full grid-cols-4 lg:w-[500px]">
           <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
+          <TabsTrigger value="postings">Postings</TabsTrigger>
           <TabsTrigger value="requests">Requests</TabsTrigger>
           <TabsTrigger value="steps">My Approvals</TabsTrigger>
-          <TabsTrigger value="postings">Postings</TabsTrigger>
         </TabsList>
 
         {/* Credit Notes */}
@@ -167,6 +167,7 @@ function IT() {
           </Card>
         </TabsContent>
 
+        {/* Postings */}
         <TabsContent value="postings" className="mt-4">
           <Card>
             <CardHeader>
