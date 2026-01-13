@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { CreditCard, FileText, Plus, FilePlus } from "lucide-react";
 
 import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
+import PostingsTable from "@/components/postings/PostingsTable";
 import EmployeeApprovalRequestTable from "@/components/approvalrequests/EmployeeApprovalRequestTable";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import {
@@ -144,6 +145,20 @@ function EmployeeDashboard() {
             </CardHeader>
             <CardContent>
               <EmployeeCreditNotesTable creditNotes={creditNotes} />
+            </CardContent>
+          </Card>
+        </section>
+
+        <section id="postings">
+          <Card>
+            <CardHeader>
+              <CardTitle>Postings</CardTitle>
+              <CardDescription>
+                A list of postings you have generated.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <PostingsTable postings={postings} refetch={refetchPostings} />
             </CardContent>
           </Card>
         </section>

@@ -9,12 +9,14 @@ import { useFetchAccount, useFetchManagers } from "@/hooks/accounts/actions";
 import { useFetchApprovalRequests } from "@/hooks/approvalrequests/actions";
 import { useFetchApprovalSteps } from "@/hooks/approvalsteps/actions";
 import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
+import { useFetchPostings } from "@/hooks/postings/actions";
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, CheckSquare, ListChecks } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
 import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
+import PostingsTable from "@/components/postings/PostingsTable";
 
 function IT() {
   const { isLoading: isLoadingAccount, data: account } = useFetchAccount();
@@ -33,6 +35,12 @@ function IT() {
 
   const { isLoading: isLoadingApprovalSteps, data: approvalSteps } =
     useFetchApprovalSteps();
+
+  const {
+    isLoading: isLoadingPostings,
+    data: postings,
+    refetch: refetchPostings,
+  } = useFetchPostings();
 
   const userPendingSteps = approvalSteps?.filter(
     (step) => step.approver === account?.email && step.status === "Pending"
@@ -128,10 +136,11 @@ function IT() {
       </section>
 
       <Tabs defaultValue="credit-notes" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
+        <TabsList className="grid w-full grid-cols-4 lg:w-[500px]">
           <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
           <TabsTrigger value="requests">Requests</TabsTrigger>
           <TabsTrigger value="steps">My Approvals</TabsTrigger>
+          <TabsTrigger value="postings">Postings</TabsTrigger>
         </TabsList>
 
         {/* Credit Notes */}
@@ -153,6 +162,25 @@ function IT() {
                   isIT={account?.is_it}
                   refetch={refetchCreditNotes}
                 />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="postings" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Postings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingPostings ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <PostingsTable postings={postings} refetch={refetchPostings} />
               )}
             </CardContent>
           </Card>

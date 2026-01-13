@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { CreditCard, FileText, Plus, FilePlus } from "lucide-react";
 
 import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
+import PostingsTable from "@/components/postings/PostingsTable";
 import EmployeeApprovalRequestTable from "@/components/approvalrequests/EmployeeApprovalRequestTable";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import {
@@ -162,6 +163,26 @@ function AuditorDashboard() {
                 </div>
               ) : (
                 <EmployeeCreditNotesTable creditNotes={creditNotes} />
+              )}
+            </CardContent>
+          </Card>
+        </section>
+
+        <section id="postings">
+          <Card>
+            <CardHeader>
+              <CardTitle>Postings</CardTitle>
+              <CardDescription>A list of all postings.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoadingPostings ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <PostingsTable postings={postings} refetch={refetchPostings} />
               )}
             </CardContent>
           </Card>
