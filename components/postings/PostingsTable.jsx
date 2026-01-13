@@ -101,7 +101,12 @@ function PostingsTable({ postings, refetch }) {
 
     setIsResolving(true);
     try {
-      await resolvePosting(selectedPosting.reference, resolveReason, axios);
+      // values should be status: Resolved and reason
+      await resolvePosting(
+        selectedPosting.reference,
+        { status: "Resolved", reason: resolveReason },
+        axios
+      );
       if (refetch) await refetch();
       setSelectedPosting(null);
       setResolveReason("");
