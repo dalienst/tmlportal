@@ -83,7 +83,7 @@ function ApprovalStepsTable({ approvalSteps, account }) {
 
       {/* Table Section */}
       {paginatedSteps?.length > 0 ? (
-        <>
+        <div className="overflow-x-auto">
           <Table className="bg-white shadow-md rounded-lg">
             <TableHeader>
               <TableRow>
@@ -122,6 +122,7 @@ function ApprovalStepsTable({ approvalSteps, account }) {
               ))}
             </TableBody>
           </Table>
+        </div>
 
           {/* Pagination Controls */}
           <div className="mt-4 flex items-center justify-between">
