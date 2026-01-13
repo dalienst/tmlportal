@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { CreditCard, FileText, Plus, FilePlus } from "lucide-react";
 
 import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
+import PostingsTable from "@/components/postings/PostingsTable";
 import EmployeeApprovalRequestTable from "@/components/approvalrequests/EmployeeApprovalRequestTable";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import {
@@ -17,9 +18,11 @@ import { Button } from "@/components/ui/button";
 import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
 import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
 
+import CreatePosting from "@/forms/postings/CreatePosting";
 import { useFetchAccount, useFetchManagers } from "@/hooks/accounts/actions";
 import { useFetchApprovalRequests } from "@/hooks/approvalrequests/actions";
 import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
+import { useFetchPostings } from "@/hooks/postings/actions";
 import { useFetchApprovalSteps } from "@/hooks/approvalsteps/actions";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -48,6 +51,12 @@ function AuditorDashboard() {
     refetch: refetchManagers,
   } = useFetchManagers();
 
+  const {
+    isLoading: isLoadingPostings,
+    data: postings,
+    refetch: refetchPostings,
+  } = useFetchPostings();
+
   const { isLoading: isLoadingApprovalSteps, data: approvalSteps } =
     useFetchApprovalSteps();
 
@@ -56,6 +65,7 @@ function AuditorDashboard() {
   );
 
   const [creditNoteModal, setCreditNoteModal] = useState(false);
+  const [postingModal, setPostingModal] = useState(false);
   const [approvalRequestModal, setApprovalRequestModal] = useState(false);
 
   return (
@@ -78,6 +88,10 @@ function AuditorDashboard() {
           <Button onClick={() => setCreditNoteModal(true)} className="gap-2">
             <Plus className="h-4 w-4" />
             New Credit Note
+          </Button>
+          <Button onClick={() => setPostingModal(true)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            New Posting
           </Button>
           <Button
             onClick={() => setApprovalRequestModal(true)}
@@ -154,6 +168,26 @@ function AuditorDashboard() {
           </Card>
         </section>
 
+        <section id="postings">
+          <Card>
+            <CardHeader>
+              <CardTitle>Postings</CardTitle>
+              <CardDescription>A list of all postings.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoadingPostings ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <PostingsTable postings={postings} refetch={refetchPostings} />
+              )}
+            </CardContent>
+          </Card>
+        </section>
+
         <section id="approval-requests">
           <Card>
             <CardHeader>
@@ -194,6 +228,26 @@ function AuditorDashboard() {
                 managers={managers}
                 refetch={refetchCreditNotes}
                 closeModal={() => setCreditNoteModal(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {postingModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="relative w-full max-w-4xl bg-background rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
+            <button
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground z-10"
+              onClick={() => setPostingModal(false)}
+            >
+              ✕
+            </button>
+            <div className="p-6">
+              <CreatePosting
+                managers={managers}
+                refetch={refetchPostings}
+                closeModal={() => setPostingModal(false)}
               />
             </div>
           </div>
