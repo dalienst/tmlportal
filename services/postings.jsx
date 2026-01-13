@@ -27,13 +27,6 @@ export const updatePosting = async (reference, formData, token) => {
   );
 };
 
-export const resolvePosting = async (reference, reason, token) => {
-  await apiActions?.patch(
-    `/api/v1/postings/${reference}/`,
-    {
-      status: "Resolved",
-      reason: reason,
-    },
-    token
-  );
+export const resolvePosting = async (reference, values, token) => {
+  await apiActions?.patch(`/api/v1/postings/${reference}/`, values, token);
 };
