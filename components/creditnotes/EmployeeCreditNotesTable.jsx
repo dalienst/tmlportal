@@ -406,7 +406,7 @@ function EmployeeCreditNotesTable({ creditNotes, isIT, isManager, refetch }) {
                     <div className="grid grid-cols-3 gap-2 text-sm">
                       <span className="text-muted-foreground">Rev. Ctr:</span>
                       <span className="col-span-2">
-                        {selectedCreditNote.revenue_center}
+                        {selectedCreditNote.revenuecenter}
                       </span>
                     </div>
                   </div>

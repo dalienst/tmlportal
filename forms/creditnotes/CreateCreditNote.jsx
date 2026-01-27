@@ -168,7 +168,7 @@ function CreateCreditNote({ closeModal, refetch, managers }) {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="revenue_center">Revenue Center</Label>
+                <Label htmlFor="revenuecenter">Revenue Center</Label>
                 <Field
                   as="select"
                   name="revenuecenter"
