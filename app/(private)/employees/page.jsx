@@ -77,30 +77,36 @@ function EmployeeDashboard() {
   }
 
   return (
-    <div className="container mx-auto p-6 min-h-screen bg-muted/30 space-y-8">
-      <section className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="container mx-auto p-4 md:p-6 min-h-screen bg-muted/30 space-y-8">
+      <section className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
             Hello, {account?.name || "User"}
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-1 text-sm md:text-base">
             Welcome to your employee dashboard.
           </p>
         </div>
 
-        <div className="flex gap-3">
-          <Button onClick={() => setCreditNoteModal(true)} className="gap-2">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          <Button
+            onClick={() => setCreditNoteModal(true)}
+            className="flex-1 sm:flex-none gap-2 text-xs sm:text-sm"
+          >
             <Plus className="h-4 w-4" />
             New Credit Note
           </Button>
-          <Button onClick={() => setPostingModal(true)} className="gap-2">
+          <Button
+            onClick={() => setPostingModal(true)}
+            className="flex-1 sm:flex-none gap-2 text-xs sm:text-sm"
+          >
             <Plus className="h-4 w-4" />
             New Posting
           </Button>
           <Button
             onClick={() => setApprovalRequestModal(true)}
             variant="secondary"
-            className="gap-2"
+            className="w-full sm:w-auto gap-2 text-xs sm:text-sm"
           >
             <FilePlus className="h-4 w-4" />
             New Request
@@ -108,7 +114,7 @@ function EmployeeDashboard() {
         </div>
       </section>
 
-      <section id="summary" className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <section id="summary" className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -151,7 +157,9 @@ function EmployeeDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <EmployeeCreditNotesTable creditNotes={creditNotes} />
+              <div className="overflow-x-auto -mx-6 px-6">
+                <EmployeeCreditNotesTable creditNotes={creditNotes} />
+              </div>
             </CardContent>
           </Card>
         </section>
@@ -165,7 +173,9 @@ function EmployeeDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <PostingsTable postings={postings} refetch={refetchPostings} />
+              <div className="overflow-x-auto -mx-6 px-6">
+                <PostingsTable postings={postings} refetch={refetchPostings} />
+              </div>
             </CardContent>
           </Card>
         </section>
@@ -179,9 +189,11 @@ function EmployeeDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <EmployeeApprovalRequestTable
-                approvalRequests={approvalRequests}
-              />
+              <div className="overflow-x-auto -mx-6 px-6">
+                <EmployeeApprovalRequestTable
+                  approvalRequests={approvalRequests}
+                />
+              </div>
             </CardContent>
           </Card>
         </section>
