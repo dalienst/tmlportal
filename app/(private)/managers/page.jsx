@@ -161,15 +161,16 @@ function Manager() {
         </Card>
       </section>
 
-      <Tabs defaultValue="steps" className="w-full">
+      <Tabs defaultValue="credit-notes" className="w-full">
         <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
           <TabsList className="flex w-max sm:grid sm:w-full sm:grid-cols-4 lg:w-[500px]">
-            <TabsTrigger value="steps" className="min-w-[100px]">
-              Approvals
-            </TabsTrigger>
             <TabsTrigger value="credit-notes" className="min-w-[100px]">
               Credit Notes
             </TabsTrigger>
+            <TabsTrigger value="steps" className="min-w-[100px]">
+              Approvals
+            </TabsTrigger>
+
             <TabsTrigger value="requests" className="min-w-[100px]">
               Requests
             </TabsTrigger>
