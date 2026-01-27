@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 function GeneralManager() {
   const { isLoading: isLoadingAccount, data: account } = useFetchAccount();
 
-  const { isLoading: isLoadingCreditNotes, data: creditNotes } =
+  const { isLoading: isLoadingCreditNotes, data: creditNotes, refetch: refetchCreditNotes } =
     useFetchCreditNotes();
 
   const { isLoading: isLoadingApprovalSteps, data: approvalSteps } =
