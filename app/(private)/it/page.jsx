@@ -43,7 +43,7 @@ function IT() {
   } = useFetchPostings();
 
   const userPendingSteps = approvalSteps?.filter(
-    (step) => step.approver === account?.email && step.status === "Pending"
+    (step) => step.approver === account?.email && step.status === "Pending",
   );
 
   const { isLoading: isLoadingManagers, data: managers } = useFetchManagers();
@@ -160,6 +160,7 @@ function IT() {
                 <EmployeeCreditNotesTable
                   creditNotes={creditNotes}
                   isIT={account?.is_it}
+                  isManager={account?.is_manager}
                   refetch={refetchCreditNotes}
                 />
               )}

@@ -29,7 +29,7 @@ function GeneralManager() {
   } = useFetchPostings();
 
   const userPendingSteps = approvalSteps?.filter(
-    (step) => step.approver === account?.email && step.status === "Pending"
+    (step) => step.approver === account?.email && step.status === "Pending",
   );
 
   return (
@@ -83,9 +83,7 @@ function GeneralManager() {
                 creditNotes?.length || 0
               )}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Total credit notes
-            </p>
+            <p className="text-xs text-muted-foreground">Total credit notes</p>
           </CardContent>
         </Card>
 
@@ -103,9 +101,7 @@ function GeneralManager() {
                 postings?.length || 0
               )}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Total postings
-            </p>
+            <p className="text-xs text-muted-foreground">Total postings</p>
           </CardContent>
         </Card>
       </section>
@@ -171,7 +167,11 @@ function GeneralManager() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <EmployeeCreditNotesTable creditNotes={creditNotes} />
+                <EmployeeCreditNotesTable
+                  creditNotes={creditNotes}
+                  isManager={true}
+                  refetch={refetchCreditNotes}
+                />
               )}
             </CardContent>
           </Card>

@@ -57,7 +57,7 @@ function Manager() {
   } = useFetchPostings();
 
   const userPendingSteps = approvalSteps?.filter(
-    (step) => step.approver === account?.email && step.status === "Pending"
+    (step) => step.approver === account?.email && step.status === "Pending",
   );
 
   const [creditNoteModal, setCreditNoteModal] = useState(false);
@@ -219,7 +219,11 @@ function Manager() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <EmployeeCreditNotesTable creditNotes={creditNotes} />
+                <EmployeeCreditNotesTable
+                  creditNotes={creditNotes}
+                  isManager={true}
+                  refetch={refetchCreditNotes}
+                />
               )}
             </CardContent>
           </Card>

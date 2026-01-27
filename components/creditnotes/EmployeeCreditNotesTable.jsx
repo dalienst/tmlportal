@@ -23,7 +23,7 @@ import { CheckCircle2, XCircle, Clock, FileText, Check } from "lucide-react";
 import { resolveCreditNote } from "@/services/creditnotes";
 import useAxiosAuth from "@/hooks/general/useAxiosAuth";
 
-function EmployeeCreditNotesTable({ creditNotes, isIT, refetch }) {
+function EmployeeCreditNotesTable({ creditNotes, isIT, isManager, refetch }) {
   const axios = useAxiosAuth();
   const [selectedCreditNote, setSelectedCreditNote] = useState(null);
   const [isResolving, setIsResolving] = useState(false);
@@ -300,7 +300,7 @@ function EmployeeCreditNotesTable({ creditNotes, isIT, refetch }) {
                   >
                     {page}
                   </Button>
-                )
+                ),
               )}
             </div>
 
@@ -425,7 +425,7 @@ function EmployeeCreditNotesTable({ creditNotes, isIT, refetch }) {
                     </span>
                     <span>
                       {new Date(
-                        selectedCreditNote.transaction_date
+                        selectedCreditNote.transaction_date,
                       ).toLocaleDateString()}
                     </span>
                   </div>
@@ -464,31 +464,32 @@ function EmployeeCreditNotesTable({ creditNotes, isIT, refetch }) {
                 </div>
               )}
 
-              {isIT && selectedCreditNote.status === "Approved" && (
-                <div className="flex justify-end pt-4 border-t gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => setSelectedCreditNote(null)}
-                    disabled={isResolving}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    className="bg-green-600 hover:bg-green-700 text-white gap-2"
-                    onClick={handleResolve}
-                    disabled={isResolving}
-                  >
-                    {isResolving ? (
-                      "Resolving..."
-                    ) : (
-                      <>
-                        <Check className="h-4 w-4" />
-                        Mark as Resolved
-                      </>
-                    )}
-                  </Button>
-                </div>
-              )}
+              {(isIT || isManager) &&
+                selectedCreditNote.status === "Approved" && (
+                  <div className="flex justify-end pt-4 border-t gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => setSelectedCreditNote(null)}
+                      disabled={isResolving}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      className="bg-green-600 hover:bg-green-700 text-white gap-2"
+                      onClick={handleResolve}
+                      disabled={isResolving}
+                    >
+                      {isResolving ? (
+                        "Resolving..."
+                      ) : (
+                        <>
+                          <Check className="h-4 w-4" />
+                          Mark as Resolved
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
             </div>
           </DialogContent>
         </Dialog>
