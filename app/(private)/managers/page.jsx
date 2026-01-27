@@ -258,6 +258,7 @@ function Manager() {
             </button>
             <div className="p-6">
               <CreateCreditNote
+                revenueCenters={revenueCenters}
                 managers={managers}
                 refetch={refetchCreditNotes}
                 closeModal={() => setCreditNoteModal(false)}

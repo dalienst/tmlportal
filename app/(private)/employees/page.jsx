@@ -23,6 +23,7 @@ import { useFetchAccount, useFetchManagers } from "@/hooks/accounts/actions";
 import { useFetchApprovalRequests } from "@/hooks/approvalrequests/actions";
 import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 import { useFetchPostings } from "@/hooks/postings/actions";
+import { useFetchRevenueCenters } from "@/hooks/revenuecenters/actions";
 
 function EmployeeDashboard() {
   const {
@@ -30,6 +31,12 @@ function EmployeeDashboard() {
     data: account,
     refetch: refetchAccount,
   } = useFetchAccount();
+
+  const {
+    isLoading: isLoadingRevenueCenters,
+    data: revenueCenters,
+    refetch: refetchRevenueCenters,
+  } = useFetchRevenueCenters();
 
   const {
     isLoading: isLoadingCreditNotes,
@@ -192,6 +199,7 @@ function EmployeeDashboard() {
             </button>
             <div className="p-6">
               <CreateCreditNote
+                revenueCenters={revenueCenters}
                 managers={managers}
                 refetch={refetchCreditNotes}
                 closeModal={() => setCreditNoteModal(false)}

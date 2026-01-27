@@ -25,6 +25,7 @@ import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 import { useFetchPostings } from "@/hooks/postings/actions";
 import { useFetchApprovalSteps } from "@/hooks/approvalsteps/actions";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useFetchRevenueCenters } from "@/hooks/revenuecenters/actions";
 
 function AuditorDashboard() {
   const {
@@ -32,6 +33,12 @@ function AuditorDashboard() {
     data: account,
     refetch: refetchAccount,
   } = useFetchAccount();
+
+  const {
+    isLoading: isLoadingRevenueCenters,
+    data: revenueCenters,
+    refetch: refetchRevenueCenters,
+  } = useFetchRevenueCenters();
 
   const {
     isLoading: isLoadingCreditNotes,
@@ -61,7 +68,7 @@ function AuditorDashboard() {
     useFetchApprovalSteps();
 
   const userPendingSteps = approvalSteps?.filter(
-    (step) => step.approver === account?.email && step.status === "Pending"
+    (step) => step.approver === account?.email && step.status === "Pending",
   );
 
   const [creditNoteModal, setCreditNoteModal] = useState(false);
@@ -225,6 +232,7 @@ function AuditorDashboard() {
             </button>
             <div className="p-6">
               <CreateCreditNote
+                revenueCenters={revenueCenters}
                 managers={managers}
                 refetch={refetchCreditNotes}
                 closeModal={() => setCreditNoteModal(false)}
