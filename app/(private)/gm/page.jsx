@@ -16,8 +16,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 function GeneralManager() {
   const { isLoading: isLoadingAccount, data: account } = useFetchAccount();
 
-  const { isLoading: isLoadingCreditNotes, data: creditNotes, refetch: refetchCreditNotes } =
-    useFetchCreditNotes();
+  const {
+    isLoading: isLoadingCreditNotes,
+    data: creditNotes,
+    refetch: refetchCreditNotes,
+  } = useFetchCreditNotes();
 
   const { isLoading: isLoadingApprovalSteps, data: approvalSteps } =
     useFetchApprovalSteps();
@@ -33,23 +36,23 @@ function GeneralManager() {
   );
 
   return (
-    <div className="container mx-auto p-6 bg-gray-50/50 min-h-screen">
-      <section className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="container mx-auto p-4 md:p-6 bg-gray-50/50 min-h-screen">
+      <section className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
             {isLoadingAccount ? (
               <Skeleton className="h-9 w-64" />
             ) : (
               `Welcome back, ${account?.name || "General Manager"}`
             )}
           </h2>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-1 text-sm md:text-base">
             Oversee feedback and approvals.
           </p>
         </div>
       </section>
 
-      <section className="mb-8 grid gap-4 md:grid-cols-3">
+      <section className="mb-8 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">My Actions</CardTitle>
@@ -88,7 +91,7 @@ function GeneralManager() {
         </Card>
 
         {/* postings */}
-        <Card>
+        <Card className="sm:col-span-2 lg:col-span-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Postings</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
@@ -107,11 +110,19 @@ function GeneralManager() {
       </section>
 
       <Tabs defaultValue="steps" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 lg:w-[600px]">
-          <TabsTrigger value="steps">Approvals</TabsTrigger>
-          <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
-          <TabsTrigger value="postings">Postings</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <TabsList className="flex w-max sm:grid sm:w-full sm:grid-cols-3 lg:w-[600px]">
+            <TabsTrigger value="steps" className="min-w-[100px]">
+              Approvals
+            </TabsTrigger>
+            <TabsTrigger value="credit-notes" className="min-w-[100px]">
+              Credit Notes
+            </TabsTrigger>
+            <TabsTrigger value="postings" className="min-w-[100px]">
+              Postings
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="steps" className="mt-4">
           <Card>
@@ -126,10 +137,12 @@ function GeneralManager() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <ApprovalStepsTable
-                  approvalSteps={approvalSteps}
-                  account={account}
-                />
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <ApprovalStepsTable
+                    approvalSteps={approvalSteps}
+                    account={account}
+                  />
+                </div>
               )}
             </CardContent>
           </Card>
@@ -148,7 +161,12 @@ function GeneralManager() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <PostingsTable postings={postings} refetch={refetchPostings} />
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <PostingsTable
+                    postings={postings}
+                    refetch={refetchPostings}
+                  />
+                </div>
               )}
             </CardContent>
           </Card>
@@ -167,11 +185,13 @@ function GeneralManager() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <EmployeeCreditNotesTable
-                  creditNotes={creditNotes}
-                  isManager={true}
-                  refetch={refetchCreditNotes}
-                />
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <EmployeeCreditNotesTable
+                    creditNotes={creditNotes}
+                    isManager={true}
+                    refetch={refetchCreditNotes}
+                  />
+                </div>
               )}
             </CardContent>
           </Card>

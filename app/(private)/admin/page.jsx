@@ -44,29 +44,29 @@ function AdminDashboard() {
     useFetchApprovalSteps();
 
   const userPendingSteps = approvalSteps?.filter(
-    (step) => step.approver === account?.email && step.status === "Pending"
+    (step) => step.approver === account?.email && step.status === "Pending",
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div className="container mx-auto p-6 bg-gray-50/50 min-h-screen">
-      <section className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="container mx-auto p-4 md:p-6 bg-gray-50/50 min-h-screen">
+      <section className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
             {isLoadingAccount ? (
               <Skeleton className="h-9 w-64" />
             ) : (
               `Welcome back, ${account?.name || "Admin"}`
             )}
           </h2>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-1 text-sm md:text-base">
             Oversee centers, feedback, and approvals.
           </p>
         </div>
-        <div>
+        <div className="w-full sm:w-auto">
           <button
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 shadow"
+            className="inline-flex w-full sm:w-auto items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 shadow"
             onClick={() => setIsModalOpen(true)}
           >
             Create Center
@@ -74,7 +74,7 @@ function AdminDashboard() {
         </div>
       </section>
 
-      <section className="mb-8 grid gap-4 md:grid-cols-3">
+      <section className="mb-8 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">My Actions</CardTitle>
@@ -111,7 +111,7 @@ function AdminDashboard() {
             </p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="sm:col-span-2 lg:col-span-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Feedback Forms
@@ -134,12 +134,22 @@ function AdminDashboard() {
       </section>
 
       <Tabs defaultValue="centers" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 lg:w-[600px]">
-          <TabsTrigger value="centers">Centers</TabsTrigger>
-          <TabsTrigger value="requests">Requests</TabsTrigger>
-          <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
-          <TabsTrigger value="steps">Approvals</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <TabsList className="flex w-max sm:grid sm:w-full sm:grid-cols-4 lg:w-[600px]">
+            <TabsTrigger value="centers" className="min-w-[100px]">
+              Centers
+            </TabsTrigger>
+            <TabsTrigger value="requests" className="min-w-[100px]">
+              Requests
+            </TabsTrigger>
+            <TabsTrigger value="credit-notes" className="min-w-[100px]">
+              Credit Notes
+            </TabsTrigger>
+            <TabsTrigger value="steps" className="min-w-[100px]">
+              Approvals
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="centers" className="mt-4">
           <Card>
@@ -154,7 +164,9 @@ function AdminDashboard() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : centers?.length > 0 ? (
-                <CentersTable centers={centers} role="admin" />
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <CentersTable centers={centers} role="admin" />
+                </div>
               ) : (
                 <div className="p-4 text-center text-muted-foreground bg-muted rounded-md">
                   No centers available
@@ -177,9 +189,11 @@ function AdminDashboard() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <EmployeeApprovalRequestTable
-                  approvalRequests={approvalRequests}
-                />
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <EmployeeApprovalRequestTable
+                    approvalRequests={approvalRequests}
+                  />
+                </div>
               )}
             </CardContent>
           </Card>
@@ -198,7 +212,9 @@ function AdminDashboard() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <EmployeeCreditNotesTable creditNotes={creditNotes} />
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <EmployeeCreditNotesTable creditNotes={creditNotes} />
+                </div>
               )}
             </CardContent>
           </Card>
@@ -217,10 +233,12 @@ function AdminDashboard() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <ApprovalStepsTable
-                  approvalSteps={approvalSteps}
-                  account={account}
-                />
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <ApprovalStepsTable
+                    approvalSteps={approvalSteps}
+                    account={account}
+                  />
+                </div>
               )}
             </CardContent>
           </Card>

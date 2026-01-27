@@ -78,34 +78,40 @@ function AuditorDashboard() {
   const [approvalRequestModal, setApprovalRequestModal] = useState(false);
 
   return (
-    <div className="container mx-auto p-6 min-h-screen bg-gray-50/50">
-      <section className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="container mx-auto p-4 md:p-6 min-h-screen bg-gray-50/50">
+      <section className="mb-8 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
             {isLoadingAccount ? (
               <Skeleton className="h-9 w-64" />
             ) : (
               `Hello, ${account?.name || "User"}`
             )}
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-1 text-sm md:text-base">
             Welcome back to your auditor dashboard.
           </p>
         </div>
 
-        <div className="flex gap-3">
-          <Button onClick={() => setCreditNoteModal(true)} className="gap-2">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          <Button
+            onClick={() => setCreditNoteModal(true)}
+            className="flex-1 sm:flex-none gap-2 text-xs sm:text-sm"
+          >
             <Plus className="h-4 w-4" />
             New Credit Note
           </Button>
-          <Button onClick={() => setPostingModal(true)} className="gap-2">
+          <Button
+            onClick={() => setPostingModal(true)}
+            className="flex-1 sm:flex-none gap-2 text-xs sm:text-sm"
+          >
             <Plus className="h-4 w-4" />
             New Posting
           </Button>
           <Button
             onClick={() => setApprovalRequestModal(true)}
             variant="secondary"
-            className="gap-2"
+            className="w-full sm:w-auto gap-2 text-xs sm:text-sm"
           >
             <FilePlus className="h-4 w-4" />
             New Request
@@ -113,7 +119,7 @@ function AuditorDashboard() {
         </div>
       </section>
 
-      <section className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">My Actions</CardTitle>
@@ -150,7 +156,7 @@ function AuditorDashboard() {
             </p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="sm:col-span-2 lg:col-span-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Postings</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
@@ -171,12 +177,22 @@ function AuditorDashboard() {
       </section>
 
       <Tabs defaultValue="credit-notes" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 lg:w-[500px]">
-          <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
-          <TabsTrigger value="postings">Postings</TabsTrigger>
-          <TabsTrigger value="requests">Requests</TabsTrigger>
-          <TabsTrigger value="approvals">Approvals</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <TabsList className="flex w-max sm:grid sm:w-full sm:grid-cols-4 lg:w-[500px]">
+            <TabsTrigger value="credit-notes" className="min-w-[100px]">
+              Credit Notes
+            </TabsTrigger>
+            <TabsTrigger value="postings" className="min-w-[100px]">
+              Postings
+            </TabsTrigger>
+            <TabsTrigger value="requests" className="min-w-[100px]">
+              Requests
+            </TabsTrigger>
+            <TabsTrigger value="approvals" className="min-w-[100px]">
+              Approvals
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="credit-notes" className="mt-4">
           <Card>
@@ -194,11 +210,13 @@ function AuditorDashboard() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <EmployeeCreditNotesTable
-                  creditNotes={creditNotes}
-                  isManager={true}
-                  refetch={refetchCreditNotes}
-                />
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <EmployeeCreditNotesTable
+                    creditNotes={creditNotes}
+                    isManager={true}
+                    refetch={refetchCreditNotes}
+                  />
+                </div>
               )}
             </CardContent>
           </Card>
@@ -218,7 +236,12 @@ function AuditorDashboard() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <PostingsTable postings={postings} refetch={refetchPostings} />
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <PostingsTable
+                    postings={postings}
+                    refetch={refetchPostings}
+                  />
+                </div>
               )}
             </CardContent>
           </Card>
@@ -240,9 +263,11 @@ function AuditorDashboard() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <EmployeeApprovalRequestTable
-                  approvalRequests={approvalRequests}
-                />
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <EmployeeApprovalRequestTable
+                    approvalRequests={approvalRequests}
+                  />
+                </div>
               )}
             </CardContent>
           </Card>
@@ -262,10 +287,12 @@ function AuditorDashboard() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <ApprovalStepsTable
-                  approvalSteps={approvalSteps}
-                  account={account}
-                />
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <ApprovalStepsTable
+                    approvalSteps={approvalSteps}
+                    account={account}
+                  />
+                </div>
               )}
             </CardContent>
           </Card>
