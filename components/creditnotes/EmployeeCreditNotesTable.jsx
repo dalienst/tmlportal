@@ -230,6 +230,7 @@ function EmployeeCreditNotesTable({ creditNotes, isIT, isManager, refetch }) {
               <TableHead>Check Number</TableHead>
               <TableHead>Customer Name</TableHead>
               <TableHead>Amount</TableHead>
+              <TableHead>Revenue Center</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -246,6 +247,7 @@ function EmployeeCreditNotesTable({ creditNotes, isIT, isManager, refetch }) {
                     {creditNote.currency}{" "}
                     {parseFloat(creditNote.amount).toFixed(2)}
                   </TableCell>
+                  <TableCell>{creditNote.revenuecenter}</TableCell>
                   <TableCell>{getStatusBadge(creditNote.status)}</TableCell>
                   <TableCell className="text-right">
                     <Button
