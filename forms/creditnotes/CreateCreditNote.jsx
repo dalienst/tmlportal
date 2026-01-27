@@ -20,9 +20,11 @@ function CreateCreditNote({ closeModal, refetch, managers }) {
   const { data: currentUser } = useFetchAccount();
   const { data: revenueCenters } = useFetchRevenueCenters();
 
-  // Filter out the current user from the list of possible approvers
+  // Filter out the current user from the list of possible approvers and only include GM and Finance
   const availableApprovers = managers?.filter(
-    (manager) => manager.email !== currentUser?.email,
+    (manager) =>
+      (manager.is_gm || manager.is_finance) &&
+      manager.email !== currentUser?.email,
   );
 
   return (
