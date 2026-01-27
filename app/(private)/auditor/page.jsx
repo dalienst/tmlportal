@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { CreditCard, FileText, Plus, FilePlus } from "lucide-react";
+import { CreditCard, FileText, Plus, FilePlus, ListChecks } from "lucide-react";
 
 import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
 import PostingsTable from "@/components/postings/PostingsTable";
 import EmployeeApprovalRequestTable from "@/components/approvalrequests/EmployeeApprovalRequestTable";
+import ApprovalStepsTable from "@/components/approvalsteps/ApprovalStepsTable";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import {
   Card,
@@ -15,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
 import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
 
@@ -25,6 +27,7 @@ import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 import { useFetchPostings } from "@/hooks/postings/actions";
 import { useFetchApprovalSteps } from "@/hooks/approvalsteps/actions";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useFetchRevenueCenters } from "@/hooks/revenuecenters/actions";
 
 function AuditorDashboard() {
   const {
@@ -32,6 +35,12 @@ function AuditorDashboard() {
     data: account,
     refetch: refetchAccount,
   } = useFetchAccount();
+
+  const {
+    isLoading: isLoadingRevenueCenters,
+    data: revenueCenters,
+    refetch: refetchRevenueCenters,
+  } = useFetchRevenueCenters();
 
   const {
     isLoading: isLoadingCreditNotes,
@@ -61,7 +70,7 @@ function AuditorDashboard() {
     useFetchApprovalSteps();
 
   const userPendingSteps = approvalSteps?.filter(
-    (step) => step.approver === account?.email && step.status === "Pending"
+    (step) => step.approver === account?.email && step.status === "Pending",
   );
 
   const [creditNoteModal, setCreditNoteModal] = useState(false);
@@ -69,10 +78,10 @@ function AuditorDashboard() {
   const [approvalRequestModal, setApprovalRequestModal] = useState(false);
 
   return (
-    <div className="container mx-auto p-6 min-h-screen bg-muted/30 space-y-8">
-      <section className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="container mx-auto p-6 min-h-screen bg-gray-50/50">
+      <section className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
             {isLoadingAccount ? (
               <Skeleton className="h-9 w-64" />
             ) : (
@@ -104,11 +113,11 @@ function AuditorDashboard() {
         </div>
       </section>
 
-      <section id="summary" className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <section className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">My Actions</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <ListChecks className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -125,9 +134,7 @@ function AuditorDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Credit Notes
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Credit Notes</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -143,10 +150,35 @@ function AuditorDashboard() {
             </p>
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Postings</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingPostings ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                postings?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total recorded postings
+            </p>
+          </CardContent>
+        </Card>
       </section>
 
-      <div className="space-y-6">
-        <section id="credit-notes">
+      <Tabs defaultValue="credit-notes" className="w-full">
+        <TabsList className="grid w-full grid-cols-4 lg:w-[500px]">
+          <TabsTrigger value="credit-notes">Credit Notes</TabsTrigger>
+          <TabsTrigger value="postings">Postings</TabsTrigger>
+          <TabsTrigger value="requests">Requests</TabsTrigger>
+          <TabsTrigger value="approvals">Approvals</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="credit-notes" className="mt-4">
           <Card>
             <CardHeader>
               <CardTitle>Credit Notes</CardTitle>
@@ -162,13 +194,17 @@ function AuditorDashboard() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <EmployeeCreditNotesTable creditNotes={creditNotes} />
+                <EmployeeCreditNotesTable
+                  creditNotes={creditNotes}
+                  isManager={true}
+                  refetch={refetchCreditNotes}
+                />
               )}
             </CardContent>
           </Card>
-        </section>
+        </TabsContent>
 
-        <section id="postings">
+        <TabsContent value="postings" className="mt-4">
           <Card>
             <CardHeader>
               <CardTitle>Postings</CardTitle>
@@ -186,9 +222,9 @@ function AuditorDashboard() {
               )}
             </CardContent>
           </Card>
-        </section>
+        </TabsContent>
 
-        <section id="approval-requests">
+        <TabsContent value="requests" className="mt-4">
           <Card>
             <CardHeader>
               <CardTitle>Approval Requests</CardTitle>
@@ -210,10 +246,32 @@ function AuditorDashboard() {
               )}
             </CardContent>
           </Card>
-        </section>
-      </div>
+        </TabsContent>
 
-      {/* Manual Modal Implementation for now to match previous behavior, but style improved */}
+        <TabsContent value="approvals" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Approval Steps</CardTitle>
+              <CardDescription>Steps requiring your approval.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoadingApprovalSteps ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <ApprovalStepsTable
+                  approvalSteps={approvalSteps}
+                  account={account}
+                />
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
       {creditNoteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className="relative w-full max-w-4xl bg-background rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
@@ -225,6 +283,7 @@ function AuditorDashboard() {
             </button>
             <div className="p-6">
               <CreateCreditNote
+                revenueCenters={revenueCenters}
                 managers={managers}
                 refetch={refetchCreditNotes}
                 closeModal={() => setCreditNoteModal(false)}

@@ -1,6 +1,5 @@
 "use client";
 
-import { revenueCenters } from "@/data/revenueCenters";
 import useAxiosAuth from "@/hooks/general/useAxiosAuth";
 import { createCreditNote } from "@/services/creditnotes";
 import { Field, Form, Formik } from "formik";
@@ -11,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useFetchAccount } from "@/hooks/accounts/actions";
+import { useFetchRevenueCenters } from "@/hooks/revenuecenters/actions";
 
 function CreateCreditNote({ closeModal, refetch, managers }) {
   const [loading, setLoading] = useState(false);
@@ -18,10 +18,11 @@ function CreateCreditNote({ closeModal, refetch, managers }) {
 
   // Fetch current logged-in user to exclude them from approvers
   const { data: currentUser } = useFetchAccount();
+  const { data: revenueCenters } = useFetchRevenueCenters();
 
   // Filter out the current user from the list of possible approvers
   const availableApprovers = managers?.filter(
-    (manager) => manager.email !== currentUser?.email
+    (manager) => manager.email !== currentUser?.email,
   );
 
   return (
@@ -34,7 +35,7 @@ function CreateCreditNote({ closeModal, refetch, managers }) {
         check_number: "",
         amount: "",
         attachment: null,
-        revenue_center: "",
+        revenuecenter: "",
         cashier_name: "",
         reason: "",
         approvers: [],
@@ -52,7 +53,7 @@ function CreateCreditNote({ closeModal, refetch, managers }) {
           formData.append("check_number", values?.check_number);
           formData.append("amount", values?.amount);
           formData.append("reason", values?.reason);
-          formData.append("revenue_center", values?.revenue_center);
+          formData.append("revenuecenter", values?.revenuecenter);
           formData.append("cashier_name", values?.cashier_name);
           values.approvers.forEach((approver) => {
             formData.append("approvers", approver);
@@ -168,7 +169,7 @@ function CreateCreditNote({ closeModal, refetch, managers }) {
                 <Label htmlFor="revenue_center">Revenue Center</Label>
                 <Field
                   as="select"
-                  name="revenue_center"
+                  name="revenuecenter"
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="">Select Revenue Center</option>

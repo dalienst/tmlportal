@@ -18,9 +18,16 @@ import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
 import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
 import CreatePosting from "@/forms/postings/CreatePosting";
 import { useFetchPostings } from "@/hooks/postings/actions";
+import { useFetchRevenueCenters } from "@/hooks/revenuecenters/actions";
 
 function Manager() {
   const { isLoading: isLoadingAccount, data: account } = useFetchAccount();
+
+  const {
+    isLoading: isLoadingRevenueCenters,
+    data: revenueCenters,
+    refetch: refetchRevenueCenters,
+  } = useFetchRevenueCenters();
 
   const {
     isLoading: isLoadingCreditNotes,
@@ -38,7 +45,7 @@ function Manager() {
     useFetchApprovalSteps();
 
   const userPendingSteps = approvalSteps?.filter(
-    (step) => step.approver === account?.email && step.status === "Pending"
+    (step) => step.approver === account?.email && step.status === "Pending",
   );
 
   const {
@@ -212,7 +219,11 @@ function Manager() {
                   <Skeleton className="h-8 w-full" />
                 </div>
               ) : (
-                <EmployeeCreditNotesTable creditNotes={creditNotes} />
+                <EmployeeCreditNotesTable
+                  creditNotes={creditNotes}
+                  isManager={true}
+                  refetch={refetchCreditNotes}
+                />
               )}
             </CardContent>
           </Card>
@@ -251,6 +262,7 @@ function Manager() {
             </button>
             <div className="p-6">
               <CreateCreditNote
+                revenueCenters={revenueCenters}
                 managers={managers}
                 refetch={refetchCreditNotes}
                 closeModal={() => setCreditNoteModal(false)}
