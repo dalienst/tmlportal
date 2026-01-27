@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
 import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
 import CreatePosting from "@/forms/postings/CreatePosting";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 import { useFetchPostings } from "@/hooks/postings/actions";
 
@@ -25,6 +25,8 @@ function Manager() {
     data: account,
     refetch: refetchAccount,
   } = useFetchAccount();
+
+  console.log(account);
 
   const {
     isLoading: isLoadingCreditNotes,
@@ -59,6 +61,14 @@ function Manager() {
   const userPendingSteps = approvalSteps?.filter(
     (step) => step.approver === account?.email && step.status === "Pending",
   );
+
+  const filteredCreditNotes = useMemo(() => {
+    if (!creditNotes) return [];
+    if (!account?.revenue_center) return creditNotes;
+    return creditNotes.filter(
+      (cn) => cn.revenuecenter === account.revenue_center,
+    );
+  }, [creditNotes, account?.revenue_center]);
 
   const [creditNoteModal, setCreditNoteModal] = useState(false);
   const [postingModal, setPostingModal] = useState(false);
@@ -151,7 +161,7 @@ function Manager() {
               {isLoadingCreditNotes ? (
                 <Skeleton className="h-8 w-16" />
               ) : (
-                creditNotes?.length || 0
+                filteredCreditNotes?.length || 0
               )}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -239,7 +249,7 @@ function Manager() {
               ) : (
                 <div className="overflow-x-auto -mx-6 px-6">
                   <EmployeeCreditNotesTable
-                    creditNotes={creditNotes}
+                    creditNotes={filteredCreditNotes}
                     isManager={true}
                     refetch={refetchCreditNotes}
                   />
@@ -284,7 +294,6 @@ function Manager() {
             </button>
             <div className="p-6">
               <CreateCreditNote
-                revenueCenters={revenueCenters}
                 managers={managers}
                 refetch={refetchCreditNotes}
                 closeModal={() => setCreditNoteModal(false)}
@@ -317,7 +326,7 @@ function Manager() {
       <CreateApprovalRequest
         isOpen={approvalRequestModal}
         onClose={() => setApprovalRequestModal(false)}
-        creditNotes={creditNotes}
+        creditNotes={filteredCreditNotes}
         managers={managers}
         refetch={refetchApprovalRequest}
       />
