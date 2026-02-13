@@ -7,7 +7,6 @@ import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNot
 import PostingsTable from "@/components/postings/PostingsTable";
 import EmployeeApprovalRequestTable from "@/components/approvalrequests/EmployeeApprovalRequestTable";
 import ApprovalStepsTable from "@/components/approvalsteps/ApprovalStepsTable";
-import LoadingSpinner from "@/components/general/LoadingSpinner";
 import {
   Card,
   CardContent,
@@ -47,6 +46,8 @@ function AuditorDashboard() {
     data: creditNotes,
     refetch: refetchCreditNotes,
   } = useFetchCreditNotes();
+
+  console.log(creditNotes);
 
   const {
     isLoading: isLoadingApprovalRequest,

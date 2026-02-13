@@ -451,6 +451,104 @@ function EmployeeCreditNotesTable({ creditNotes, isIT, isManager, refetch }) {
                 </div>
               </div>
 
+              {/* Approval Details Section */}
+              {selectedCreditNote.credit_note_requests &&
+                selectedCreditNote.credit_note_requests.length > 0 && (
+                  <div className="space-y-4 pt-4 border-t">
+                    <h4 className="font-semibold text-foreground border-b pb-2">
+                      Approval Details
+                    </h4>
+                    {selectedCreditNote.credit_note_requests.map(
+                      (request, index) => (
+                        <div
+                          key={index}
+                          className="bg-muted/20 p-4 rounded-lg border space-y-3"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h5 className="font-medium text-sm">
+                                {request.title}
+                              </h5>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {request.description}
+                              </p>
+                            </div>
+                            <Badge
+                              variant={
+                                request.status === "APPROVED"
+                                  ? "default"
+                                  : "secondary"
+                              }
+                              className={
+                                request.status === "APPROVED"
+                                  ? "bg-green-600"
+                                  : ""
+                              }
+                            >
+                              {request.status}
+                            </Badge>
+                          </div>
+
+                          <div className="mt-3">
+                            <h6 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                              Approvers
+                            </h6>
+                            <div className="space-y-2">
+                              {request.approvers.map((approverEmail, idx) => {
+                                const step = request.steps?.find(
+                                  (s) => s.approver === approverEmail,
+                                );
+                                const status = step ? step.status : "Pending";
+
+                                return (
+                                  <div
+                                    key={idx}
+                                    className="flex items-center justify-between text-sm p-2 bg-background rounded border"
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      {status === "Approved" ? (
+                                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                      ) : status === "Rejected" ? (
+                                        <XCircle className="w-4 h-4 text-red-500" />
+                                      ) : (
+                                        <Clock className="w-4 h-4 text-yellow-500" />
+                                      )}
+                                      <span className="font-mono text-xs">
+                                        {approverEmail}
+                                      </span>
+                                    </div>
+                                    <div className="flex flex-col items-end">
+                                      <Badge
+                                        variant="outline"
+                                        className={
+                                          status === "Approved"
+                                            ? "text-green-600 border-green-200 bg-green-50"
+                                            : status === "Rejected"
+                                              ? "text-red-600 border-red-200 bg-red-50"
+                                              : "text-yellow-600 border-yellow-200 bg-yellow-50"
+                                        }
+                                      >
+                                        {status}
+                                      </Badge>
+                                      {step && step.updated_at && (
+                                        <span className="text-[10px] text-muted-foreground mt-1">
+                                          {new Date(
+                                            step.updated_at,
+                                          ).toLocaleString()}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      ),
+                    )}
+                  </div>
+                )}
+
               {selectedCreditNote.attachment && (
                 <div className="flex justify-end pt-2">
                   <Button asChild variant="outline" className="gap-2">
