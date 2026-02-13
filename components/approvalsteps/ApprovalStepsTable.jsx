@@ -16,7 +16,7 @@ import React, { useState } from "react";
 function ApprovalStepsTable({ approvalSteps, account }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterType, setFilterType] = useState("");
-  const itemsPerPage = 5;
+  const itemsPerPage = 20;
   const router = useRouter();
 
   // Get unique request types for the filter dropdown

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 function CentersTable({ centers, role }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 20;
 
   const indexOfLastCenter = currentPage * itemsPerPage;
   const indexOfFirstCenter = indexOfLastCenter - itemsPerPage;

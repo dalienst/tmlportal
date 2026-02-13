@@ -40,7 +40,7 @@ function PostingsTable({ postings, refetch }) {
     posting_type: "",
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
 
   // Handle filter input changes
   const handleFilterChange = (e) => {

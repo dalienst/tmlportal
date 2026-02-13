@@ -28,7 +28,7 @@ function EmployeeApprovalRequestTable({ approvalRequests }) {
     created_at: "",
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 20;
 
   // Handle filter input changes
   const handleFilterChange = (e) => {

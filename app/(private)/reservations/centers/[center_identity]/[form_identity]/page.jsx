@@ -51,7 +51,7 @@ function FeedbackFormDetail({ params }) {
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
 
   const filterFeedbacks = useMemo(() => {
     if (!allFeedbacks) return [];
