@@ -67,7 +67,6 @@ function CreateCreditNote({ closeModal, refetch, managers }) {
           refetch();
         } catch (error) {
           toast.error("Something went wrong!");
-          console.log(error);
         } finally {
           setLoading(false);
         }

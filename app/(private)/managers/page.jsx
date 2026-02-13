@@ -26,7 +26,6 @@ function Manager() {
     refetch: refetchAccount,
   } = useFetchAccount();
 
-  console.log(account);
 
   const {
     isLoading: isLoadingCreditNotes,
