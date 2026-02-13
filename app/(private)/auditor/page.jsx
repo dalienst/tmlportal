@@ -47,7 +47,6 @@ function AuditorDashboard() {
     refetch: refetchCreditNotes,
   } = useFetchCreditNotes();
 
-  console.log(creditNotes);
 
   const {
     isLoading: isLoadingApprovalRequest,
