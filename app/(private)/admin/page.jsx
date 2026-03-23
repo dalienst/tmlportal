@@ -3,8 +3,10 @@
 import CentersTable from "@/components/centers/CentersTable";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import CreateCenter from "@/forms/centers/CreateCenter";
+import CreateUser from "@/forms/admin/CreateUser";
+import UsersTable from "@/components/admin/UsersTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useFetchAccount } from "@/hooks/accounts/actions";
+import { useFetchAccount, useFetchUsers } from "@/hooks/accounts/actions";
 import { useFetchApprovalRequests } from "@/hooks/approvalrequests/actions";
 import { useFetchApprovalSteps } from "@/hooks/approvalsteps/actions";
 import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
@@ -21,6 +23,8 @@ import {
   FileText,
   CheckSquare,
   ListChecks,
+  Users,
+  UserPlus,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -43,11 +47,18 @@ function AdminDashboard() {
   const { isLoading: isLoadingApprovalSteps, data: approvalSteps } =
     useFetchApprovalSteps();
 
+  const {
+    isLoading: isLoadingUsers,
+    data: users,
+    refetch: refetchUsers,
+  } = useFetchUsers();
+
   const userPendingSteps = approvalSteps?.filter(
     (step) => step.approver === account?.email && step.status === "Pending",
   );
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCenterModalOpen, setIsCenterModalOpen] = useState(false);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
 
   return (
     <div className="container mx-auto p-4 md:p-6 bg-gray-50/50 min-h-screen">
@@ -61,20 +72,26 @@ function AdminDashboard() {
             )}
           </h2>
           <p className="text-muted-foreground mt-1 text-sm md:text-base">
-            Oversee centers, feedback, and approvals.
+            Oversee staff, centers, feedback, and approvals.
           </p>
         </div>
-        <div className="w-full sm:w-auto">
+        <div className="flex flex-wrap gap-2 sm:w-auto">
           <button
-            className="inline-flex w-full sm:w-auto items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 shadow"
-            onClick={() => setIsModalOpen(true)}
+            className="inline-flex w-full sm:w-auto items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 border shadow-sm"
+            onClick={() => setIsCenterModalOpen(true)}
           >
             Create Center
+          </button>
+          <button
+            className="inline-flex w-full sm:w-auto items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 shadow"
+            onClick={() => setIsUserModalOpen(true)}
+          >
+            Add Staff Member
           </button>
         </div>
       </section>
 
-      <section className="mb-8 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="mb-8 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">My Actions</CardTitle>
@@ -90,6 +107,24 @@ function AdminDashboard() {
             </div>
             <p className="text-xs text-muted-foreground">
               Steps requiring your attention
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Staff Members</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingUsers ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                users?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total registered staff
             </p>
           </CardContent>
         </Card>
@@ -111,7 +146,7 @@ function AdminDashboard() {
             </p>
           </CardContent>
         </Card>
-        <Card className="sm:col-span-2 lg:col-span-1">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Feedback Forms
@@ -133,9 +168,12 @@ function AdminDashboard() {
         </Card>
       </section>
 
-      <Tabs defaultValue="centers" className="w-full">
+      <Tabs defaultValue="users" className="w-full">
         <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-          <TabsList className="flex w-max sm:grid sm:w-full sm:grid-cols-4 lg:w-[600px]">
+          <TabsList className="flex w-max sm:grid sm:w-full sm:grid-cols-5 lg:w-[750px]">
+            <TabsTrigger value="users" className="min-w-[100px]">
+              Users
+            </TabsTrigger>
             <TabsTrigger value="centers" className="min-w-[100px]">
               Centers
             </TabsTrigger>
@@ -150,6 +188,27 @@ function AdminDashboard() {
             </TabsTrigger>
           </TabsList>
         </div>
+
+        <TabsContent value="users" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Staff Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingUsers ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <UsersTable users={users} refetch={refetchUsers} />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="centers" className="mt-4">
           <Card>
@@ -245,18 +304,35 @@ function AdminDashboard() {
         </TabsContent>
       </Tabs>
 
-      {isModalOpen && (
+      {isCenterModalOpen && (
         <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto relative border">
             <button
               className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setIsModalOpen(false)}
+              onClick={() => setIsCenterModalOpen(false)}
             >
               ✕
             </button>
             <CreateCenter
               refetch={refetchCenters}
-              closeModal={() => setIsModalOpen(false)}
+              closeModal={() => setIsCenterModalOpen(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {isUserModalOpen && (
+        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto relative border">
+            <button
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => setIsUserModalOpen(false)}
+            >
+              ✕
+            </button>
+            <CreateUser
+              refetch={refetchUsers}
+              closeModal={() => setIsUserModalOpen(false)}
             />
           </div>
         </div>
@@ -265,4 +341,6 @@ function AdminDashboard() {
   );
 }
 
+
 export default AdminDashboard;
+
