@@ -7,16 +7,20 @@ import { LayoutGrid, LogOut, Menu, X, Waves } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-export default function AdminNavbar() {
+export default function Navbar({ 
+  brand = "Admin Portal", 
+  subtitle = "Management Console", 
+  navItems = [
+    { label: "Dashboard", href: "/admin", icon: LayoutGrid },
+  ],
+  homeHref = "/admin",
+  logoutCallback = "/login"
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  const navItems = [
-    { label: "Dashboard", href: "/admin", icon: LayoutGrid },
-  ];
-
   const handleLogout = () => {
-    signOut({ callbackUrl: "/login" });
+    signOut({ callbackUrl: logoutCallback });
   };
 
   return (
@@ -24,13 +28,13 @@ export default function AdminNavbar() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href="/admin" className="flex items-center gap-2.5 group">
+            <Link href={homeHref} className="flex items-center gap-2.5 group">
               <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-all duration-300 ring-4 ring-primary/5">
                 <Waves className="text-primary h-5 w-5" />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-base leading-none tracking-tight">Admin Portal</span>
-                <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-[0.1em] mt-1">Management Console</span>
+                <span className="font-bold text-base leading-none tracking-tight">{brand}</span>
+                {subtitle && <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-[0.1em] mt-1">{subtitle}</span>}
               </div>
             </Link>
           </div>
@@ -48,7 +52,7 @@ export default function AdminNavbar() {
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
               >
-                <item.icon className="h-4 w-4" />
+                {item.icon && <item.icon className="h-4 w-4" />}
                 {item.label}
               </Link>
             ))}
@@ -93,7 +97,7 @@ export default function AdminNavbar() {
                     : "text-muted-foreground hover:bg-muted"
                 )}
               >
-                <item.icon className="h-5 w-5" />
+                {item.icon && <item.icon className="h-5 w-5" />}
                 {item.label}
               </Link>
             ))}
