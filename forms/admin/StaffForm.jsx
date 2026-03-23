@@ -1,12 +1,22 @@
 "use client";
 
 import useAxiosAuth from "@/hooks/general/useAxiosAuth";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, ErrorMessage } from "formik";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { cn } from "@/lib/utils";
+import * as Yup from "yup";
+import { PasswordSchema } from "@/validations";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+
+const validationSchema = Yup.object().shape({
+  name: Yup.string().required("Full name is required"),
+  username: Yup.string().required("Username is required"),
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  password: PasswordSchema,
+});
 
 function StaffForm({ roleLabel, apiAction, refetch, closeModal }) {
   const [loading, setLoading] = useState(false);
@@ -20,6 +30,7 @@ function StaffForm({ roleLabel, apiAction, refetch, closeModal }) {
         email: "",
         password: "",
       }}
+      validationSchema={validationSchema}
       onSubmit={async (values) => {
         setLoading(true);
         try {
@@ -35,7 +46,7 @@ function StaffForm({ roleLabel, apiAction, refetch, closeModal }) {
         }
       }}
     >
-      {() => (
+      {({ errors, touched }) => (
         <Form className="p-6">
           <div className="space-y-4">
             <div className="space-y-2">
@@ -46,9 +57,9 @@ function StaffForm({ roleLabel, apiAction, refetch, closeModal }) {
                 id="name"
                 name="name"
                 placeholder="e.g. John Doe"
-                required
-                className="bg-muted/30"
+                className={cn("bg-muted/30", errors.name && touched.name && "border-destructive")}
               />
+              <ErrorMessage name="name" component="p" className="text-xs text-destructive font-medium" />
             </div>
 
             <div className="space-y-2">
@@ -59,9 +70,9 @@ function StaffForm({ roleLabel, apiAction, refetch, closeModal }) {
                 id="username"
                 name="username"
                 placeholder="e.g. johndoe"
-                required
-                className="bg-muted/30"
+                className={cn("bg-muted/30", errors.username && touched.username && "border-destructive")}
               />
+              <ErrorMessage name="username" component="p" className="text-xs text-destructive font-medium" />
             </div>
 
             <div className="space-y-2">
@@ -72,9 +83,9 @@ function StaffForm({ roleLabel, apiAction, refetch, closeModal }) {
                 id="email"
                 name="email"
                 placeholder="e.g. john@tamarind.co.ke"
-                required
-                className="bg-muted/30"
+                className={cn("bg-muted/30", errors.email && touched.email && "border-destructive")}
               />
+              <ErrorMessage name="email" component="p" className="text-xs text-destructive font-medium" />
             </div>
 
             <div className="space-y-2">
@@ -85,9 +96,9 @@ function StaffForm({ roleLabel, apiAction, refetch, closeModal }) {
                 id="password"
                 name="password"
                 placeholder="••••••••"
-                required
-                className="bg-muted/30"
+                className={cn("bg-muted/30", errors.password && touched.password && "border-destructive")}
               />
+              <ErrorMessage name="password" component="p" className="text-xs text-destructive font-medium max-w-[300px]" />
               <p className="text-[10px] text-muted-foreground italic">
                 Staff member will be able to reset this later.
               </p>
