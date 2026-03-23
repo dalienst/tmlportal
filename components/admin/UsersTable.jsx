@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import Modal from "@/components/general/Modal";
 import {
   Table,
   TableBody,
@@ -42,14 +37,14 @@ function UsersTable({ users, refetch }) {
   };
 
   const getRole = (user) => {
-    if (user.is_superuser || user.is_admin) return "Admin";
-    if (user.is_gm) return "GM";
-    if (user.is_finance) return "Finance";
-    if (user.is_manager) return "Manager";
-    if (user.is_auditor) return "Auditor";
-    if (user.is_it) return "IT";
-    if (user.is_reservations) return "Reservations";
-    if (user.is_employee) return "Employee";
+    if (user?.is_superuser || user?.is_admin) return "Admin";
+    if (user?.is_gm) return "GM";
+    if (user?.is_finance) return "Finance";
+    if (user?.is_manager) return "Manager";
+    if (user?.is_auditor) return "Auditor";
+    if (user?.is_it) return "IT";
+    if (user?.is_reservations) return "Reservations";
+    if (user?.is_employee) return "Employee";
     return "Staff";
   };
 
@@ -57,9 +52,9 @@ function UsersTable({ users, refetch }) {
     const role = getRole(user).toLowerCase();
     const matchesRole = !filters.role || role === filters.role.toLowerCase();
     const matchesSearch = !filters.search || 
-      user.name?.toLowerCase().includes(filters.search.toLowerCase()) ||
-      user.email?.toLowerCase().includes(filters.search.toLowerCase()) ||
-      user.username?.toLowerCase().includes(filters.search.toLowerCase());
+      user?.name?.toLowerCase().includes(filters.search.toLowerCase()) ||
+      user?.email?.toLowerCase().includes(filters.search.toLowerCase()) ||
+      user?.username?.toLowerCase().includes(filters.search.toLowerCase());
     
     return matchesRole && matchesSearch;
   });
@@ -209,50 +204,45 @@ function UsersTable({ users, refetch }) {
         </div>
       )}
 
-      {selectedUser && (
-        <Dialog open={!!selectedUser} onOpenChange={() => setSelectedUser(null)}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-2xl font-bold">
-                <ShieldCheck className="h-6 w-6 text-primary" />
-                Staff Profile
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-6 py-4">
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="space-y-1">
-                  <p className="text-muted-foreground font-medium uppercase tracking-wider text-[10px]">Full Name</p>
-                  <p className="font-bold text-base">{selectedUser.name}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground font-medium uppercase tracking-wider text-[10px]">Username</p>
-                  <p className="font-bold text-base">@{selectedUser.username}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground font-medium uppercase tracking-wider text-[10px]">Email</p>
-                  <p className="font-bold">{selectedUser.email}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground font-medium uppercase tracking-wider text-[10px]">Staff Role</p>
-                  <Badge className="w-fit">{getRole(selectedUser)}</Badge>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground font-medium uppercase tracking-wider text-[10px]">Revenue Center</p>
-                  <p className="font-bold">{selectedUser.revenue_center || 'Not Assigned'}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground font-medium uppercase tracking-wider text-[10px]">Reference ID</p>
-                  <code className="bg-muted px-1 rounded text-xs">{selectedUser.reference}</code>
-                </div>
-              </div>
-              
-              <div className="pt-4 border-t border-border flex justify-end">
-                <Button variant="outline" onClick={() => setSelectedUser(null)}>Close Profile</Button>
-              </div>
+      <Modal
+        isOpen={!!selectedUser}
+        onClose={() => setSelectedUser(null)}
+        title="Staff Profile"
+        className="max-w-md"
+      >
+        <div className="space-y-6 p-6">
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="space-y-1">
+              <p className="text-muted-foreground font-medium uppercase tracking-wider text-[10px]">Full Name</p>
+              <p className="font-bold text-base">{selectedUser?.name}</p>
             </div>
-          </DialogContent>
-        </Dialog>
-      )}
+            <div className="space-y-1">
+              <p className="text-muted-foreground font-medium uppercase tracking-wider text-[10px]">Username</p>
+              <p className="font-bold text-base">@{selectedUser?.username}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-muted-foreground font-medium uppercase tracking-wider text-[10px]">Email</p>
+              <p className="font-bold">{selectedUser?.email}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-muted-foreground font-medium uppercase tracking-wider text-[10px]">Staff Role</p>
+              <Badge className="w-fit">{getRole(selectedUser)}</Badge>
+            </div>
+            <div className="space-y-1">
+              <p className="text-muted-foreground font-medium uppercase tracking-wider text-[10px]">Revenue Center</p>
+              <p className="font-bold">{selectedUser?.revenue_center || 'Not Assigned'}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-muted-foreground font-medium uppercase tracking-wider text-[10px]">Reference ID</p>
+              <code className="bg-muted px-1 rounded text-xs">{selectedUser?.reference}</code>
+            </div>
+          </div>
+          
+          <div className="pt-4 border-t border-border flex justify-end">
+            <Button variant="outline" onClick={() => setSelectedUser(null)}>Close Profile</Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

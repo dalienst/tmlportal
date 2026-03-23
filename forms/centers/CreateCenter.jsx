@@ -45,23 +45,7 @@ function CreateCenter({ refetch, closeModal }) {
       }}
     >
       {({ setFieldValue, values }) => (
-        <Form className="w-full max-w-md p-6 bg-card border border-border rounded-lg shadow-xl max-h-[85vh] overflow-y-auto">
-          <div className="flex flex-col items-center mb-6">
-            <Image
-              className="mb-3 object-contain"
-              src="/logo.png"
-              alt="Tamarind Logo"
-              width={80}
-              height={80}
-            />
-            <h2 className="text-2xl font-bold text-center text-foreground">
-              Create Center
-            </h2>
-            <p className="text-sm text-muted-foreground text-center">
-              Add a new operational center/branch
-            </p>
-          </div>
-
+        <Form className="p-6">
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="logo">Center Logo</Label>

@@ -5,6 +5,7 @@ import LoadingSpinner from "@/components/general/LoadingSpinner";
 import CreateCenter from "@/forms/centers/CreateCenter";
 import CreateUser from "@/forms/admin/CreateUser";
 import UsersTable from "@/components/admin/UsersTable";
+import Modal from "@/components/general/Modal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFetchAccount, useFetchUsers } from "@/hooks/accounts/actions";
 import { useFetchApprovalRequests } from "@/hooks/approvalrequests/actions";
@@ -18,6 +19,11 @@ import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNot
 import ApprovalStepsTable from "@/components/approvalsteps/ApprovalStepsTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Building2,
   MessageSquare,
   FileText,
@@ -25,6 +31,8 @@ import {
   ListChecks,
   Users,
   UserPlus,
+  Plus,
+  ChevronDown,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -62,7 +70,7 @@ function AdminDashboard() {
 
   return (
     <div className="container mx-auto p-4 md:p-6 bg-gray-50/50 min-h-screen">
-      <section className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <section className="mb-8 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
             {isLoadingAccount ? (
@@ -75,19 +83,35 @@ function AdminDashboard() {
             Oversee staff, centers, feedback, and approvals.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2 sm:w-auto">
-          <button
-            className="inline-flex w-full sm:w-auto items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 border shadow-sm"
-            onClick={() => setIsCenterModalOpen(true)}
-          >
-            Create Center
-          </button>
-          <button
-            className="inline-flex w-full sm:w-auto items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 shadow"
-            onClick={() => setIsUserModalOpen(true)}
-          >
-            Add Staff Member
-          </button>
+        
+        <div className="flex items-center gap-3">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="inline-flex items-center justify-center rounded-xl text-sm font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-6 shadow-lg shadow-primary/20 cursor-pointer group">
+                <Plus className="mr-2 h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
+                Quick Actions
+                <ChevronDown className="ml-2 h-4 w-4 opacity-50 group-data-[state=open]:rotate-180 transition-transform" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-2 shadow-2xl border-border/40 backdrop-blur-xl" align="end" sideOffset={8}>
+              <div className="grid gap-1">
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-semibold rounded-lg hover:bg-muted transition-colors text-left group"
+                  onClick={() => setIsCenterModalOpen(true)}
+                >
+                  <Building2 className="mr-3 h-4 w-4 text-primary opacity-70 group-hover:opacity-100" />
+                  Create Center
+                </button>
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-semibold rounded-lg hover:bg-muted transition-colors text-left group"
+                  onClick={() => setIsUserModalOpen(true)}
+                >
+                  <UserPlus className="mr-3 h-4 w-4 text-emerald-600 opacity-70 group-hover:opacity-100" />
+                  Add Staff Member
+                </button>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </section>
 
@@ -304,39 +328,29 @@ function AdminDashboard() {
         </TabsContent>
       </Tabs>
 
-      {isCenterModalOpen && (
-        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto relative border">
-            <button
-              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setIsCenterModalOpen(false)}
-            >
-              ✕
-            </button>
-            <CreateCenter
-              refetch={refetchCenters}
-              closeModal={() => setIsCenterModalOpen(false)}
-            />
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={isCenterModalOpen}
+        onClose={() => setIsCenterModalOpen(false)}
+        title="Create New Center"
+        className="max-w-md sm:max-w-lg"
+      >
+        <CreateCenter
+          refetch={refetchCenters}
+          closeModal={() => setIsCenterModalOpen(false)}
+        />
+      </Modal>
 
-      {isUserModalOpen && (
-        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto relative border">
-            <button
-              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setIsUserModalOpen(false)}
-            >
-              ✕
-            </button>
-            <CreateUser
-              refetch={refetchUsers}
-              closeModal={() => setIsUserModalOpen(false)}
-            />
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={isUserModalOpen}
+        onClose={() => setIsUserModalOpen(false)}
+        title="Create New User"
+        className="max-w-md sm:max-w-lg"
+      >
+        <CreateUser
+          refetch={refetchUsers}
+          closeModal={() => setIsUserModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 }

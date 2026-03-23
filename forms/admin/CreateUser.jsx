@@ -67,25 +67,7 @@ function CreateUser({ refetch, closeModal }) {
       }}
     >
       {({ setFieldValue, values }) => (
-        <Form className="w-full max-w-md p-6 bg-card border border-border rounded-xl shadow-2xl max-h-[90vh] overflow-y-auto">
-          <div className="flex flex-col items-center mb-8 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-               <Image
-                src="/logo.png"
-                alt="Tamarind Logo"
-                width={48}
-                height={48}
-                className="object-contain"
-              />
-            </div>
-            <h2 className="text-2xl font-bold tracking-tight text-foreground">
-              Create New User
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Add a new staff member to the platform
-            </p>
-          </div>
-
+        <Form className="p-6">
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="role">User Role</Label>
