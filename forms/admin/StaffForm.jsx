@@ -1,39 +1,16 @@
 "use client";
 
 import useAxiosAuth from "@/hooks/general/useAxiosAuth";
-import { 
-  createAdmin, 
-  createAuditor, 
-  createEmployee, 
-  createFinance, 
-  createGM, 
-  createIT, 
-  createManager, 
-  createReservations 
-} from "@/services/accounts";
 import { Field, Form, Formik } from "formik";
-import Image from "next/image";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-function CreateUser({ refetch, closeModal }) {
+function StaffForm({ roleLabel, apiAction, refetch, closeModal }) {
   const [loading, setLoading] = useState(false);
   const axios = useAxiosAuth();
-
-  const roleConfigs = {
-    manager: { label: "Manager", action: createManager },
-    employee: { label: "Employee", action: createEmployee },
-    gm: { label: "General Manager", action: createGM },
-    finance: { label: "Finance", action: createFinance },
-    it: { label: "IT", action: createIT },
-    auditor: { label: "Auditor", action: createAuditor },
-    reservations: { label: "Reservations", action: createReservations },
-    admin: { label: "Admin", action: createAdmin },
-  };
 
   return (
     <Formik
@@ -42,52 +19,25 @@ function CreateUser({ refetch, closeModal }) {
         username: "",
         email: "",
         password: "",
-        role: "employee",
       }}
       onSubmit={async (values) => {
         setLoading(true);
         try {
-          const { role, ...payload } = values;
-          const apiAction = roleConfigs[role]?.action;
-          
-          if (!apiAction) {
-            throw new Error("Invalid role selected");
-          }
-
-          await apiAction(payload, axios);
-          toast.success(`${roleConfigs[role].label} created successfully!`);
+          await apiAction(values, axios);
+          toast.success(`${roleLabel} created successfully!`);
           if (refetch) refetch();
           closeModal();
         } catch (error) {
-          console.error("Create user error:", error);
+          console.error(`Create ${roleLabel} error:`, error);
           toast.error(error?.response?.data?.message || "Something went wrong!");
         } finally {
           setLoading(false);
         }
       }}
     >
-      {({ setFieldValue, values }) => (
+      {() => (
         <Form className="p-6">
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="role">User Role</Label>
-              <Select
-                value={values.role}
-                onValueChange={(val) => setFieldValue("role", val)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a role" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(roleConfigs).map(([key, config]) => (
-                    <SelectItem key={key} value={key}>
-                      {config.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
               <Field
@@ -147,7 +97,7 @@ function CreateUser({ refetch, closeModal }) {
               <Button
                 type="button"
                 variant="ghost"
-                className="flex-1 hover:bg-destructive/10 hover:text-destructive transition-colors"
+                className="flex-1 hover:bg-destructive/10 hover:text-destructive transition-colors text-sm"
                 onClick={closeModal}
                 disabled={loading}
               >
@@ -155,7 +105,7 @@ function CreateUser({ refetch, closeModal }) {
               </Button>
               <Button
                 type="submit"
-                className="flex-1 shadow-lg shadow-primary/20"
+                className="flex-1 shadow-md shadow-primary/20 text-sm font-bold"
                 disabled={loading}
               >
                 {loading ? (
@@ -164,7 +114,7 @@ function CreateUser({ refetch, closeModal }) {
                      Processing...
                    </span>
                 ) : (
-                  "Create Staff Member"
+                  `Create ${roleLabel}`
                 )}
               </Button>
             </div>
@@ -175,4 +125,4 @@ function CreateUser({ refetch, closeModal }) {
   );
 }
 
-export default CreateUser;
+export default StaffForm;

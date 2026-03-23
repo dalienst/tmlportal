@@ -3,7 +3,14 @@
 import CentersTable from "@/components/centers/CentersTable";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import CreateCenter from "@/forms/centers/CreateCenter";
-import CreateUser from "@/forms/admin/CreateUser";
+import CreateManager from "@/forms/admin/roles/CreateManager";
+import CreateEmployee from "@/forms/admin/roles/CreateEmployee";
+import CreateGM from "@/forms/admin/roles/CreateGM";
+import CreateFinance from "@/forms/admin/roles/CreateFinance";
+import CreateIT from "@/forms/admin/roles/CreateIT";
+import CreateAuditor from "@/forms/admin/roles/CreateAuditor";
+import CreateReservations from "@/forms/admin/roles/CreateReservations";
+import CreateAdmin from "@/forms/admin/roles/CreateAdmin";
 import UsersTable from "@/components/admin/UsersTable";
 import Modal from "@/components/general/Modal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +31,18 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuPortal,
+} from "@/components/ui/dropdown-menu";
+import {
   Building2,
   MessageSquare,
   FileText,
@@ -33,6 +52,15 @@ import {
   UserPlus,
   Plus,
   ChevronDown,
+  ChevronRight,
+  UserCog,
+  User,
+  ShieldCheck,
+  Coins,
+  Cpu,
+  FileSearch,
+  CalendarClock,
+  Shield,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -66,7 +94,18 @@ function AdminDashboard() {
   );
 
   const [isCenterModalOpen, setIsCenterModalOpen] = useState(false);
-  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [activeRoleModal, setActiveRoleModal] = useState(null);
+
+  const roles = [
+    { id: "manager", label: "Manager", icon: UserCog, component: CreateManager },
+    { id: "employee", label: "Employee", icon: User, component: CreateEmployee },
+    { id: "gm", label: "General Manager", icon: ShieldCheck, component: CreateGM },
+    { id: "finance", label: "Finance", icon: Coins, component: CreateFinance },
+    { id: "it", label: "IT Staff", icon: Cpu, component: CreateIT },
+    { id: "auditor", label: "Auditor", icon: FileSearch, component: CreateAuditor },
+    { id: "reservations", label: "Reservations", icon: CalendarClock, component: CreateReservations },
+    { id: "admin", label: "Admin", icon: Shield, component: CreateAdmin },
+  ];
 
   return (
     <div className="container mx-auto p-4 md:p-6 bg-gray-50/50 min-h-screen">
@@ -102,13 +141,31 @@ function AdminDashboard() {
                   <Building2 className="mr-3 h-4 w-4 text-primary opacity-70 group-hover:opacity-100" />
                   Create Center
                 </button>
-                <button
-                  className="flex items-center w-full px-4 py-3 text-sm font-semibold rounded-lg hover:bg-muted transition-colors text-left group"
-                  onClick={() => setIsUserModalOpen(true)}
-                >
-                  <UserPlus className="mr-3 h-4 w-4 text-emerald-600 opacity-70 group-hover:opacity-100" />
-                  Add Staff Member
-                </button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center w-full px-4 py-3 text-sm font-semibold rounded-lg hover:bg-muted transition-colors text-left group">
+                      <UserPlus className="mr-3 h-4 w-4 text-emerald-600 opacity-70 group-hover:opacity-100" />
+                      Add Staff Member
+                      <ChevronRight className="ml-auto h-4 w-4 opacity-40" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuContent className="w-56" align="start" side="right" sideOffset={10}>
+                      <DropdownMenuLabel>Select Staff Role</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {roles.map((role) => (
+                        <DropdownMenuItem
+                          key={role.id}
+                          className="cursor-pointer py-2.5"
+                          onClick={() => setActiveRoleModal(role.id)}
+                        >
+                          <role.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+                          {role.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenuPortal>
+                </DropdownMenu>
               </div>
             </PopoverContent>
           </Popover>
@@ -340,17 +397,23 @@ function AdminDashboard() {
         />
       </Modal>
 
-      <Modal
-        isOpen={isUserModalOpen}
-        onClose={() => setIsUserModalOpen(false)}
-        title="Create New User"
-        className="max-w-md sm:max-w-lg"
-      >
-        <CreateUser
-          refetch={refetchUsers}
-          closeModal={() => setIsUserModalOpen(false)}
-        />
-      </Modal>
+      {roles.map((role) => {
+        const ActiveFormComponent = role.component;
+        return (
+          <Modal
+            key={role.id}
+            isOpen={activeRoleModal === role.id}
+            onClose={() => setActiveRoleModal(null)}
+            title={`Create ${role.label}`}
+            className="max-w-md sm:max-w-lg"
+          >
+            <ActiveFormComponent
+              refetch={refetchUsers}
+              closeModal={() => setActiveRoleModal(null)}
+            />
+          </Modal>
+        );
+      })}
     </div>
   );
 }
