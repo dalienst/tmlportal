@@ -27,7 +27,7 @@ import {
 import { Plus, ChevronDown, UserPen, Send } from "lucide-react";
 
 function IT() {
-  const { isLoading: isLoadingAccount, data: account } = useFetchAccount();
+  const { isLoading: isLoadingAccount, data: account, refetch: refetchAccount } = useFetchAccount();
 
   const {
     isLoading: isLoadingCreditNotes,
