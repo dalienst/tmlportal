@@ -89,6 +89,7 @@ function ApprovalStepsTable({ approvalSteps, account }) {
             <TableHeader>
               <TableRow>
                 <TableHead>Approval Request</TableHead>
+                <TableHead>Reference</TableHead>
                 <TableHead>Request Type</TableHead>
                 <TableHead>Step Order</TableHead>
                 <TableHead>Created At</TableHead>
@@ -99,6 +100,9 @@ function ApprovalStepsTable({ approvalSteps, account }) {
               {paginatedSteps.map((step) => (
                 <TableRow key={step.reference}>
                   <TableCell>{step.request_info?.title || "N/A"}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {step.request_info?.reference || "N/A"}
+                  </TableCell>
                   <TableCell>
                     {step.request_info?.request_type || "N/A"}
                   </TableCell>
