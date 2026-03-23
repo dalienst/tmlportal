@@ -39,38 +39,32 @@ export default function UpdateProfile({ user, refetch, onClose }) {
       }}
     >
       {({ errors, touched }) => (
-        <Form className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Full Name</Label>
+        <Form className="w-full container p-4 mx-auto space-y-6">
+          <div className="grid gap-2">
+            <Label htmlFor="name">Full Name</Label>
             <Field
               as={Input}
               name="name"
               placeholder="Your full name"
-              className={cn(
-                "h-12 rounded-xl bg-background border-muted-foreground/20 focus:ring-primary/20 transition-all",
-                errors.name && touched.name && "border-destructive focus:ring-destructive/20"
-              )}
             />
             {errors.name && touched.name && (
-                <div className="text-destructive text-[10px] font-bold uppercase tracking-tight ml-1 leading-none pt-1 animate-in fade-in slide-in-from-top-1">
-                    {errors.name}
-                </div>
+              <div className="text-destructive text-xs">
+                {errors.name}
+              </div>
             )}
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t uppercase tracking-widest text-[10px] font-black">
+          <div className="flex justify-end gap-2 pt-4 border-t">
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               onClick={onClose}
-              className="rounded-xl px-6 h-12 hover:bg-muted font-black"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={loading}
-              className="rounded-xl px-8 h-12 shadow-lg shadow-primary/20 font-black"
             >
               {loading ? "Updating..." : "Save Changes"}
             </Button>

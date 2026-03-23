@@ -12,6 +12,9 @@ import CreateAuditor from "@/forms/admin/roles/CreateAuditor";
 import CreateReservations from "@/forms/admin/roles/CreateReservations";
 import CreateAdmin from "@/forms/admin/roles/CreateAdmin";
 import UsersTable from "@/components/admin/UsersTable";
+import RevenueCentersTable from "@/components/revenuecenters/RevenueCentersTable";
+import CreateRevenueCenter from "@/forms/revenuecenters/CreateRevenueCenter";
+import UpdateRevenueCenter from "@/forms/revenuecenters/UpdateRevenueCenter";
 import Modal from "@/components/general/Modal";
 import UpdateProfile from "@/forms/accounts/UpdateProfile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,6 +24,7 @@ import { useFetchApprovalSteps } from "@/hooks/approvalsteps/actions";
 import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 import { useFetchCenters } from "@/hooks/centers/actions";
 import { useFetchFeedbackForms } from "@/hooks/feedbackforms/actions";
+import { useFetchRevenueCenters } from "@/hooks/revenuecenters/actions";
 import React, { useState } from "react";
 import EmployeeApprovalRequestTable from "@/components/approvalrequests/EmployeeApprovalRequestTable";
 import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
@@ -63,6 +67,7 @@ import {
   CalendarClock,
   Shield,
   UserPen,
+  Wallet,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -73,6 +78,11 @@ function AdminDashboard() {
     data: centers,
     refetch: refetchCenters,
   } = useFetchCenters();
+  const {
+    isLoading: isLoadingRevenueCenters,
+    data: revenueCenters,
+    refetch: refetchRevenueCenters,
+  } = useFetchRevenueCenters();
   const { isLoading: isLoadingFeedbackForms, data: feedbackForms } =
     useFetchFeedbackForms();
   const { isLoading: isLoadingCreditNotes, data: creditNotes } =
@@ -92,6 +102,9 @@ function AdminDashboard() {
   );
 
   const [centerModal, setCenterModal] = useState(false);
+  const [revenueCenterModal, setRevenueCenterModal] = useState(false);
+  const [updateRevenueCenterModal, setUpdateRevenueCenterModal] = useState(false);
+  const [selectedRevenueCenter, setSelectedRevenueCenter] = useState(null);
   const [managerModal, setManagerModal] = useState(false);
   const [employeeModal, setEmployeeModal] = useState(false);
   const [gmModal, setGMModal] = useState(false);
@@ -112,6 +125,11 @@ function AdminDashboard() {
     { id: "reservations", label: "Reservations", icon: CalendarClock, component: CreateReservations, state: reservationsModal, setState: setReservationsModal },
     { id: "admin", label: "Admin", icon: Shield, component: CreateAdmin, state: adminModal, setState: setAdminModal },
   ];
+
+  const handleEditRevenueCenter = (center) => {
+    setSelectedRevenueCenter(center);
+    setUpdateRevenueCenterModal(true);
+  };
 
   return (
     <div className="container mx-auto p-4 md:p-6 bg-gray-50/50 min-h-screen">
@@ -156,6 +174,13 @@ function AdminDashboard() {
                 >
                   <Building2 className="mr-3 h-4 w-4 text-primary" />
                   Create Center
+                </button>
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group"
+                  onClick={() => setRevenueCenterModal(true)}
+                >
+                  <Wallet className="mr-3 h-4 w-4 text-indigo-600" />
+                  Create Revenue Center
                 </button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -267,9 +292,12 @@ function AdminDashboard() {
 
       <Tabs defaultValue="users" className="w-full">
         <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-          <TabsList className="flex w-max sm:grid sm:w-full sm:grid-cols-5 lg:w-[750px]">
+          <TabsList className="flex w-max sm:grid sm:w-full sm:grid-cols-6 lg:w-[900px]">
             <TabsTrigger value="users" className="min-w-[100px]">
               Users
+            </TabsTrigger>
+            <TabsTrigger value="revenue-centers" className="min-w-[100px]">
+              Rev Centers
             </TabsTrigger>
             <TabsTrigger value="centers" className="min-w-[100px]">
               Centers
@@ -301,6 +329,30 @@ function AdminDashboard() {
               ) : (
                 <div className="overflow-x-auto -mx-6 px-6">
                   <UsersTable users={users} refetch={refetchUsers} />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="revenue-centers" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Revenue Centers Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingRevenueCenters ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <RevenueCentersTable 
+                    revenueCenters={revenueCenters} 
+                    onEdit={handleEditRevenueCenter} 
+                  />
                 </div>
               )}
             </CardContent>
@@ -410,6 +462,31 @@ function AdminDashboard() {
         <CreateCenter
           refetch={refetchCenters}
           closeModal={() => setCenterModal(false)}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={revenueCenterModal}
+        onClose={() => setRevenueCenterModal(false)}
+        title="Create Revenue Center"
+        className="max-w-md sm:max-w-lg"
+      >
+        <CreateRevenueCenter
+          refetch={refetchRevenueCenters}
+          closeModal={() => setRevenueCenterModal(false)}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={updateRevenueCenterModal}
+        onClose={() => setUpdateRevenueCenterModal(false)}
+        title="Update Revenue Center"
+        className="max-w-md sm:max-w-lg"
+      >
+        <UpdateRevenueCenter
+          revenueCenter={selectedRevenueCenter}
+          refetch={refetchRevenueCenters}
+          closeModal={() => setUpdateRevenueCenterModal(false)}
         />
       </Modal>
 
