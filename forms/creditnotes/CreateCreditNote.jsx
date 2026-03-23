@@ -36,7 +36,7 @@ function CreateCreditNote({ closeModal, refetch, managers }) {
         transaction_date: "",
         check_number: "",
         amount: "",
-        attachment: null,
+        uploaded_attachments: [], // many files
         revenuecenter: "",
         cashier_name: "",
         reason: "",
@@ -46,17 +46,23 @@ function CreateCreditNote({ closeModal, refetch, managers }) {
         setLoading(true);
         try {
           const formData = new FormData();
-          if (values?.attachment)
-            formData.append("attachment", values?.attachment);
-          formData.append("customer_name", values?.customer_name);
-          formData.append("customer_address", values?.customer_address);
-          formData.append("customer_email", values?.customer_email);
-          formData.append("transaction_date", values?.transaction_date);
-          formData.append("check_number", values?.check_number);
-          formData.append("amount", values?.amount);
-          formData.append("reason", values?.reason);
-          formData.append("revenuecenter", values?.revenuecenter);
-          formData.append("cashier_name", values?.cashier_name);
+
+          if (values.uploaded_attachments && values.uploaded_attachments.length > 0) {
+            values.uploaded_attachments.forEach((file) => {
+              formData.append("uploaded_attachments", file);
+            });
+          }
+
+          formData.append("customer_name", values.customer_name);
+          formData.append("customer_address", values.customer_address);
+          formData.append("customer_email", values.customer_email);
+          formData.append("transaction_date", values.transaction_date);
+          formData.append("check_number", values.check_number);
+          formData.append("amount", values.amount);
+          formData.append("reason", values.reason);
+          formData.append("revenuecenter", values.revenuecenter);
+          formData.append("cashier_name", values.cashier_name);
+
           values.approvers.forEach((approver) => {
             formData.append("approvers", approver);
           });
@@ -67,21 +73,14 @@ function CreateCreditNote({ closeModal, refetch, managers }) {
           refetch();
         } catch (error) {
           toast.error("Something went wrong!");
+          console.error(error);
         } finally {
           setLoading(false);
         }
       }}
     >
-      {({ setFieldValue }) => (
-        <Form className="w-full max-w-4xl mx-auto space-y-6">
-          <section className="mb-6">
-            <h2 className="text-2xl font-bold text-foreground">
-              Create Credit Note
-            </h2>
-            <p className="text-muted-foreground text-sm">
-              Fill in the details to create a new credit note.
-            </p>
-          </section>
+      {({ values, setFieldValue }) => (
+        <Form className="w-full container p-4 mx-auto space-y-6">
 
           {/* Customer Details */}
           <div className="space-y-4">
@@ -155,16 +154,19 @@ function CreateCreditNote({ closeModal, refetch, managers }) {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="attachment">Attachment</Label>
+                <Label htmlFor="attachments">Attachments</Label>
                 <Input
                   type="file"
-                  name="attachment"
-                  id="attachment"
+                  multiple
+                  id="attachments"
                   onChange={(e) =>
-                    setFieldValue("attachment", e.target.files[0])
+                    setFieldValue("uploaded_attachments", Array.from(e.target.files))
                   }
                   className="file:text-foreground"
                 />
+                <p className="text-[10px] text-muted-foreground">
+                  {values.uploaded_attachments.length > 0 ? `${values.uploaded_attachments.length} files selected` : "Select one or more files"}
+                </p>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="revenuecenter">Revenue Center</Label>
@@ -224,7 +226,9 @@ function CreateCreditNote({ closeModal, refetch, managers }) {
                       className="text-sm font-medium leading-none cursor-pointer select-none"
                     >
                       {manager.name || manager.email}{" "}
-                      {manager.email === currentUser?.email && "(You)"}
+                      <span className="text-[10px] text-muted-foreground uppercase">
+                        ({manager.is_gm ? "General Manager" : "Finance"})
+                      </span>
                     </label>
                   </div>
                 ))
@@ -244,7 +248,7 @@ function CreateCreditNote({ closeModal, refetch, managers }) {
             <Button type="button" variant="outline" onClick={closeModal}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading || values.approvers.length === 0}>
               {loading ? "Creating..." : "Create Credit Note"}
             </Button>
           </div>

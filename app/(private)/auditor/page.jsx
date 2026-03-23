@@ -8,8 +8,9 @@ import {
   FilePlus,
   ListChecks,
   ChevronDown,
-  Send,
   MoreVertical,
+  Send,
+  UserPen,
 } from "lucide-react";
 
 import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
@@ -17,6 +18,7 @@ import PostingsTable from "@/components/postings/PostingsTable";
 import EmployeeApprovalRequestTable from "@/components/approvalrequests/EmployeeApprovalRequestTable";
 import ApprovalStepsTable from "@/components/approvalsteps/ApprovalStepsTable";
 import Modal from "@/components/general/Modal";
+import UpdateProfile from "@/forms/accounts/UpdateProfile";
 import {
   Popover,
   PopoverContent,
@@ -91,6 +93,7 @@ function AuditorDashboard() {
   const [creditNoteModal, setCreditNoteModal] = useState(false);
   const [postingModal, setPostingModal] = useState(false);
   const [approvalRequestModal, setApprovalRequestModal] = useState(false);
+  const [profileModal, setProfileModal] = useState(false);
 
   return (
     <div className="container mx-auto p-4 md:p-6 min-h-screen bg-gray-50/50">
@@ -117,8 +120,18 @@ function AuditorDashboard() {
                 <ChevronDown className="h-4 w-4 opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-56 p-2" align="end" sideOffset={8}>
+            <PopoverContent className="w-56 p-2 shadow-2xl border-primary/10" align="end" sideOffset={8}>
               <div className="space-y-1">
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group"
+                  onClick={() => setProfileModal(true)}
+                >
+                  <UserPen className="mr-3 h-4 w-4 text-primary" />
+                  Update Profile
+                </button>
+
+                <div className="h-px bg-border my-1 mx-2" />
+
                 <button
                   className="flex items-center w-full px-4 py-3 text-sm font-semibold rounded-lg hover:bg-muted transition-colors text-left group"
                   onClick={() => setCreditNoteModal(true)}
@@ -332,6 +345,7 @@ function AuditorDashboard() {
         title="Create Credit Note"
         className="max-w-4xl"
       >
+
         <CreateCreditNote
           revenueCenters={revenueCenters}
           managers={managers}
@@ -350,6 +364,18 @@ function AuditorDashboard() {
           managers={managers}
           refetch={refetchPostings}
           closeModal={() => setPostingModal(false)}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={profileModal}
+        onClose={() => setProfileModal(false)}
+        title="Update Profile"
+      >
+        <UpdateProfile
+          user={account}
+          refetch={refetchAccount}
+          onClose={() => setProfileModal(false)}
         />
       </Modal>
 

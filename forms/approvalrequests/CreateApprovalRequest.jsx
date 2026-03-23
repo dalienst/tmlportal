@@ -11,7 +11,6 @@ import { Field, Form, Formik } from "formik";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useFetchAccount } from "@/hooks/accounts/actions";
-import { cn } from "@/lib/utils";
 
 function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers, refetch }) {
   const [loading, setLoading] = useState(false);
@@ -34,7 +33,7 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers, refetch
           request_type: "",
           title: "",
           description: "",
-          attachment: null,
+          attachments: [],
           approvers: [],
           credit_note: "",
         }}
@@ -45,9 +44,13 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers, refetch
             formData.append("request_type", values.request_type);
             formData.append("title", values.title);
             formData.append("description", values.description);
-            if (values.attachment) {
-              formData.append("attachment", values.attachment);
+            
+            if (values.attachments && values.attachments.length > 0) {
+              values.attachments.forEach((file) => {
+                formData.append("attachments", file);
+              });
             }
+
             values.approvers.forEach((email) => {
               formData.append("approvers", email);
             });
@@ -66,17 +69,26 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers, refetch
         }}
       >
         {({ values, setFieldValue }) => (
-          <Form className="space-y-6">
+          <Form className="w-full container p-4 mx-auto space-y-6">
+            <section className="mb-6">
+              <h2 className="text-2xl font-bold text-foreground">
+                Create Approval Request
+              </h2>
+              <p className="text-muted-foreground text-sm">
+                Fill in the details to create a new approval request.
+              </p>
+            </section>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Request Type */}
               <div className="grid gap-2">
-                <Label htmlFor="request_type" className="font-bold text-xs uppercase tracking-wider text-muted-foreground">Request Type</Label>
+                <Label htmlFor="request_type">Request Type</Label>
                 <Field
                   as="select"
                   name="request_type"
-                  className="flex h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 transition-all font-medium"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <option value="">Select Request Type</option>
+                  <option value="">Select Type</option>
                   <option value="LPO">Local Purchase Order (LPO)</option>
                   <option value="Credit Note">Credit Note</option>
                   <option value="Debit Note">Debit Note</option>
@@ -92,13 +104,12 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers, refetch
 
               {/* Title */}
               <div className="grid gap-2">
-                <Label htmlFor="title" className="font-bold text-xs uppercase tracking-wider text-muted-foreground">Title</Label>
+                <Label htmlFor="title">Title</Label>
                 <Field
                   as={Input}
                   type="text"
                   name="title"
                   placeholder="Enter a clear title"
-                  className="h-11 rounded-xl bg-background/50 font-medium"
                 />
               </div>
             </div>
@@ -106,11 +117,11 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers, refetch
             {/* Credit Note Selection */}
             {values.request_type === "Credit Note" && (
               <div className="grid gap-2">
-                <Label htmlFor="credit_note" className="font-bold text-xs uppercase tracking-wider text-muted-foreground">Credit Note</Label>
+                <Label htmlFor="credit_note">Credit Note Reference</Label>
                 <Field
                   as="select"
                   name="credit_note"
-                  className="flex h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 transition-all font-medium"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="">Select Credit Note</option>
                   {creditNotes?.map((creditNote) => (
@@ -118,7 +129,7 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers, refetch
                       key={creditNote.identity}
                       value={creditNote.identity}
                     >
-                      {creditNote.check_number} - {creditNote.customer_name} - {creditNote.amount} {creditNote.currency} ({creditNote.status})
+                      {creditNote.check_number} - {creditNote.customer_name} - {creditNote.amount} {creditNote.currency}
                     </option>
                   ))}
                 </Field>
@@ -126,80 +137,71 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers, refetch
             )}
 
             {/* Description */}
-            {values.request_type !== "Credit Note" && (
-              <div className="grid gap-2">
-                <Label htmlFor="description" className="font-bold text-xs uppercase tracking-wider text-muted-foreground">Description</Label>
-                <Field
-                  as={Textarea}
-                  name="description"
-                  placeholder="Provide details about this request..."
-                  className="min-h-[120px] rounded-xl bg-background/50 font-medium"
-                />
-              </div>
-            )}
-
-            {/* Attachment */}
             <div className="grid gap-2">
-              <Label htmlFor="attachment" className="font-bold text-xs uppercase tracking-wider text-muted-foreground">Attachment (Optional)</Label>
-              <div className="flex items-center gap-4 p-4 rounded-xl border-2 border-dashed border-muted-foreground/20 hover:border-primary/50 transition-colors bg-background/30">
-                <Input
-                  type="file"
-                  id="attachment"
-                  className="cursor-pointer file:bg-primary file:text-primary-foreground file:rounded-lg file:border-0 file:px-4 file:py-1 file:mr-4 file:hover:bg-primary/90 transition-all"
-                  onChange={(e) => setFieldValue("attachment", e.target.files?.[0] || null)}
-                />
-              </div>
+              <Label htmlFor="description">Description</Label>
+              <Field
+                as={Textarea}
+                name="description"
+                placeholder="Provide details about this request..."
+                rows={4}
+              />
+            </div>
+
+            {/* Attachments */}
+            <div className="grid gap-2">
+              <Label htmlFor="attachments">Attachments (Optional)</Label>
+              <Input
+                type="file"
+                multiple
+                id="attachments"
+                onChange={(e) => setFieldValue("attachments", Array.from(e.target.files))}
+                className="file:text-foreground"
+              />
+              <p className="text-[10px] text-muted-foreground italic">
+                {values.attachments.length > 0 ? `${values.attachments.length} files selected` : "Select one or more files"}
+              </p>
             </div>
 
             {/* Approvers */}
             <div className="grid gap-2">
-              <Label className="font-bold text-xs uppercase tracking-wider text-muted-foreground">
-                Select Approvers <span className="text-destructive">*</span>
-              </Label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto p-1">
+              <Label htmlFor="approvers">Select Approvers</Label>
+              <div className="max-h-60 overflow-y-auto rounded-md border border-input bg-background p-4">
                 {availableApprovers && availableApprovers.length > 0 ? (
                   availableApprovers.map((manager) => (
                     <div
                       key={manager.email}
-                      className={cn(
-                        "flex items-center space-x-3 p-3 rounded-xl border transition-all cursor-pointer group",
-                        values.approvers.includes(manager.email)
-                          ? "bg-primary/5 border-primary ring-2 ring-primary/10"
-                          : "bg-background/50 border-border hover:border-primary/50"
-                      )}
+                      className="flex items-center space-x-3 py-2"
                     >
                       <Field
                         type="checkbox"
                         name="approvers"
                         value={manager.email}
                         id={`approver-${manager.email}`}
-                        className="h-5 w-5 rounded-lg border-muted-foreground/30 text-primary focus:ring-primary/50 transition-all cursor-pointer"
+                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                       />
                       <label
                         htmlFor={`approver-${manager.email}`}
-                        className="flex flex-col cursor-pointer select-none min-w-0"
+                        className="text-sm font-medium leading-none cursor-pointer select-none"
                       >
-                        <span className="text-sm font-bold text-foreground truncate">{manager.name || "Unnamed Manager"}</span>
-                        <span className="text-[10px] text-muted-foreground truncate">{manager.email}</span>
+                        {manager.name || manager.email}
                       </label>
                     </div>
                   ))
                 ) : (
-                  <div className="col-span-full py-8 text-center bg-muted/20 rounded-xl border border-dashed">
-                    <p className="text-sm text-muted-foreground">No available approvers found.</p>
-                  </div>
+                  <p className="text-sm text-muted-foreground py-4 text-center">
+                    No available approvers found.
+                  </p>
                 )}
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t">
-              <Button type="button" variant="ghost" onClick={onClose} className="rounded-xl font-bold">
+            <div className="flex justify-end gap-2 pt-4">
+              <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
               <Button 
                 type="submit" 
                 disabled={loading || values.approvers.length === 0}
-                className="rounded-xl px-8 font-bold shadow-lg shadow-primary/20"
               >
                 {loading ? "Submitting..." : "Submit Request"}
               </Button>

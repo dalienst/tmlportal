@@ -17,6 +17,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import CreateCreditNote from "@/forms/creditnotes/CreateCreditNote";
 import CreateApprovalRequest from "@/forms/approvalrequests/CreateApprovalRequest";
 import PostingsTable from "@/components/postings/PostingsTable";
+import Modal from "@/components/general/Modal";
+import UpdateProfile from "@/forms/accounts/UpdateProfile";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Plus, ChevronDown, UserPen, Send } from "lucide-react";
 
 function IT() {
   const { isLoading: isLoadingAccount, data: account } = useFetchAccount();
@@ -49,30 +57,55 @@ function IT() {
   const { isLoading: isLoadingManagers, data: managers } = useFetchManagers();
 
   const [approvalRequestModal, setApprovalRequestModal] = useState(false);
+  const [profileModal, setProfileModal] = useState(false);
 
   return (
     <div className="container mx-auto p-4 md:p-6 min-h-screen bg-gray-50/50">
-      <section className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
+      <section className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-2 border-b">
+        <div className="space-y-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 leading-none">
             {isLoadingAccount ? (
               <Skeleton className="h-9 w-64" />
             ) : (
-              `Welcome back, ${account?.name || "Manager"}`
+              `Hello, ${account?.name || "Manager"}`
             )}
-          </h2>
-          <p className="text-muted-foreground mt-1 text-sm md:text-base">
+          </h1>
+          <p className="text-muted-foreground text-sm md:text-base">
             Manage your approval requests and credit notes.
           </p>
         </div>
 
-        <div className="w-full md:w-auto">
-          <button
-            className="inline-flex w-full md:w-auto items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 shadow"
-            onClick={() => setApprovalRequestModal(true)}
-          >
-            New Request
-          </button>
+        <div className="flex items-center gap-3">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="inline-flex items-center justify-center rounded-xl text-sm font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-6 shadow-lg shadow-primary/20 cursor-pointer group whitespace-nowrap">
+                <Plus className="mr-2 h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
+                Quick Actions
+                <ChevronDown className="ml-2 h-4 w-4 opacity-50 group-data-[state=open]:rotate-180 transition-transform" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-2 shadow-2xl border-primary/10" align="end" sideOffset={8}>
+              <div className="space-y-1">
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group"
+                  onClick={() => setProfileModal(true)}
+                >
+                  <UserPen className="mr-3 h-4 w-4 text-primary" />
+                  Update Profile
+                </button>
+
+                <div className="h-px bg-border my-1 mx-2" />
+
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-semibold rounded-lg hover:bg-muted transition-colors text-left group"
+                  onClick={() => setApprovalRequestModal(true)}
+                >
+                  <Send className="mr-3 h-4 w-4 text-primary opacity-70 group-hover:opacity-100" />
+                  New Request
+                </button>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </section>
 
@@ -254,6 +287,18 @@ function IT() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <Modal
+        isOpen={profileModal}
+        onClose={() => setProfileModal(false)}
+        title="Update Profile"
+      >
+        <UpdateProfile 
+          user={account} 
+          refetch={refetchAccount} 
+          onClose={() => setProfileModal(false)} 
+        />
+      </Modal>
 
       <CreateApprovalRequest
         isOpen={approvalRequestModal}

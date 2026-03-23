@@ -13,6 +13,7 @@ import CreateReservations from "@/forms/admin/roles/CreateReservations";
 import CreateAdmin from "@/forms/admin/roles/CreateAdmin";
 import UsersTable from "@/components/admin/UsersTable";
 import Modal from "@/components/general/Modal";
+import UpdateProfile from "@/forms/accounts/UpdateProfile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFetchAccount, useFetchUsers } from "@/hooks/accounts/actions";
 import { useFetchApprovalRequests } from "@/hooks/approvalrequests/actions";
@@ -61,11 +62,12 @@ import {
   FileSearch,
   CalendarClock,
   Shield,
+  UserPen,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 function AdminDashboard() {
-  const { isLoading: isLoadingAccount, data: account } = useFetchAccount();
+  const { isLoading: isLoadingAccount, data: account, refetch: refetchAccount } = useFetchAccount();
   const {
     isLoading: isLoadingCenters,
     data: centers,
@@ -73,16 +75,12 @@ function AdminDashboard() {
   } = useFetchCenters();
   const { isLoading: isLoadingFeedbackForms, data: feedbackForms } =
     useFetchFeedbackForms();
-
   const { isLoading: isLoadingCreditNotes, data: creditNotes } =
     useFetchCreditNotes();
-
   const { isLoading: isLoadingApprovalRequest, data: approvalRequests } =
     useFetchApprovalRequests();
-
   const { isLoading: isLoadingApprovalSteps, data: approvalSteps } =
     useFetchApprovalSteps();
-
   const {
     isLoading: isLoadingUsers,
     data: users,
@@ -93,32 +91,40 @@ function AdminDashboard() {
     (step) => step.approver === account?.email && step.status === "Pending",
   );
 
-  const [isCenterModalOpen, setIsCenterModalOpen] = useState(false);
-  const [activeRoleModal, setActiveRoleModal] = useState(null);
+  const [centerModal, setCenterModal] = useState(false);
+  const [managerModal, setManagerModal] = useState(false);
+  const [employeeModal, setEmployeeModal] = useState(false);
+  const [gmModal, setGMModal] = useState(false);
+  const [financeModal, setFinanceModal] = useState(false);
+  const [itModal, setITModal] = useState(false);
+  const [auditorModal, setAuditorModal] = useState(false);
+  const [reservationsModal, setReservationsModal] = useState(false);
+  const [adminModal, setAdminModal] = useState(false);
+  const [profileModal, setProfileModal] = useState(false);
 
   const roles = [
-    { id: "manager", label: "Manager", icon: UserCog, component: CreateManager },
-    { id: "employee", label: "Employee", icon: User, component: CreateEmployee },
-    { id: "gm", label: "General Manager", icon: ShieldCheck, component: CreateGM },
-    { id: "finance", label: "Finance", icon: Coins, component: CreateFinance },
-    { id: "it", label: "IT Staff", icon: Cpu, component: CreateIT },
-    { id: "auditor", label: "Auditor", icon: FileSearch, component: CreateAuditor },
-    { id: "reservations", label: "Reservations", icon: CalendarClock, component: CreateReservations },
-    { id: "admin", label: "Admin", icon: Shield, component: CreateAdmin },
+    { id: "manager", label: "Manager", icon: UserCog, component: CreateManager, state: managerModal, setState: setManagerModal },
+    { id: "employee", label: "Employee", icon: User, component: CreateEmployee, state: employeeModal, setState: setEmployeeModal },
+    { id: "gm", label: "General Manager", icon: ShieldCheck, component: CreateGM, state: gmModal, setState: setGMModal },
+    { id: "finance", label: "Finance", icon: Coins, component: CreateFinance, state: financeModal, setState: setFinanceModal },
+    { id: "it", label: "IT Staff", icon: Cpu, component: CreateIT, state: itModal, setState: setITModal },
+    { id: "auditor", label: "Auditor", icon: FileSearch, component: CreateAuditor, state: auditorModal, setState: setAuditorModal },
+    { id: "reservations", label: "Reservations", icon: CalendarClock, component: CreateReservations, state: reservationsModal, setState: setReservationsModal },
+    { id: "admin", label: "Admin", icon: Shield, component: CreateAdmin, state: adminModal, setState: setAdminModal },
   ];
 
   return (
     <div className="container mx-auto p-4 md:p-6 bg-gray-50/50 min-h-screen">
-      <section className="mb-8 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
+      <section className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-2 border-b">
+        <div className="space-y-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 leading-none">
             {isLoadingAccount ? (
               <Skeleton className="h-9 w-64" />
             ) : (
-              `Welcome back, ${account?.name || "Admin"}`
+              `Hello, ${account?.name || "Admin"}`
             )}
-          </h2>
-          <p className="text-muted-foreground mt-1 text-sm md:text-base">
+          </h1>
+          <p className="text-muted-foreground text-sm md:text-base">
             Oversee staff, centers, feedback, and approvals.
           </p>
         </div>
@@ -132,19 +138,29 @@ function AdminDashboard() {
                 <ChevronDown className="ml-2 h-4 w-4 opacity-50 group-data-[state=open]:rotate-180 transition-transform" />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-64 p-2 shadow-2xl border-border/40 backdrop-blur-xl" align="end" sideOffset={8}>
-              <div className="grid gap-1">
+            <PopoverContent className="w-64 p-2 shadow-2xl border-primary/10" align="end" sideOffset={8}>
+              <div className="space-y-1">
                 <button
-                  className="flex items-center w-full px-4 py-3 text-sm font-semibold rounded-lg hover:bg-muted transition-colors text-left group"
-                  onClick={() => setIsCenterModalOpen(true)}
+                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group"
+                  onClick={() => setProfileModal(true)}
                 >
-                  <Building2 className="mr-3 h-4 w-4 text-primary opacity-70 group-hover:opacity-100" />
+                  <UserPen className="mr-3 h-4 w-4 text-primary" />
+                  Update Profile
+                </button>
+
+                <div className="h-px bg-border my-1 mx-2" />
+
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group"
+                  onClick={() => setCenterModal(true)}
+                >
+                  <Building2 className="mr-3 h-4 w-4 text-primary" />
                   Create Center
                 </button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="flex items-center w-full px-4 py-3 text-sm font-semibold rounded-lg hover:bg-muted transition-colors text-left group">
-                      <UserPlus className="mr-3 h-4 w-4 text-emerald-600 opacity-70 group-hover:opacity-100" />
+                    <button className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group">
+                      <UserPlus className="mr-3 h-4 w-4 text-emerald-600" />
                       Add Staff Member
                       <ChevronRight className="ml-auto h-4 w-4 opacity-40" />
                     </button>
@@ -156,8 +172,8 @@ function AdminDashboard() {
                       {roles.map((role) => (
                         <DropdownMenuItem
                           key={role.id}
-                          className="cursor-pointer py-2.5"
-                          onClick={() => setActiveRoleModal(role.id)}
+                          className="cursor-pointer py-2.5 font-semibold"
+                          onClick={() => role.setState(true)}
                         >
                           <role.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                           {role.label}
@@ -308,7 +324,7 @@ function AdminDashboard() {
                   <CentersTable centers={centers} role="admin" />
                 </div>
               ) : (
-                <div className="p-4 text-center text-muted-foreground bg-muted rounded-md">
+                <div className="p-4 text-center text-muted-foreground bg-muted rounded-md border border-dashed">
                   No centers available
                 </div>
               )}
@@ -386,14 +402,26 @@ function AdminDashboard() {
       </Tabs>
 
       <Modal
-        isOpen={isCenterModalOpen}
-        onClose={() => setIsCenterModalOpen(false)}
+        isOpen={centerModal}
+        onClose={() => setCenterModal(false)}
         title="Create New Center"
         className="max-w-md sm:max-w-lg"
       >
         <CreateCenter
           refetch={refetchCenters}
-          closeModal={() => setIsCenterModalOpen(false)}
+          closeModal={() => setCenterModal(false)}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={profileModal}
+        onClose={() => setProfileModal(false)}
+        title="Update Profile"
+      >
+        <UpdateProfile 
+          user={account} 
+          refetch={refetchAccount} 
+          onClose={() => setProfileModal(false)} 
         />
       </Modal>
 
@@ -402,14 +430,14 @@ function AdminDashboard() {
         return (
           <Modal
             key={role.id}
-            isOpen={activeRoleModal === role.id}
-            onClose={() => setActiveRoleModal(null)}
+            isOpen={role.state}
+            onClose={() => role.setState(false)}
             title={`Create ${role.label}`}
             className="max-w-md sm:max-w-lg"
           >
             <ActiveFormComponent
               refetch={refetchUsers}
-              closeModal={() => setActiveRoleModal(null)}
+              closeModal={() => role.setState(false)}
             />
           </Modal>
         );
@@ -418,6 +446,4 @@ function AdminDashboard() {
   );
 }
 
-
 export default AdminDashboard;
-
