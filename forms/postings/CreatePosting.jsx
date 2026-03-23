@@ -27,23 +27,27 @@ export default function CreatePosting({ closeModal, refetch, managers }) {
       initialValues={{
         title: "",
         posting_type: "", // Choices: Double, Triple, Quadruple, Pentuple
-        check_file: null,
-        journal_file: null,
+        uploaded_attachments: [],
         approvers: [],
       }}
       onSubmit={async (values) => {
         setLoading(true);
         try {
           const formData = new FormData();
-          if (values?.check_file)
-            formData.append("check_file", values?.check_file);
-          if (values?.journal_file)
-            formData.append("journal_file", values?.journal_file);
-          formData.append("title", values?.title);
-          formData.append("posting_type", values?.posting_type);
+
+          if (values.uploaded_attachments && values.uploaded_attachments.length > 0) {
+            values.uploaded_attachments.forEach((file) => {
+              formData.append("uploaded_attachments", file);
+            });
+          }
+
+          formData.append("title", values.title);
+          formData.append("posting_type", values.posting_type);
+
           values.approvers.forEach((approver) => {
             formData.append("approvers", approver);
           });
+
           await createPosting(formData, token);
           toast.success("Posting created successfully");
           closeModal();
@@ -56,16 +60,8 @@ export default function CreatePosting({ closeModal, refetch, managers }) {
         }
       }}
     >
-      {({ setFieldValue }) => (
-        <Form className="w-full max-w-4xl mx-auto space-y-6">
-          <section className="mb-6">
-            <h2 className="text-2xl font-bold text-foreground">
-              Create Posting
-            </h2>
-            <p className="text-muted-foreground text-sm">
-              Fill in the details to create a new posting.
-            </p>
-          </section>
+      {({ values, setFieldValue }) => (
+        <Form className="w-full container p-4 mx-auto space-y-6">
 
           {/* Posting Details */}
           <div className="space-y-4">
@@ -97,31 +93,21 @@ export default function CreatePosting({ closeModal, refetch, managers }) {
                 </Field>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="check_file">Check File</Label>
-                <Input
-                  type="file"
-                  name="check_file"
-                  id="check_file"
-                  onChange={(e) =>
-                    setFieldValue("check_file", e.target.files[0])
-                  }
-                  className="file:text-foreground"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="journal_file">Journal File</Label>
-                <Input
-                  type="file"
-                  name="journal_file"
-                  id="journal_file"
-                  onChange={(e) =>
-                    setFieldValue("journal_file", e.target.files[0])
-                  }
-                  className="file:text-foreground"
-                />
-              </div>
+            <div className="grid gap-2">
+              <Label htmlFor="uploaded_attachments">Attachments</Label>
+              <Input
+                type="file"
+                multiple
+                name="uploaded_attachments"
+                id="uploaded_attachments"
+                onChange={(e) =>
+                  setFieldValue("uploaded_attachments", Array.from(e.target.files))
+                }
+                className="file:text-foreground"
+              />
+              <p className="text-[10px] text-muted-foreground italic">
+                {values.uploaded_attachments.length > 0 ? `${values.uploaded_attachments.length} files selected` : "Upload attachments"}
+              </p>
             </div>
           </div>
 
@@ -166,7 +152,7 @@ export default function CreatePosting({ closeModal, refetch, managers }) {
             <Button type="button" variant="outline" onClick={closeModal}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading || values.approvers.length === 0}>
               {loading ? "Creating..." : "Create Posting"}
             </Button>
           </div>

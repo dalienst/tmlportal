@@ -7,6 +7,14 @@ import { useFetchAccount } from "@/hooks/accounts/actions";
 import { useFetchCenters } from "@/hooks/centers/actions";
 import { useFetchFeedbackForms } from "@/hooks/feedbackforms/actions";
 import React, { useState } from "react";
+import Modal from "@/components/general/Modal";
+import UpdateProfile from "@/forms/accounts/UpdateProfile";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Plus, ChevronDown, UserPen, Building2 } from "lucide-react";
 
 function Reservations() {
   const {
@@ -26,17 +34,60 @@ function Reservations() {
   } = useFetchFeedbackForms();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [profileModal, setProfileModal] = useState(false);
 
   if (isLoadingAccount || isLoadingCenters || isLoadingFeedbackForms) {
     return <LoadingSpinner />;
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-6 bg-background min-h-screen">
-      <section className="mb-6">
-        <h2 className="text-xl md:text-2xl font-bold text-black text-center sm:text-left">
-          Hello {account?.name || "User"}
-        </h2>
+    <div className="container mx-auto p-4 md:p-6 bg-gray-50/50 min-h-screen">
+      <section className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-2 border-b">
+        <div className="space-y-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 leading-none">
+            {isLoadingAccount ? (
+              <Skeleton className="h-9 w-64" />
+            ) : (
+              `Hello, ${account?.name || "User"}`
+            )}
+          </h1>
+          <p className="text-muted-foreground text-sm md:text-base">
+            Manage centers and feedback forms.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="inline-flex items-center justify-center rounded-xl text-sm font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-6 shadow-lg shadow-primary/20 cursor-pointer group whitespace-nowrap">
+                <Plus className="mr-2 h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
+                Quick Actions
+                <ChevronDown className="ml-2 h-4 w-4 opacity-50 group-data-[state=open]:rotate-180 transition-transform" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-2 shadow-2xl border-primary/10" align="end" sideOffset={8}>
+              <div className="space-y-1">
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group"
+                  onClick={() => setProfileModal(true)}
+                >
+                  <UserPen className="mr-3 h-4 w-4 text-primary" />
+                  Update Profile
+                </button>
+
+                <div className="h-px bg-border my-1 mx-2" />
+
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-semibold rounded-lg hover:bg-muted transition-colors text-left group"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  <Building2 className="mr-3 h-4 w-4 text-primary opacity-70 group-hover:opacity-100" />
+                  Create Center
+                </button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
       </section>
 
       <section id="summary" className="mb-6">
@@ -84,22 +135,29 @@ function Reservations() {
         </div>
       </section>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto">
-            <button
-              className="absolute top-2 right-2 text-black hover:text-primary"
-              onClick={() => setIsModalOpen(false)}
-            >
-              ✕
-            </button>
-            <CreateCenter
-              refetch={refetchCenters}
-              closeModal={() => setIsModalOpen(false)}
-            />
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Create New Center"
+        className="max-w-md"
+      >
+        <CreateCenter
+          refetch={refetchCenters}
+          closeModal={() => setIsModalOpen(false)}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={profileModal}
+        onClose={() => setProfileModal(false)}
+        title="Update Profile"
+      >
+        <UpdateProfile 
+          user={account} 
+          refetch={refetchAccount} 
+          onClose={() => setProfileModal(false)} 
+        />
+      </Modal>
     </div>
   );
 }

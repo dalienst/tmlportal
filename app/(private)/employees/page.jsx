@@ -24,6 +24,14 @@ import { useFetchApprovalRequests } from "@/hooks/approvalrequests/actions";
 import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 import { useFetchPostings } from "@/hooks/postings/actions";
 import { useFetchRevenueCenters } from "@/hooks/revenuecenters/actions";
+import Modal from "@/components/general/Modal";
+import UpdateProfile from "@/forms/accounts/UpdateProfile";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ChevronDown, UserPen, Send } from "lucide-react";
 
 function EmployeeDashboard() {
   const {
@@ -65,6 +73,7 @@ function EmployeeDashboard() {
   const [creditNoteModal, setCreditNoteModal] = useState(false);
   const [postingModal, setPostingModal] = useState(false);
   const [approvalRequestModal, setApprovalRequestModal] = useState(false);
+  const [profileModal, setProfileModal] = useState(false);
 
   if (
     isLoadingAccount ||
@@ -77,40 +86,66 @@ function EmployeeDashboard() {
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-6 min-h-screen bg-muted/30 space-y-8">
-      <section className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-            Hello, {account?.name || "User"}
+    <div className="container mx-auto p-4 md:p-6 min-h-screen bg-gray-50/50 space-y-8">
+      <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-2 border-b">
+        <div className="space-y-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 leading-none">
+            {isLoadingAccount ? (
+              <Skeleton className="h-9 w-64" />
+            ) : (
+              `Hello, ${account?.name || "User"}`
+            )}
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm md:text-base">
+          <p className="text-muted-foreground text-sm md:text-base">
             Welcome to your employee dashboard.
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-2 sm:gap-3">
-          <Button
-            onClick={() => setCreditNoteModal(true)}
-            className="flex-1 sm:flex-none gap-2 text-xs sm:text-sm"
-          >
-            <Plus className="h-4 w-4" />
-            New Credit Note
-          </Button>
-          <Button
-            onClick={() => setPostingModal(true)}
-            className="flex-1 sm:flex-none gap-2 text-xs sm:text-sm"
-          >
-            <Plus className="h-4 w-4" />
-            New Posting
-          </Button>
-          <Button
-            onClick={() => setApprovalRequestModal(true)}
-            variant="secondary"
-            className="w-full sm:w-auto gap-2 text-xs sm:text-sm"
-          >
-            <FilePlus className="h-4 w-4" />
-            New Request
-          </Button>
+        <div className="flex items-center gap-3">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="inline-flex items-center justify-center rounded-xl text-sm font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-6 shadow-lg shadow-primary/20 cursor-pointer group whitespace-nowrap">
+                <Plus className="mr-2 h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
+                Quick Actions
+                <ChevronDown className="ml-2 h-4 w-4 opacity-50 group-data-[state=open]:rotate-180 transition-transform" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-2 shadow-2xl border-primary/10" align="end" sideOffset={8}>
+              <div className="space-y-1">
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group"
+                  onClick={() => setProfileModal(true)}
+                >
+                  <UserPen className="mr-3 h-4 w-4 text-primary" />
+                  Update Profile
+                </button>
+
+                <div className="h-px bg-border my-1 mx-2" />
+
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-semibold rounded-lg hover:bg-muted transition-colors text-left group"
+                  onClick={() => setCreditNoteModal(true)}
+                >
+                  <CreditCard className="mr-3 h-4 w-4 text-primary opacity-70 group-hover:opacity-100" />
+                  New Credit Note
+                </button>
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-semibold rounded-lg hover:bg-muted transition-colors text-left group"
+                  onClick={() => setPostingModal(true)}
+                >
+                  <Plus className="mr-3 h-4 w-4 text-emerald-600 opacity-70 group-hover:opacity-100" />
+                  New Posting
+                </button>
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-semibold rounded-lg hover:bg-muted transition-colors text-left group"
+                  onClick={() => setApprovalRequestModal(true)}
+                >
+                  <Send className="mr-3 h-4 w-4 text-blue-600 opacity-70 group-hover:opacity-100" />
+                  New Request
+                </button>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </section>
 
@@ -200,46 +235,44 @@ function EmployeeDashboard() {
       </div>
 
       {/* Manual Modal Implementation */}
-      {creditNoteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-4xl bg-background rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
-            <button
-              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground z-10"
-              onClick={() => setCreditNoteModal(false)}
-            >
-              ✕
-            </button>
-            <div className="p-6">
-              <CreateCreditNote
-                revenueCenters={revenueCenters}
-                managers={managers}
-                refetch={refetchCreditNotes}
-                closeModal={() => setCreditNoteModal(false)}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={creditNoteModal}
+        onClose={() => setCreditNoteModal(false)}
+        title="Create Credit Note"
+        className="max-w-4xl"
+      >
+        <CreateCreditNote
+          revenueCenters={revenueCenters}
+          managers={managers}
+          refetch={refetchCreditNotes}
+          closeModal={() => setCreditNoteModal(false)}
+        />
+      </Modal>
 
-      {postingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-4xl bg-background rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
-            <button
-              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground z-10"
-              onClick={() => setPostingModal(false)}
-            >
-              ✕
-            </button>
-            <div className="p-6">
-              <CreatePosting
-                managers={managers}
-                refetch={refetchPostings}
-                closeModal={() => setPostingModal(false)}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={postingModal}
+        onClose={() => setPostingModal(false)}
+        title="Create Posting"
+        className="max-w-4xl"
+      >
+        <CreatePosting
+          managers={managers}
+          refetch={refetchPostings}
+          closeModal={() => setPostingModal(false)}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={profileModal}
+        onClose={() => setProfileModal(false)}
+        title="Update Profile"
+      >
+        <UpdateProfile 
+          user={account} 
+          refetch={refetchAccount} 
+          onClose={() => setProfileModal(false)} 
+        />
+      </Modal>
 
       <CreateApprovalRequest
         isOpen={approvalRequestModal}

@@ -14,3 +14,21 @@ export const getRevenueCenter = async (name, token) => {
   );
   return response.data || {};
 };
+
+export const createRevenueCenter = async (data, token) => {
+  const response = await apiActions.post(
+    `/api/v1/revenuecenters/`,
+    data,
+    token,
+  );
+  return response.data || {};
+};
+
+export const updateRevenueCenter = async (name, data, token) => {
+  const response = await apiActions.put(
+    `/api/v1/revenuecenters/${name}/`,
+    data,
+    token,
+  );
+  return response.data || {};
+};

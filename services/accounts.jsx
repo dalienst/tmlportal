@@ -31,3 +31,42 @@ export const resetPassword = async (values) => {
   // user enters their email, code, and new password
   await apiActions?.post("/api/v1/auth/password/reset/", values);
 };
+
+// Admin activities
+// Values
+// email
+// username
+// name
+// password
+
+export const createManager = async (values) => {
+  await apiActions?.post("/api/v1/auth/signup/manager/", values);
+};
+
+export const createEmployee = async (values) => {
+  await apiActions?.post("/api/v1/auth/signup/employee/", values);
+};
+
+export const createGM = async (values) => {
+  await apiActions?.post("/api/v1/auth/signup/gm/", values);
+};
+
+export const createFinance = async (values) => {
+  await apiActions?.post("/api/v1/auth/signup/finance/", values);
+};
+
+export const createIT = async (values) => {
+  await apiActions?.post("/api/v1/auth/signup/it/", values);
+};
+
+export const createAuditor = async (values) => {
+  await apiActions?.post("/api/v1/auth/signup/auditor/", values);
+};
+
+export const createReservations = async (values) => {
+  await apiActions?.post("/api/v1/auth/signup/reservations/", values);
+};
+
+export const createAdmin = async (values) => {
+  await apiActions?.post("/api/v1/auth/signup/admin/", values);
+};

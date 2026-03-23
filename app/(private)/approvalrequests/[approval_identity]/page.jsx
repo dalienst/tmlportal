@@ -208,18 +208,39 @@ export default function ApprovalRequestDetail() {
                 </p>
               </div>
 
+              {request.attachments && request.attachments.length > 0 && (
+                <div className="space-y-2 pt-2">
+                  <Label className="text-xs text-muted-foreground uppercase tracking-wider block">
+                    Attachments
+                  </Label>
+                  <div className="flex flex-wrap gap-3">
+                    {request.attachments.map((attachment, idx) => (
+                      <Button
+                        key={attachment.id || idx}
+                        variant="outline"
+                        size="sm"
+                        asChild
+                        className="gap-2"
+                      >
+                        <a
+                          href={attachment.file}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <FileText className="h-3 w-3" />
+                          File {idx + 1}
+                          {attachment.reference && (
+                            <span className="text-[10px] opacity-70 ml-1">
+                              ({attachment.reference})
+                            </span>
+                          )}
+                        </a>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div className="flex flex-wrap gap-4 pt-2">
-                {request.attachment && (
-                  <Button variant="outline" size="sm" asChild className="gap-2">
-                    <a
-                      href={request.attachment}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <FileText className="h-3 w-3" /> View Attachment
-                    </a>
-                  </Button>
-                )}
                 {request.credit_note && (
                   <Button
                     variant="secondary"
@@ -342,7 +363,7 @@ export default function ApprovalRequestDetail() {
                               )}
                             </TableCell>
                           </TableRow>
-                        );
+                        )
                       })}
                     </TableBody>
                   </Table>
@@ -517,20 +538,36 @@ export default function ApprovalRequestDetail() {
                 </div>
               </div>
             </div>
-            {request.credit_note_details.attachment && (
-              <DialogFooter className="sm:justify-start">
-                <Button variant="outline" size="sm" asChild>
-                  <a
-                    href={request.credit_note_details.attachment}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <FileText className="mr-2 h-4 w-4" /> Original Receipt /
-                    File
-                  </a>
-                </Button>
-              </DialogFooter>
-            )}
+            {request.credit_note_details.attachments &&
+              request.credit_note_details.attachments.length > 0 && (
+                <div className="col-span-2 space-y-2 pt-4 border-t">
+                  <Label className="text-xs text-muted-foreground uppercase tracking-wider block">
+                    Original Documents
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {request.credit_note_details.attachments.map(
+                      (attachment, idx) => (
+                        <Button
+                          key={attachment.id || idx}
+                          variant="outline"
+                          size="sm"
+                          asChild
+                          className="h-8 py-0"
+                        >
+                          <a
+                            href={attachment.file}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <FileText className="mr-2 h-3 w-3" />
+                            File {idx + 1}
+                          </a>
+                        </Button>
+                      )
+                    )}
+                  </div>
+                </div>
+              )}
           </DialogContent>
         </Dialog>
       )}
@@ -579,30 +616,36 @@ export default function ApprovalRequestDetail() {
                 </div>
               </div>
             </div>
-            <DialogFooter className="sm:justify-start gap-2">
-              {request.posting_details.check_file && (
-                <Button variant="outline" size="sm" asChild>
-                  <a
-                    href={request.posting_details.check_file}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <File className="mr-2 h-4 w-4" /> Check File
-                  </a>
-                </Button>
+            {request.posting_details.attachments &&
+              request.posting_details.attachments.length > 0 && (
+                <div className="col-span-2 space-y-2 pt-4 border-t">
+                  <Label className="text-xs text-muted-foreground uppercase tracking-wider block">
+                    Posting Documents
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {request.posting_details.attachments.map(
+                      (attachment, idx) => (
+                        <Button
+                          key={attachment.id || idx}
+                          variant="outline"
+                          size="sm"
+                          asChild
+                          className="h-8 py-0"
+                        >
+                          <a
+                            href={attachment.file}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <File className="mr-2 h-3 w-3" />
+                            File {idx + 1}
+                          </a>
+                        </Button>
+                      )
+                    )}
+                  </div>
+                </div>
               )}
-              {request.posting_details.journal_file && (
-                <Button variant="outline" size="sm" asChild>
-                  <a
-                    href={request.posting_details.journal_file}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <File className="mr-2 h-4 w-4" /> Journal File
-                  </a>
-                </Button>
-              )}
-            </DialogFooter>
           </DialogContent>
         </Dialog>
       )}

@@ -10,11 +10,18 @@ import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNot
 import PostingsTable from "@/components/postings/PostingsTable";
 import ApprovalStepsTable from "@/components/approvalsteps/ApprovalStepsTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, ListChecks } from "lucide-react";
+import { FileText, ListChecks, Plus, ChevronDown, UserPen } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import Modal from "@/components/general/Modal";
+import UpdateProfile from "@/forms/accounts/UpdateProfile";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 function GeneralManager() {
-  const { isLoading: isLoadingAccount, data: account } = useFetchAccount();
+  const { isLoading: isLoadingAccount, data: account, refetch: refetchAccount } = useFetchAccount();
 
   const {
     isLoading: isLoadingCreditNotes,
@@ -35,20 +42,45 @@ function GeneralManager() {
     (step) => step.approver === account?.email && step.status === "Pending",
   );
 
+  const [profileModal, setProfileModal] = useState(false);
+
   return (
     <div className="container mx-auto p-4 md:p-6 bg-gray-50/50 min-h-screen">
-      <section className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
+      <section className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-2 border-b">
+        <div className="space-y-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 leading-none">
             {isLoadingAccount ? (
               <Skeleton className="h-9 w-64" />
             ) : (
-              `Welcome back, ${account?.name || "General Manager"}`
+              `Hello, ${account?.name || "General Manager"}`
             )}
-          </h2>
-          <p className="text-muted-foreground mt-1 text-sm md:text-base">
+          </h1>
+          <p className="text-muted-foreground text-sm md:text-base">
             Oversee feedback and approvals.
           </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="inline-flex items-center justify-center rounded-xl text-sm font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-6 shadow-lg shadow-primary/20 cursor-pointer group">
+                <Plus className="mr-2 h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
+                Quick Actions
+                <ChevronDown className="ml-2 h-4 w-4 opacity-50 group-data-[state=open]:rotate-180 transition-transform" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-2 shadow-2xl border-primary/10" align="end" sideOffset={8}>
+              <div className="space-y-1">
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group"
+                  onClick={() => setProfileModal(true)}
+                >
+                  <UserPen className="mr-3 h-4 w-4 text-primary" />
+                  Update Profile
+                </button>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </section>
 
@@ -197,6 +229,18 @@ function GeneralManager() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <Modal
+        isOpen={profileModal}
+        onClose={() => setProfileModal(false)}
+        title="Update Profile"
+      >
+        <UpdateProfile 
+          user={account} 
+          refetch={refetchAccount} 
+          onClose={() => setProfileModal(false)} 
+        />
+      </Modal>
     </div>
   );
 }

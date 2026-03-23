@@ -3,78 +3,217 @@
 import CentersTable from "@/components/centers/CentersTable";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import CreateCenter from "@/forms/centers/CreateCenter";
+import CreateManager from "@/forms/admin/roles/CreateManager";
+import CreateEmployee from "@/forms/admin/roles/CreateEmployee";
+import CreateGM from "@/forms/admin/roles/CreateGM";
+import CreateFinance from "@/forms/admin/roles/CreateFinance";
+import CreateIT from "@/forms/admin/roles/CreateIT";
+import CreateAuditor from "@/forms/admin/roles/CreateAuditor";
+import CreateReservations from "@/forms/admin/roles/CreateReservations";
+import CreateAdmin from "@/forms/admin/roles/CreateAdmin";
+import UsersTable from "@/components/admin/UsersTable";
+import RevenueCentersTable from "@/components/revenuecenters/RevenueCentersTable";
+import CreateRevenueCenter from "@/forms/revenuecenters/CreateRevenueCenter";
+import UpdateRevenueCenter from "@/forms/revenuecenters/UpdateRevenueCenter";
+import Modal from "@/components/general/Modal";
+import UpdateProfile from "@/forms/accounts/UpdateProfile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useFetchAccount } from "@/hooks/accounts/actions";
+import { useFetchAccount, useFetchUsers } from "@/hooks/accounts/actions";
 import { useFetchApprovalRequests } from "@/hooks/approvalrequests/actions";
 import { useFetchApprovalSteps } from "@/hooks/approvalsteps/actions";
 import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 import { useFetchCenters } from "@/hooks/centers/actions";
 import { useFetchFeedbackForms } from "@/hooks/feedbackforms/actions";
+import { useFetchRevenueCenters } from "@/hooks/revenuecenters/actions";
 import React, { useState } from "react";
 import EmployeeApprovalRequestTable from "@/components/approvalrequests/EmployeeApprovalRequestTable";
 import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
 import ApprovalStepsTable from "@/components/approvalsteps/ApprovalStepsTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuPortal,
+} from "@/components/ui/dropdown-menu";
+import {
   Building2,
   MessageSquare,
   FileText,
   CheckSquare,
   ListChecks,
+  Users,
+  UserPlus,
+  Plus,
+  ChevronDown,
+  ChevronRight,
+  UserCog,
+  User,
+  ShieldCheck,
+  Coins,
+  Cpu,
+  FileSearch,
+  CalendarClock,
+  Shield,
+  UserPen,
+  Wallet,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 function AdminDashboard() {
-  const { isLoading: isLoadingAccount, data: account } = useFetchAccount();
+  const { isLoading: isLoadingAccount, data: account, refetch: refetchAccount } = useFetchAccount();
   const {
     isLoading: isLoadingCenters,
     data: centers,
     refetch: refetchCenters,
   } = useFetchCenters();
+  const {
+    isLoading: isLoadingRevenueCenters,
+    data: revenueCenters,
+    refetch: refetchRevenueCenters,
+  } = useFetchRevenueCenters();
   const { isLoading: isLoadingFeedbackForms, data: feedbackForms } =
     useFetchFeedbackForms();
-
   const { isLoading: isLoadingCreditNotes, data: creditNotes } =
     useFetchCreditNotes();
-
   const { isLoading: isLoadingApprovalRequest, data: approvalRequests } =
     useFetchApprovalRequests();
-
   const { isLoading: isLoadingApprovalSteps, data: approvalSteps } =
     useFetchApprovalSteps();
+  const {
+    isLoading: isLoadingUsers,
+    data: users,
+    refetch: refetchUsers,
+  } = useFetchUsers();
 
   const userPendingSteps = approvalSteps?.filter(
     (step) => step.approver === account?.email && step.status === "Pending",
   );
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [centerModal, setCenterModal] = useState(false);
+  const [revenueCenterModal, setRevenueCenterModal] = useState(false);
+  const [updateRevenueCenterModal, setUpdateRevenueCenterModal] = useState(false);
+  const [selectedRevenueCenter, setSelectedRevenueCenter] = useState(null);
+  const [managerModal, setManagerModal] = useState(false);
+  const [employeeModal, setEmployeeModal] = useState(false);
+  const [gmModal, setGMModal] = useState(false);
+  const [financeModal, setFinanceModal] = useState(false);
+  const [itModal, setITModal] = useState(false);
+  const [auditorModal, setAuditorModal] = useState(false);
+  const [reservationsModal, setReservationsModal] = useState(false);
+  const [adminModal, setAdminModal] = useState(false);
+  const [profileModal, setProfileModal] = useState(false);
+
+  const roles = [
+    { id: "manager", label: "Manager", icon: UserCog, component: CreateManager, state: managerModal, setState: setManagerModal },
+    { id: "employee", label: "Employee", icon: User, component: CreateEmployee, state: employeeModal, setState: setEmployeeModal },
+    { id: "gm", label: "General Manager", icon: ShieldCheck, component: CreateGM, state: gmModal, setState: setGMModal },
+    { id: "finance", label: "Finance", icon: Coins, component: CreateFinance, state: financeModal, setState: setFinanceModal },
+    { id: "it", label: "IT Staff", icon: Cpu, component: CreateIT, state: itModal, setState: setITModal },
+    { id: "auditor", label: "Auditor", icon: FileSearch, component: CreateAuditor, state: auditorModal, setState: setAuditorModal },
+    { id: "reservations", label: "Reservations", icon: CalendarClock, component: CreateReservations, state: reservationsModal, setState: setReservationsModal },
+    { id: "admin", label: "Admin", icon: Shield, component: CreateAdmin, state: adminModal, setState: setAdminModal },
+  ];
+
+  const handleEditRevenueCenter = (center) => {
+    setSelectedRevenueCenter(center);
+    setUpdateRevenueCenterModal(true);
+  };
 
   return (
     <div className="container mx-auto p-4 md:p-6 bg-gray-50/50 min-h-screen">
-      <section className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
+      <section className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-2 border-b">
+        <div className="space-y-1">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 leading-none">
             {isLoadingAccount ? (
               <Skeleton className="h-9 w-64" />
             ) : (
-              `Welcome back, ${account?.name || "Admin"}`
+              `Hello, ${account?.name || "Admin"}`
             )}
-          </h2>
-          <p className="text-muted-foreground mt-1 text-sm md:text-base">
-            Oversee centers, feedback, and approvals.
+          </h1>
+          <p className="text-muted-foreground text-sm md:text-base">
+            Oversee staff, centers, feedback, and approvals.
           </p>
         </div>
-        <div className="w-full sm:w-auto">
-          <button
-            className="inline-flex w-full sm:w-auto items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 shadow"
-            onClick={() => setIsModalOpen(true)}
-          >
-            Create Center
-          </button>
+        
+        <div className="flex items-center gap-3">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="inline-flex items-center justify-center rounded-xl text-sm font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-6 shadow-lg shadow-primary/20 cursor-pointer group">
+                <Plus className="mr-2 h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
+                Quick Actions
+                <ChevronDown className="ml-2 h-4 w-4 opacity-50 group-data-[state=open]:rotate-180 transition-transform" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-2 shadow-2xl border-primary/10" align="end" sideOffset={8}>
+              <div className="space-y-1">
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group"
+                  onClick={() => setProfileModal(true)}
+                >
+                  <UserPen className="mr-3 h-4 w-4 text-primary" />
+                  Update Profile
+                </button>
+
+                <div className="h-px bg-border my-1 mx-2" />
+
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group"
+                  onClick={() => setCenterModal(true)}
+                >
+                  <Building2 className="mr-3 h-4 w-4 text-primary" />
+                  Create Center
+                </button>
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group"
+                  onClick={() => setRevenueCenterModal(true)}
+                >
+                  <Wallet className="mr-3 h-4 w-4 text-indigo-600" />
+                  Create Revenue Center
+                </button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group">
+                      <UserPlus className="mr-3 h-4 w-4 text-emerald-600" />
+                      Add Staff Member
+                      <ChevronRight className="ml-auto h-4 w-4 opacity-40" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuContent className="w-56" align="start" side="right" sideOffset={10}>
+                      <DropdownMenuLabel>Select Staff Role</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {roles.map((role) => (
+                        <DropdownMenuItem
+                          key={role.id}
+                          className="cursor-pointer py-2.5 font-semibold"
+                          onClick={() => role.setState(true)}
+                        >
+                          <role.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+                          {role.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenuPortal>
+                </DropdownMenu>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </section>
 
-      <section className="mb-8 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="mb-8 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">My Actions</CardTitle>
@@ -90,6 +229,24 @@ function AdminDashboard() {
             </div>
             <p className="text-xs text-muted-foreground">
               Steps requiring your attention
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Staff Members</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingUsers ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                users?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total registered staff
             </p>
           </CardContent>
         </Card>
@@ -111,7 +268,7 @@ function AdminDashboard() {
             </p>
           </CardContent>
         </Card>
-        <Card className="sm:col-span-2 lg:col-span-1">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Feedback Forms
@@ -133,9 +290,15 @@ function AdminDashboard() {
         </Card>
       </section>
 
-      <Tabs defaultValue="centers" className="w-full">
+      <Tabs defaultValue="users" className="w-full">
         <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-          <TabsList className="flex w-max sm:grid sm:w-full sm:grid-cols-4 lg:w-[600px]">
+          <TabsList className="flex w-max sm:grid sm:w-full sm:grid-cols-6 lg:w-[900px]">
+            <TabsTrigger value="users" className="min-w-[100px]">
+              Users
+            </TabsTrigger>
+            <TabsTrigger value="revenue-centers" className="min-w-[100px]">
+              Rev Centers
+            </TabsTrigger>
             <TabsTrigger value="centers" className="min-w-[100px]">
               Centers
             </TabsTrigger>
@@ -150,6 +313,51 @@ function AdminDashboard() {
             </TabsTrigger>
           </TabsList>
         </div>
+
+        <TabsContent value="users" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Staff Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingUsers ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <UsersTable users={users} refetch={refetchUsers} />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="revenue-centers" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Revenue Centers Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingRevenueCenters ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : (
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <RevenueCentersTable 
+                    revenueCenters={revenueCenters} 
+                    onEdit={handleEditRevenueCenter} 
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="centers" className="mt-4">
           <Card>
@@ -168,7 +376,7 @@ function AdminDashboard() {
                   <CentersTable centers={centers} role="admin" />
                 </div>
               ) : (
-                <div className="p-4 text-center text-muted-foreground bg-muted rounded-md">
+                <div className="p-4 text-center text-muted-foreground bg-muted rounded-md border border-dashed">
                   No centers available
                 </div>
               )}
@@ -245,22 +453,72 @@ function AdminDashboard() {
         </TabsContent>
       </Tabs>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto relative border">
-            <button
-              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setIsModalOpen(false)}
-            >
-              ✕
-            </button>
-            <CreateCenter
-              refetch={refetchCenters}
-              closeModal={() => setIsModalOpen(false)}
+      <Modal
+        isOpen={centerModal}
+        onClose={() => setCenterModal(false)}
+        title="Create New Center"
+        className="max-w-md sm:max-w-lg"
+      >
+        <CreateCenter
+          refetch={refetchCenters}
+          closeModal={() => setCenterModal(false)}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={revenueCenterModal}
+        onClose={() => setRevenueCenterModal(false)}
+        title="Create Revenue Center"
+        className="max-w-md sm:max-w-lg"
+      >
+        <CreateRevenueCenter
+          refetch={refetchRevenueCenters}
+          closeModal={() => setRevenueCenterModal(false)}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={updateRevenueCenterModal}
+        onClose={() => setUpdateRevenueCenterModal(false)}
+        title="Update Revenue Center"
+        className="max-w-md sm:max-w-lg"
+      >
+        <UpdateRevenueCenter
+          revenueCenter={selectedRevenueCenter}
+          refetch={refetchRevenueCenters}
+          closeModal={() => setUpdateRevenueCenterModal(false)}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={profileModal}
+        onClose={() => setProfileModal(false)}
+        title="Update Profile"
+      >
+        <UpdateProfile 
+          user={account} 
+          refetch={refetchAccount} 
+          onClose={() => setProfileModal(false)} 
+        />
+      </Modal>
+
+      {roles.map((role) => {
+        const ActiveFormComponent = role.component;
+        return (
+          <Modal
+            key={role.id}
+            isOpen={role.state}
+            onClose={() => role.setState(false)}
+            title={`Create ${role.label}`}
+            className="max-w-md sm:max-w-lg"
+          >
+            <ActiveFormComponent
+              refetch={refetchUsers}
+              closeModal={() => role.setState(false)}
             />
-          </div>
-        </div>
-      )}
+          </Modal>
+        );
+      })}
     </div>
   );
 }
