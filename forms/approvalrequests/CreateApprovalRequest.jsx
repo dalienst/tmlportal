@@ -33,7 +33,7 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers, refetch
           request_type: "",
           title: "",
           description: "",
-          attachments: [],
+          uploaded_attachments: [],
           approvers: [],
           credit_note: "",
         }}
@@ -45,9 +45,9 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers, refetch
             formData.append("title", values.title);
             formData.append("description", values.description);
             
-            if (values.attachments && values.attachments.length > 0) {
-              values.attachments.forEach((file) => {
-                formData.append("attachments", file);
+            if (values.uploaded_attachments && values.uploaded_attachments.length > 0) {
+              values.uploaded_attachments.forEach((file) => {
+                formData.append("uploaded_attachments", file);
               });
             }
 
@@ -149,16 +149,16 @@ function CreateApprovalRequest({ isOpen, onClose, creditNotes, managers, refetch
 
             {/* Attachments */}
             <div className="grid gap-2">
-              <Label htmlFor="attachments">Attachments (Optional)</Label>
+              <Label htmlFor="uploaded_attachments">Attachments (Optional)</Label>
               <Input
                 type="file"
                 multiple
-                id="attachments"
-                onChange={(e) => setFieldValue("attachments", Array.from(e.target.files))}
+                id="uploaded_attachments"
+                onChange={(e) => setFieldValue("uploaded_attachments", Array.from(e.target.files))}
                 className="file:text-foreground"
               />
               <p className="text-[10px] text-muted-foreground italic">
-                {values.attachments.length > 0 ? `${values.attachments.length} files selected` : "Select one or more files"}
+                {values.uploaded_attachments.length > 0 ? `${values.uploaded_attachments.length} files selected` : "Select one or more files"}
               </p>
             </div>
 

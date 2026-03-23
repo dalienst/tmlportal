@@ -27,8 +27,7 @@ export default function CreatePosting({ closeModal, refetch, managers }) {
       initialValues={{
         title: "",
         posting_type: "", // Choices: Double, Triple, Quadruple, Pentuple
-        check_files: [],
-        journal_files: [],
+        uploaded_attachments: [],
         approvers: [],
       }}
       onSubmit={async (values) => {
@@ -36,15 +35,9 @@ export default function CreatePosting({ closeModal, refetch, managers }) {
         try {
           const formData = new FormData();
 
-          if (values.check_files && values.check_files.length > 0) {
-            values.check_files.forEach((file) => {
-              formData.append("check_files", file);
-            });
-          }
-
-          if (values.journal_files && values.journal_files.length > 0) {
-            values.journal_files.forEach((file) => {
-              formData.append("journal_files", file);
+          if (values.uploaded_attachments && values.uploaded_attachments.length > 0) {
+            values.uploaded_attachments.forEach((file) => {
+              formData.append("uploaded_attachments", file);
             });
           }
 
@@ -100,39 +93,21 @@ export default function CreatePosting({ closeModal, refetch, managers }) {
                 </Field>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="check_files">Check Files</Label>
-                <Input
-                  type="file"
-                  multiple
-                  name="check_files"
-                  id="check_files"
-                  onChange={(e) =>
-                    setFieldValue("check_files", Array.from(e.target.files))
-                  }
-                  className="file:text-foreground"
-                />
-                <p className="text-[10px] text-muted-foreground italic">
-                  {values.check_files.length > 0 ? `${values.check_files.length} files selected` : "Upload check files"}
-                </p>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="journal_files">Journal Files</Label>
-                <Input
-                  type="file"
-                  multiple
-                  name="journal_files"
-                  id="journal_files"
-                  onChange={(e) =>
-                    setFieldValue("journal_files", Array.from(e.target.files))
-                  }
-                  className="file:text-foreground"
-                />
-                <p className="text-[10px] text-muted-foreground italic">
-                  {values.journal_files.length > 0 ? `${values.journal_files.length} files selected` : "Upload journal files"}
-                </p>
-              </div>
+            <div className="grid gap-2">
+              <Label htmlFor="uploaded_attachments">Attachments</Label>
+              <Input
+                type="file"
+                multiple
+                name="uploaded_attachments"
+                id="uploaded_attachments"
+                onChange={(e) =>
+                  setFieldValue("uploaded_attachments", Array.from(e.target.files))
+                }
+                className="file:text-foreground"
+              />
+              <p className="text-[10px] text-muted-foreground italic">
+                {values.uploaded_attachments.length > 0 ? `${values.uploaded_attachments.length} files selected` : "Upload attachments"}
+              </p>
             </div>
           </div>
 
