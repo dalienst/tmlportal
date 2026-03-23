@@ -308,19 +308,134 @@ function EmployeeApprovalRequestTable({ approvalRequests }) {
                   ? `${selectedApprovalRequest.steps.length} step(s)`
                   : "N/A"}
               </div>
-              {selectedApprovalRequest.attachment && (
-                <div>
-                  <span className="font-semibold">Attachment:</span>{" "}
-                  <a
-                    href={selectedApprovalRequest.attachment}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
-                  >
-                    View Attachment
-                  </a>
-                </div>
-              )}
+
+              {/* Nested Details */}
+              {selectedApprovalRequest.request_type === "Credit Note" &&
+                selectedApprovalRequest.credit_note_details && (
+                  <div className="bg-muted/30 p-4 rounded-lg border space-y-2">
+                    <h4 className="font-semibold text-sm border-b pb-1">
+                      Related Credit Note Details
+                    </h4>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <span className="text-muted-foreground mr-2">
+                          Identity:
+                        </span>
+                        <span className="font-mono">
+                          {selectedApprovalRequest.credit_note_details.identity}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground mr-2">
+                          Customer:
+                        </span>
+                        <span>
+                          {
+                            selectedApprovalRequest.credit_note_details
+                              .customer_name
+                          }
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground mr-2">
+                          Amount:
+                        </span>
+                        <span className="font-bold">
+                          {
+                            selectedApprovalRequest.credit_note_details
+                              .currency
+                          }{" "}
+                          {parseFloat(
+                            selectedApprovalRequest.credit_note_details.amount,
+                          ).toFixed(2)}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground mr-2">
+                          Date:
+                        </span>
+                        <span>
+                          {
+                            selectedApprovalRequest.credit_note_details
+                              .transaction_date
+                          }
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+              {selectedApprovalRequest.request_type === "Posting" &&
+                selectedApprovalRequest.posting_details && (
+                  <div className="bg-muted/30 p-4 rounded-lg border space-y-2">
+                    <h4 className="font-semibold text-sm border-b pb-1">
+                      Related Posting Details
+                    </h4>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <span className="text-muted-foreground mr-2">
+                          Identity:
+                        </span>
+                        <span className="font-mono">
+                          {selectedApprovalRequest.posting_details.identity}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground mr-2">
+                          Title:
+                        </span>
+                        <span>
+                          {selectedApprovalRequest.posting_details.title}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground mr-2">
+                          Type:
+                        </span>
+                        <span>
+                          {selectedApprovalRequest.posting_details.posting_type}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground mr-2">
+                          Status:
+                        </span>
+                        <Badge variant="outline">
+                          {selectedApprovalRequest.posting_details.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+              {selectedApprovalRequest.attachments &&
+                selectedApprovalRequest.attachments.length > 0 && (
+                  <div>
+                    <span className="font-semibold block mb-2">
+                      Attachments:
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedApprovalRequest.attachments.map(
+                        (attachment, idx) => (
+                          <a
+                            key={attachment.id || idx}
+                            href={attachment.file}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center px-3 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-medium border border-blue-200 hover:bg-blue-100"
+                          >
+                            File {idx + 1}
+                            {attachment.reference && (
+                              <span className="text-[10px] opacity-70 ml-1">
+                                ({attachment.reference})
+                              </span>
+                            )}
+                          </a>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                )}
               <div>
                 <span className="font-semibold">Created At:</span>{" "}
                 {new Date(selectedApprovalRequest.created_at).toLocaleString()}

@@ -549,20 +549,39 @@ function EmployeeCreditNotesTable({ creditNotes, isIT, isManager, refetch }) {
                   </div>
                 )}
 
-              {selectedCreditNote.attachment && (
-                <div className="flex justify-end pt-2">
-                  <Button asChild variant="outline" className="gap-2">
-                    <a
-                      href={selectedCreditNote.attachment}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <FileText className="h-4 w-4" />
-                      View Attachment
-                    </a>
-                  </Button>
-                </div>
-              )}
+              {selectedCreditNote.attachments &&
+                selectedCreditNote.attachments.length > 0 && (
+                  <div className="space-y-2 pt-2">
+                    <h4 className="font-semibold text-foreground border-b pb-2">
+                      Attachments
+                    </h4>
+                    <div className="flex flex-wrap gap-3 pt-2">
+                      {selectedCreditNote.attachments.map((attachment, idx) => (
+                        <Button
+                          key={attachment.id || idx}
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="gap-2"
+                        >
+                          <a
+                            href={attachment.file}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <FileText className="h-4 w-4" />
+                            File {idx + 1}
+                            {attachment.reference && (
+                              <span className="text-[10px] opacity-70 ml-1 font-mono">
+                                ({attachment.reference})
+                              </span>
+                            )}
+                          </a>
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
               {(isIT || isManager) &&
                 selectedCreditNote.status === "Approved" && (
