@@ -29,7 +29,7 @@ import {
 import { Plus, ChevronDown, UserPen, CreditCard, FilePlus, Send } from "lucide-react";
 
 function Manager() {
-  const { isLoading: isLoadingAccount, data: account } = useFetchAccount();
+  const { isLoading: isLoadingAccount, data: account, refetch: refetchAccount } = useFetchAccount();
 
   const {
     isLoading: isLoadingRevenueCenters,
