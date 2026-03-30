@@ -31,3 +31,9 @@ export const getFeedbackForm = async (form_identity) => {
   );
   return response?.data || {};
 };
+
+
+export const getPublicFeedbackFormDetails = async (form_identity) => {
+  const response = await apiActions?.get(`/api/v1/feedbackforms/public/detail/${form_identity}/`);
+  return response?.data || {};
+};

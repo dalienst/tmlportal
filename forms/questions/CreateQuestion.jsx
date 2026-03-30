@@ -7,17 +7,12 @@ import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useQueryClient } from "@tanstack/react-query";
 
 function CreateQuestion({ feedbackForm, closeModal, refetch }) {
   const [loading, setLoading] = useState(false);
   const axios = useAxiosAuth();
+  const queryClient = useQueryClient();
 
   return (
     <Formik
@@ -32,7 +27,13 @@ function CreateQuestion({ feedbackForm, closeModal, refetch }) {
         try {
           await createQuestion(values, axios);
           toast.success("Question created successfully!");
-          refetch();
+
+          // Explicitly invalidate and refetch to ensure UI updates
+          await queryClient.invalidateQueries({
+            queryKey: ["feedbackforms", feedbackForm?.form_identity],
+          });
+
+          if (refetch) refetch();
           closeModal();
         } catch (error) {
           toast.error("Error creating question");
@@ -59,20 +60,21 @@ function CreateQuestion({ feedbackForm, closeModal, refetch }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="type">Type</Label>
-                <Select
+                <select
+                  id="type"
                   name="type"
-                  onValueChange={(value) => setFieldValue("type", value)}
-                  defaultValue={values.type}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={values.type}
+                  onChange={(e) => setFieldValue("type", e.target.value)}
+                  required
                 >
-                  <SelectTrigger id="type" className="w-full">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="RATING">Rating (Stars)</SelectItem>
-                    <SelectItem value="TEXT">Text Response</SelectItem>
-                    <SelectItem value="YES_NO">Yes/No Toggle</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <option value="" disabled>
+                    Select type
+                  </option>
+                  <option value="RATING">Rating (Stars)</option>
+                  <option value="TEXT">Text Response</option>
+                  <option value="YES_NO">Yes/No Toggle</option>
+                </select>
               </div>
 
               <div className="space-y-2">
