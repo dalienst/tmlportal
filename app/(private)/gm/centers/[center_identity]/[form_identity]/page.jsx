@@ -1,6 +1,7 @@
 "use client";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import CreateQuestion from "@/forms/questions/CreateQuestion";
+import UpdateQuestion from "@/forms/questions/UpdateQuestion";
 import { useFetchFeedbackForm } from "@/hooks/feedbackforms/actions";
 import { useFetchFeedbacksByFeedbackForm } from "@/hooks/feedbacks/actions";
 import Link from "next/link";
@@ -29,6 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function FeedbackFormDetail({ params }) {
   const { form_identity, center_identity } = use(params);
@@ -53,6 +55,9 @@ function FeedbackFormDetail({ params }) {
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isUpdateQuestionModalOpen, setIsUpdateQuestionModalOpen] =
+    useState(false);
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
   const itemsPerPage = 20;
 
   const filterFeedbacks = useMemo(() => {
@@ -121,18 +126,15 @@ function FeedbackFormDetail({ params }) {
           </Link>
         </Button>
       </div>
-      {/* top section */}
-      <div className="mb-2">
-        <span className="text-sm text-muted-foreground uppercase font-semibold">
-          {feedbackForm?.center}
-        </span>
-      </div>
 
       <section className="mb-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-              {feedbackForm?.title} Reviews
+          <div className="space-y-1">
+            <span className="text-sm text-primary uppercase font-bold tracking-wider">
+              {feedbackForm?.center}
+            </span>
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 leading-none">
+              {feedbackForm?.title} Overview
             </h2>
           </div>
           {/* buttons */}
@@ -143,6 +145,14 @@ function FeedbackFormDetail({ params }) {
               size="sm"
             >
               <Plus className="h-4 w-4" /> Add Question
+            </Button>
+            <Button
+              onClick={() => setIsUpdateModalOpen(true)}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <Edit className="h-4 w-4" /> Update Form
             </Button>
             {feedbackForm?.questions?.length > 0 && (
               <Button asChild variant="secondary" size="sm">
@@ -155,14 +165,6 @@ function FeedbackFormDetail({ params }) {
                 </Link>
               </Button>
             )}
-            <Button
-              onClick={() => setIsUpdateModalOpen(true)}
-              variant="outline"
-              size="sm"
-              className="gap-2"
-            >
-              <Edit className="h-4 w-4" /> Update
-            </Button>
             <Button asChild variant="ghost" size="sm">
               <Link
                 href={`/reports/${feedbackForm?.form_identity}`}
@@ -177,19 +179,19 @@ function FeedbackFormDetail({ params }) {
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
-          <Card>
+          <Card className="shadow-sm border-primary/10">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Total Reviews
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {feedbackForm?.total_submissions}
+              <div className="text-2xl font-bold text-gray-900">
+                {feedbackForm?.total_submissions || 0}
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="shadow-sm border-primary/10">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Average Rating
@@ -204,15 +206,15 @@ function FeedbackFormDetail({ params }) {
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="shadow-sm border-primary/10">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Total Questions
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {feedbackForm?.questions?.length}
+              <div className="text-2xl font-bold text-gray-900">
+                {feedbackForm?.questions?.length || 0}
               </div>
             </CardContent>
           </Card>
@@ -220,199 +222,310 @@ function FeedbackFormDetail({ params }) {
       </section>
       {/* end of top section */}
 
-      {/* lower section */}
-      <section className="mb-6">
-        <Card>
-          <CardHeader>
-            <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
-              <CardTitle>Responses</CardTitle>
-              <div className="flex flex-col md:flex-row gap-4 items-end md:items-center">
-                <div className="flex items-center gap-2">
-                  <Label className="whitespace-nowrap">Specific Date:</Label>
-                  <Input
-                    type="date"
-                    value={specificDate}
-                    onChange={(e) => {
-                      setSpecificDate(e.target.value);
-                      setStartDate("");
-                      setEndDate("");
-                    }}
-                    className="w-[150px]"
-                    disabled={startDate || endDate}
-                  />
+      <Tabs defaultValue="responses" className="w-full">
+        <TabsList className="bg-white p-1 rounded-xl shadow-sm border border-border w-max">
+          <TabsTrigger
+            value="responses"
+            className="px-6 rounded-lg text-sm font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+          >
+            Responses
+          </TabsTrigger>
+          <TabsTrigger
+            value="questions"
+            className="px-6 rounded-lg text-sm font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+          >
+            Questions
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="responses" className="mt-6">
+          <Card>
+            <CardHeader>
+              <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
+                <CardTitle>Detailed Feedback</CardTitle>
+                <div className="flex flex-col md:flex-row gap-4 items-end md:items-center">
+                  <div className="flex items-center gap-2">
+                    <Label className="whitespace-nowrap">Specific Date:</Label>
+                    <Input
+                      type="date"
+                      value={specificDate}
+                      onChange={(e) => {
+                        setSpecificDate(e.target.value);
+                        setStartDate("");
+                        setEndDate("");
+                      }}
+                      className="w-[150px]"
+                      disabled={startDate || endDate}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label className="whitespace-nowrap">Start:</Label>
+                    <Input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => {
+                        setStartDate(e.target.value);
+                        setSpecificDate("");
+                      }}
+                      className="w-[150px]"
+                      disabled={specificDate}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label className="whitespace-nowrap">End:</Label>
+                    <Input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => {
+                        setEndDate(e.target.value);
+                        setSpecificDate("");
+                      }}
+                      className="w-[150px]"
+                      disabled={specificDate}
+                    />
+                  </div>
+                  <Button
+                    onClick={handleClearFilters}
+                    variant="ghost"
+                    size="sm"
+                  >
+                    Clear
+                  </Button>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Label className="whitespace-nowrap">Start:</Label>
-                  <Input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => {
-                      setStartDate(e.target.value);
-                      setSpecificDate("");
-                    }}
-                    className="w-[150px]"
-                    disabled={specificDate}
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Label className="whitespace-nowrap">End:</Label>
-                  <Input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => {
-                      setEndDate(e.target.value);
-                      setSpecificDate("");
-                    }}
-                    className="w-[150px]"
-                    disabled={specificDate}
-                  />
-                </div>
-                <Button onClick={handleClearFilters} variant="ghost" size="sm">
-                  Clear
-                </Button>
               </div>
-            </div>
-            <div className="text-sm text-muted-foreground mt-2">
-              {filterFeedbacks.length} records found
-            </div>
-          </CardHeader>
-          <CardContent>
-            {filterFeedbacks?.length > 0 ? (
-              <>
+              <div className="text-sm text-muted-foreground mt-2">
+                {filterFeedbacks.length} records found
+              </div>
+            </CardHeader>
+            <CardContent>
+              {filterFeedbacks?.length > 0 ? (
+                <>
+                  <div className="rounded-md border overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-muted ring-1 ring-border">
+                          <TableHead className="w-[50px] text-center">
+                            #
+                          </TableHead>
+                          <TableHead>Guest Name</TableHead>
+                          <TableHead>Date</TableHead>
+                          <TableHead className="text-right">Action</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {paginatedFeedbacks.map((feedback, index) => {
+                          const displayIndex =
+                            (currentPage - 1) * itemsPerPage + index + 1;
+                          const isExpanded = expandedRows.has(
+                            feedback.reference
+                          );
+                          return (
+                            <React.Fragment key={feedback.reference}>
+                              <TableRow
+                                className={
+                                  isExpanded
+                                    ? "bg-muted/50"
+                                    : "hover:bg-muted/30 transition-colors"
+                                }
+                              >
+                                <TableCell className="text-center font-medium">
+                                  {displayIndex}
+                                </TableCell>
+                                <TableCell className="font-semibold text-gray-900">
+                                  {feedback.guest_name}
+                                </TableCell>
+                                <TableCell>
+                                  {new Date(
+                                    feedback.created_at
+                                  ).toLocaleDateString()}
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => toggleRow(feedback.reference)}
+                                    className="hover:bg-primary/10 hover:text-primary"
+                                  >
+                                    {isExpanded ? (
+                                      <>
+                                        Hide{" "}
+                                        <ChevronUp className="ml-1 h-4 w-4" />
+                                      </>
+                                    ) : (
+                                      <>
+                                        View{" "}
+                                        <ChevronDown className="ml-1 h-4 w-4" />
+                                      </>
+                                    )}
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                              {isExpanded && (
+                                <TableRow className="bg-muted/20">
+                                  <TableCell colSpan={4}>
+                                    <div className="p-6 grid gap-6 bg-white rounded-xl border shadow-inner">
+                                      <h4 className="font-bold text-gray-900 border-b pb-2">
+                                        Full Review Details
+                                      </h4>
+                                      <div className="grid gap-6 sm:grid-cols-2">
+                                        {feedback.responses.map((resp) => (
+                                          <div
+                                            key={resp.reference}
+                                            className="p-4 rounded-lg bg-gray-50 border border-gray-100 flex flex-col gap-2"
+                                          >
+                                            <div className="font-bold text-sm text-gray-700">
+                                              {resp.actual_question.text}
+                                            </div>
+                                            <div className="text-sm">
+                                              {resp.rating !== null ? (
+                                                <div className="flex items-center gap-2">
+                                                  <StarRating
+                                                    rating={resp.rating}
+                                                    size={16}
+                                                  />
+                                                  <span className="font-bold text-primary">
+                                                    ({resp.rating})
+                                                  </span>
+                                                </div>
+                                              ) : resp.text !== null ? (
+                                                <span className="italic text-gray-600">
+                                                  "{resp.text}"
+                                                </span>
+                                              ) : resp.yes_no !== null ? (
+                                                <span
+                                                  className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                                    resp.yes_no
+                                                      ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                                                      : "bg-red-100 text-red-700 border border-red-200"
+                                                  }`}
+                                                >
+                                                  {resp.yes_no ? "Yes" : "No"}
+                                                </span>
+                                              ) : (
+                                                "N/A"
+                                              )}
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                            </React.Fragment>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between">
+                    <div className="text-sm text-muted-foreground font-medium">
+                      Page {currentPage} of {totalPages}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        Previous
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="p-12 text-center text-muted-foreground bg-muted/20 rounded-xl border-2 border-dashed flex flex-col items-center gap-4">
+                  <FileText className="h-10 w-10 opacity-20" />
+                  No guest reviews found for this form yet.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="questions" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Form Structure & Questions</CardTitle>
+              <div className="text-sm text-muted-foreground">
+                This is how the questions appear on the public feedback form.
+              </div>
+            </CardHeader>
+            <CardContent>
+              {feedbackForm?.questions?.length > 0 ? (
                 <div className="rounded-md border overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow>
+                      <TableRow className="bg-muted ring-1 ring-border">
                         <TableHead className="w-[50px] text-center">
-                          #
+                          Order
                         </TableHead>
-                        <TableHead>Guest Name</TableHead>
-                        <TableHead>Date</TableHead>
+                        <TableHead>Question Text</TableHead>
+                        <TableHead>Response Type</TableHead>
+                        <TableHead>Identity</TableHead>
                         <TableHead className="text-right">Action</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {paginatedFeedbacks.map((feedback, index) => {
-                        const displayIndex =
-                          (currentPage - 1) * itemsPerPage + index + 1;
-                        const isExpanded = expandedRows.has(feedback.reference);
-                        return (
-                          <React.Fragment key={feedback.reference}>
-                            <TableRow
-                              className={isExpanded ? "bg-muted/50" : ""}
-                            >
-                              <TableCell className="text-center font-medium">
-                                {displayIndex}
-                              </TableCell>
-                              <TableCell>{feedback.guest_name}</TableCell>
-                              <TableCell>
-                                {new Date(
-                                  feedback.created_at
-                                ).toLocaleDateString()}
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => toggleRow(feedback.reference)}
-                                >
-                                  {isExpanded ? (
-                                    <>
-                                      Hide{" "}
-                                      <ChevronUp className="ml-1 h-4 w-4" />
-                                    </>
-                                  ) : (
-                                    <>
-                                      View{" "}
-                                      <ChevronDown className="ml-1 h-4 w-4" />
-                                    </>
-                                  )}
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                            {isExpanded && (
-                              <TableRow className="bg-muted/50">
-                                <TableCell colSpan={4}>
-                                  <div className="p-4 grid gap-4 bg-background rounded-md border">
-                                    <h4 className="font-semibold mb-2">
-                                      Detailed Responses
-                                    </h4>
-                                    <ul className="space-y-4">
-                                      {feedback.responses.map((resp) => (
-                                        <li
-                                          key={resp.reference}
-                                          className="border-b pb-2 last:border-0 last:pb-0"
-                                        >
-                                          <div className="font-medium text-sm text-foreground">
-                                            {resp.actual_question.text}
-                                          </div>
-                                          <div className="mt-1 text-sm text-muted-foreground">
-                                            {resp.rating !== null ? (
-                                              <div className="flex items-center gap-1">
-                                                <StarRating
-                                                  rating={resp.rating}
-                                                  size={14}
-                                                />{" "}
-                                                ({resp.rating})
-                                              </div>
-                                            ) : resp.text !== null ? (
-                                              resp.text
-                                            ) : resp.yes_no !== null ? (
-                                              resp.yes_no ? (
-                                                "Yes"
-                                              ) : (
-                                                "No"
-                                              )
-                                            ) : (
-                                              "N/A"
-                                            )}
-                                          </div>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            )}
-                          </React.Fragment>
-                        );
-                      })}
+                      {feedbackForm.questions
+                        .sort((a, b) => a.order - b.order)
+                        .map((question) => (
+                          <TableRow
+                            key={question.reference}
+                            className="hover:bg-muted/30 transition-colors"
+                          >
+                            <TableCell className="text-center font-bold text-primary">
+                              #{question.order}
+                            </TableCell>
+                            <TableCell className="font-semibold text-gray-900">
+                              {question.text}
+                            </TableCell>
+                            <TableCell>
+                              <span className="px-2 py-1 rounded-md text-xs font-bold border border-border bg-white text-gray-700">
+                                {question.type}
+                              </span>
+                            </TableCell>
+                            <TableCell className="font-mono text-xs text-muted-foreground">
+                              {question.identity}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedQuestion(question);
+                                  setIsUpdateQuestionModalOpen(true);
+                                }}
+                                className="hover:bg-primary/10 hover:text-primary"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
                     </TableBody>
                   </Table>
                 </div>
-
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="text-sm text-muted-foreground">
-                    Page {currentPage} of {totalPages}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                    >
-                      Previous
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                    >
-                      Next
-                    </Button>
-                  </div>
+              ) : (
+                <div className="p-12 text-center text-muted-foreground bg-muted/20 rounded-xl border-2 border-dashed flex flex-col items-center gap-4">
+                  <Plus className="h-10 w-10 opacity-20" />
+                  No questions established for this form.
                 </div>
-              </>
-            ) : (
-              <div className="p-8 text-center text-muted-foreground bg-muted/50 rounded-md border border-dashed">
-                No responses available
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </section>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       <Modal
         isOpen={isModalOpen}
@@ -436,6 +549,25 @@ function FeedbackFormDetail({ params }) {
           closeModal={() => setIsUpdateModalOpen(false)}
           center={feedbackForm?.center}
           feedbackForm={feedbackForm}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={isUpdateQuestionModalOpen}
+        onClose={() => {
+          setIsUpdateQuestionModalOpen(false);
+          setSelectedQuestion(null);
+        }}
+        title="Update Question"
+      >
+        <UpdateQuestion
+          question={selectedQuestion}
+          feedbackForm={feedbackForm}
+          refetch={refetchFeedbackForm}
+          closeModal={() => {
+            setIsUpdateQuestionModalOpen(false);
+            setSelectedQuestion(null);
+          }}
         />
       </Modal>
     </div>
