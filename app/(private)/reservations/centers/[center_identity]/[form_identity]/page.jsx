@@ -17,6 +17,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
+import Modal from "@/components/general/Modal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -405,42 +406,30 @@ function FeedbackFormDetail({ params }) {
         </Card>
       </section>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-card p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto relative border">
-            <button
-              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setIsModalOpen(false)}
-            >
-              ✕
-            </button>
-            <CreateQuestion
-              feedbackForm={feedbackForm}
-              refetch={refetchFeedbackForm}
-              closeModal={() => setIsModalOpen(false)}
-            />
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Add Question"
+      >
+        <CreateQuestion
+          feedbackForm={feedbackForm}
+          refetch={refetchFeedbackForm}
+          closeModal={() => setIsModalOpen(false)}
+        />
+      </Modal>
 
-      {isUpdateModalOpen && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-card p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto relative border">
-            <button
-              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setIsUpdateModalOpen(false)}
-            >
-              ✕
-            </button>
-            <UpdateFeedbackForm
-              refetch={refetchFeedbackForm}
-              closeModal={() => setIsUpdateModalOpen(false)}
-              center={feedbackForm?.center}
-              feedbackForm={feedbackForm}
-            />
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={isUpdateModalOpen}
+        onClose={() => setIsUpdateModalOpen(false)}
+        title="Update Feedback Form"
+      >
+        <UpdateFeedbackForm
+          refetch={refetchFeedbackForm}
+          closeModal={() => setIsUpdateModalOpen(false)}
+          center={feedbackForm?.center}
+          feedbackForm={feedbackForm}
+        />
+      </Modal>
     </div>
   );
 }

@@ -5,12 +5,24 @@ import { useFetchAccount } from "@/hooks/accounts/actions";
 import { useFetchApprovalSteps } from "@/hooks/approvalsteps/actions";
 import { useFetchCreditNotes } from "@/hooks/creditnotes/actions";
 import { useFetchPostings } from "@/hooks/postings/actions";
+import { useFetchCenters } from "@/hooks/centers/actions";
+import { useFetchFeedbackForms } from "@/hooks/feedbackforms/actions";
 import React, { useState } from "react";
 import EmployeeCreditNotesTable from "@/components/creditnotes/EmployeeCreditNotesTable";
 import PostingsTable from "@/components/postings/PostingsTable";
 import ApprovalStepsTable from "@/components/approvalsteps/ApprovalStepsTable";
+import CentersTable from "@/components/centers/CentersTable";
+import CreateCenter from "@/forms/centers/CreateCenter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, ListChecks, Plus, ChevronDown, UserPen } from "lucide-react";
+import {
+  FileText,
+  ListChecks,
+  Plus,
+  ChevronDown,
+  UserPen,
+  Building2,
+  MessageSquare,
+} from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Modal from "@/components/general/Modal";
 import UpdateProfile from "@/forms/accounts/UpdateProfile";
@@ -37,12 +49,20 @@ function GeneralManager() {
     data: postings,
     refetch: refetchPostings,
   } = useFetchPostings();
+  const {
+    isLoading: isLoadingCenters,
+    data: centers,
+    refetch: refetchCenters,
+  } = useFetchCenters();
+  const { isLoading: isLoadingFeedbackForms, data: feedbackForms } =
+    useFetchFeedbackForms();
 
   const userPendingSteps = approvalSteps?.filter(
     (step) => step.approver === account?.email && step.status === "Pending",
   );
 
   const [profileModal, setProfileModal] = useState(false);
+  const [centerModal, setCenterModal] = useState(false);
 
   return (
     <div className="container mx-auto p-4 md:p-6 bg-gray-50/50 min-h-screen">
@@ -56,7 +76,7 @@ function GeneralManager() {
             )}
           </h1>
           <p className="text-muted-foreground text-sm md:text-base">
-            Oversee feedback and approvals.
+            Oversee staff, centers, feedback, and approvals.
           </p>
         </div>
 
@@ -78,13 +98,23 @@ function GeneralManager() {
                   <UserPen className="mr-3 h-4 w-4 text-primary" />
                   Update Profile
                 </button>
+
+                <div className="h-px bg-border my-1 mx-2" />
+
+                <button
+                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group"
+                  onClick={() => setCenterModal(true)}
+                >
+                  <Building2 className="mr-3 h-4 w-4 text-primary" />
+                  Create Center
+                </button>
               </div>
             </PopoverContent>
           </Popover>
         </div>
       </section>
 
-      <section className="mb-8 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="mb-8 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">My Actions</CardTitle>
@@ -104,26 +134,45 @@ function GeneralManager() {
           </CardContent>
         </Card>
 
-        {/* credit notes */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Credit Notes</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total Centers</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {isLoadingCreditNotes ? (
+              {isLoadingCenters ? (
                 <Skeleton className="h-8 w-16" />
               ) : (
-                creditNotes?.length || 0
+                centers?.length || 0
               )}
             </div>
-            <p className="text-xs text-muted-foreground">Total credit notes</p>
+            <p className="text-xs text-muted-foreground">
+              Active operational centers
+            </p>
           </CardContent>
         </Card>
 
-        {/* postings */}
-        <Card className="sm:col-span-2 lg:col-span-1">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Feedback Forms</CardTitle>
+            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingFeedbackForms ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                feedbackForms?.length || 0
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Customer feedback entries
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Postings</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
@@ -143,9 +192,12 @@ function GeneralManager() {
 
       <Tabs defaultValue="steps" className="w-full">
         <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-          <TabsList className="flex w-max sm:grid sm:w-full sm:grid-cols-3 lg:w-[600px]">
+          <TabsList className="flex w-max sm:grid sm:w-full sm:grid-cols-4 lg:w-[800px]">
             <TabsTrigger value="steps" className="min-w-[100px]">
               Approvals
+            </TabsTrigger>
+            <TabsTrigger value="centers" className="min-w-[100px]">
+              Centers
             </TabsTrigger>
             <TabsTrigger value="credit-notes" className="min-w-[100px]">
               Credit Notes
@@ -174,6 +226,31 @@ function GeneralManager() {
                     approvalSteps={approvalSteps}
                     account={account}
                   />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="centers" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Centers Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingCenters ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              ) : centers?.length > 0 ? (
+                <div className="overflow-x-auto -mx-6 px-6">
+                  <CentersTable centers={centers} role="gm" />
+                </div>
+              ) : (
+                <div className="p-4 text-center text-muted-foreground bg-muted rounded-md border border-dashed">
+                  No centers available
                 </div>
               )}
             </CardContent>
@@ -229,6 +306,18 @@ function GeneralManager() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <Modal
+        isOpen={centerModal}
+        onClose={() => setCenterModal(false)}
+        title="Create New Center"
+        className="max-width-md sm:max-w-lg"
+      >
+        <CreateCenter
+          refetch={refetchCenters}
+          closeModal={() => setCenterModal(false)}
+        />
+      </Modal>
 
       <Modal
         isOpen={profileModal}

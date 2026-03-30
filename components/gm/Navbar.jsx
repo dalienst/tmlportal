@@ -7,7 +7,6 @@ import { LayoutGrid, Building2 } from "lucide-react";
 function GMNavbar() {
   const navItems = [
     { label: "Dashboard", href: "/gm", icon: LayoutGrid },
-    { label: "Centers", href: "/gm/centers", icon: Building2 },
   ];
 
   return (

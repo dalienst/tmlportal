@@ -1,6 +1,6 @@
 "use client";
 import useAxiosAuth from "@/hooks/general/useAxiosAuth";
-import { createQuestion } from "@/services/questions";
+import { updateQuestion } from "@/services/questions";
 import { Field, Form, Formik } from "formik";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useQueryClient } from "@tanstack/react-query";
 
-function CreateQuestion({ feedbackForm, closeModal, refetch }) {
+function UpdateQuestion({ question, feedbackForm, closeModal, refetch }) {
   const [loading, setLoading] = useState(false);
   const axios = useAxiosAuth();
   const queryClient = useQueryClient();
@@ -17,16 +17,15 @@ function CreateQuestion({ feedbackForm, closeModal, refetch }) {
   return (
     <Formik
       initialValues={{
-        feedback_form: feedbackForm?.form_identity,
-        text: "",
-        type: "",
-        order: 0,
+        text: question?.text || "",
+        type: question?.type || "",
+        order: question?.order || 0,
       }}
       onSubmit={async (values) => {
         setLoading(true);
         try {
-          await createQuestion(values, axios);
-          toast.success("Question created successfully!");
+          await updateQuestion(values, axios, question?.identity);
+          toast.success("Question updated successfully!");
 
           // Explicitly invalidate and refetch to ensure UI updates
           await queryClient.invalidateQueries({
@@ -36,7 +35,7 @@ function CreateQuestion({ feedbackForm, closeModal, refetch }) {
           if (refetch) refetch();
           closeModal();
         } catch (error) {
-          toast.error("Error creating question");
+          toast.error("Error updating question");
         } finally {
           setLoading(false);
         }
@@ -106,7 +105,7 @@ function CreateQuestion({ feedbackForm, closeModal, refetch }) {
                 className="w-full sm:w-1/2"
                 disabled={loading}
               >
-                {loading ? "Creating..." : "Create Question"}
+                {loading ? "Updating..." : "Update Question"}
               </Button>
             </div>
           </div>
@@ -116,4 +115,4 @@ function CreateQuestion({ feedbackForm, closeModal, refetch }) {
   );
 }
 
-export default CreateQuestion;
+export default UpdateQuestion;

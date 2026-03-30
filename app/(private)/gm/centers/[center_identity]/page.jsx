@@ -8,6 +8,7 @@ import React, { use, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, ArrowRight, ArrowLeft } from "lucide-react";
+import Modal from "@/components/general/Modal";
 import {
   Table,
   TableBody,
@@ -40,8 +41,8 @@ function CenterDetail({ params }) {
     >
       <div className="mb-6">
         <Button asChild variant="outline" size="sm" className="gap-2">
-          <Link href="/gm/centers">
-            <ArrowLeft className="h-4 w-4" /> Back to Centers
+          <Link href="/gm">
+            <ArrowLeft className="h-4 w-4" /> Back to Dashboard
           </Link>
         </Button>
       </div>
@@ -120,23 +121,17 @@ function CenterDetail({ params }) {
         </CardContent>
       </Card>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-card p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto relative border">
-            <button
-              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setIsModalOpen(false)}
-            >
-              ✕
-            </button>
-            <CreateFeedbackForm
-              refetch={refetchCenter}
-              closeModal={() => setIsModalOpen(false)}
-              center={center}
-            />
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Create Feedback Form"
+      >
+        <CreateFeedbackForm
+          refetch={refetchCenter}
+          closeModal={() => setIsModalOpen(false)}
+          center={center}
+        />
+      </Modal>
     </div>
   );
 }

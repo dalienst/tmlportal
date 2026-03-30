@@ -5,7 +5,7 @@ function GMLayout({ children }) {
   return (
     <div>
       <GMNavbar />
-      <div className="pt-16">{children}</div>
+      <div className="pt-8">{children}</div>
     </div>
   );
 }
