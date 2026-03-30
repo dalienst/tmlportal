@@ -2,9 +2,18 @@
 import useAxiosAuth from "@/hooks/general/useAxiosAuth";
 import { createQuestion } from "@/services/questions";
 import { Field, Form, Formik } from "formik";
-import Image from "next/image";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function CreateQuestion({ feedbackForm, closeModal, refetch }) {
   const [loading, setLoading] = useState(false);
@@ -32,86 +41,72 @@ function CreateQuestion({ feedbackForm, closeModal, refetch }) {
         }
       }}
     >
-      {({ setFieldValue }) => (
-        <Form className="w-full max-w-md p-6 bg-card border border-border rounded-lg shadow-md">
-          <Image
-            className="mx-auto mb-4"
-            src="/logo.png"
-            alt="Tamarind Logo"
-            width={100}
-            height={100}
-          />
-          <h2 className="mb-6 text-2xl font-bold text-center text-black">
-            Create Question
-          </h2>
-          <div className="mb-4 hidden">
-            <label htmlFor="feedbackForm" className="block text-black mb-2">
-              Feedback Form
-            </label>
-            <Field
-              type="text"
-              id="feedbackForm"
-              name="feedbackForm"
-              className="w-full px-3 py-2 border border-border rounded-lg text-black bg-muted focus:ring-2 focus:ring-primary"
-              disabled
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="text" className="block text-black mb-2">
-              Question Text
-            </label>
-            <Field
-              type="text"
-              id="text"
-              name="text"
-              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="type" className="block text-black mb-2">
-              Type
-            </label>
-            <Field
-              as="select"
-              id="type"
-              name="type"
-              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black"
-            >
-              <option value="">Select Type</option>
-              <option value="RATING">Rating</option>
-              <option value="TEXT">Text</option>
-              <option value="YES_NO">Yes/No</option>
-            </Field>
-          </div>
-          <div className="mb-4">
-            <label htmlFor="order" className="block text-black mb-2">
-              Order
-            </label>
-            <Field
-              type="number"
-              id="order"
-              name="order"
-              className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary text-black"
-              min="0"
-            />
-          </div>
-          <div className="flex flex-col gap-2 mt-4 md:flex-row md:gap-4">
-            <button
-              type="submit"
-              className={`w-full bg-accent text-accent-foreground py-2 rounded-lg hover:bg-opacity-90 transition-colors ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={loading}
-            >
-              {loading ? "Creating..." : "Create Question"}
-            </button>
-            <button
-              type="button"
-              className="w-full bg-accent text-accent-foreground py-2 rounded-lg hover:bg-opacity-90 transition-colors"
-              onClick={closeModal}
-            >
-              Cancel
-            </button>
+      {({ setFieldValue, values }) => (
+        <Form className="p-6">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="text">Question Text</Label>
+              <Field
+                as={Input}
+                type="text"
+                id="text"
+                name="text"
+                placeholder="Enter the question text"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="type">Type</Label>
+                <Select
+                  name="type"
+                  onValueChange={(value) => setFieldValue("type", value)}
+                  defaultValue={values.type}
+                >
+                  <SelectTrigger id="type" className="w-full">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="RATING">Rating (Stars)</SelectItem>
+                    <SelectItem value="TEXT">Text Response</SelectItem>
+                    <SelectItem value="YES_NO">Yes/No Toggle</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="order">Display Order</Label>
+                <Field
+                  as={Input}
+                  type="number"
+                  id="order"
+                  name="order"
+                  placeholder="0"
+                  min="0"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full sm:w-1/2"
+                onClick={closeModal}
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="w-full sm:w-1/2"
+                disabled={loading}
+              >
+                {loading ? "Creating..." : "Create Question"}
+              </Button>
+            </div>
           </div>
         </Form>
       )}

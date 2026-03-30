@@ -22,7 +22,7 @@ function Centers() {
   }
 
   return (
-    <div className="container mx-auto p-6 bg-gray-50/50 min-h-screen">
+    <div className="container mx-auto p-4 bg-gray-50/50 min-h-screen">
       <section className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-gray-900">
