@@ -18,6 +18,7 @@ import {
   ChevronDown,
   ChevronUp,
   ArrowLeft,
+  Settings2,
 } from "lucide-react";
 import Modal from "@/components/general/Modal";
 import { Input } from "@/components/ui/input";
@@ -31,6 +32,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 function FeedbackFormDetail({ params }) {
   const { form_identity, center_identity } = use(params);
@@ -115,11 +117,8 @@ function FeedbackFormDetail({ params }) {
   }
 
   return (
-    <div
-      id="feedback-form"
-      className="container mx-auto p-6 bg-gray-50/50 min-h-screen"
-    >
-      <div className="mb-6">
+    <div id="feedback-form" className="container mx-auto px-4 py-2 min-h-screen">
+      <div className="mb-4">
         <Button asChild variant="outline" size="sm" className="gap-2">
           <Link href={`/gm/centers/${center_identity}`}>
             <ArrowLeft className="h-4 w-4" /> Back to Center
@@ -130,51 +129,58 @@ function FeedbackFormDetail({ params }) {
       <section className="mb-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div className="space-y-1">
-            <span className="text-sm text-primary uppercase font-bold tracking-wider">
+            <span className="text-sm text-primary">
               {feedbackForm?.center}
             </span>
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 leading-none">
+            <h2 className="text-xl font-medium text-gray-900 leading-none">
               {feedbackForm?.title} Overview
             </h2>
           </div>
           {/* buttons */}
-          <div className="flex flex-wrap gap-2">
-            <Button
-              onClick={() => setIsModalOpen(true)}
-              className="gap-2"
-              size="sm"
-            >
-              <Plus className="h-4 w-4" /> Add Question
-            </Button>
-            <Button
-              onClick={() => setIsUpdateModalOpen(true)}
-              variant="outline"
-              size="sm"
-              className="gap-2"
-            >
-              <Edit className="h-4 w-4" /> Update Form
-            </Button>
-            {feedbackForm?.questions?.length > 0 && (
-              <Button asChild variant="secondary" size="sm">
-                <Link
-                  href={`/feedback/${feedbackForm?.form_identity}`}
-                  target="_blank"
-                  className="gap-2"
-                >
-                  <ExternalLink className="h-4 w-4" /> Public Link
-                </Link>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Settings2 className="h-4 w-4" /> Manage Form
               </Button>
-            )}
-            <Button asChild variant="ghost" size="sm">
-              <Link
-                href={`/reports/${feedbackForm?.form_identity}`}
-                target="_blank"
-                className="gap-2"
-              >
-                <FileText className="h-4 w-4" /> Generate Report
-              </Link>
-            </Button>
-          </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-2" align="end">
+              <div className="grid gap-1">
+                <Button
+                  onClick={() => setIsModalOpen(true)}
+                  variant="ghost"
+                  className="justify-start gap-2 h-9"
+                  size="sm"
+                >
+                  <Plus className="h-4 w-4 text-primary" /> Add Question
+                </Button>
+                <Button
+                  onClick={() => setIsUpdateModalOpen(true)}
+                  variant="ghost"
+                  className="justify-start gap-2 h-9"
+                  size="sm"
+                >
+                  <Edit className="h-4 w-4 text-primary" /> Update Form
+                </Button>
+                {feedbackForm?.questions?.length > 0 && (
+                  <Button asChild variant="ghost" className="justify-start gap-2 h-9" size="sm">
+                    <Link
+                      href={`/feedback/${feedbackForm?.form_identity}`}
+                      target="_blank"
+                    >
+                      <ExternalLink className="h-4 w-4 text-primary" /> Public Link
+                    </Link>
+                  </Button>
+                )}
+                <Button asChild variant="ghost" className="justify-start gap-2 h-9" size="sm">
+                  <Link
+                    href={`/reports/${feedbackForm?.form_identity}`}
+                  >
+                    <FileText className="h-4 w-4 text-primary" /> Generate Report
+                  </Link>
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
           {/* end of buttons */}
         </div>
 
@@ -186,7 +192,7 @@ function FeedbackFormDetail({ params }) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-2xl text-gray-900">
                 {feedbackForm?.total_submissions || 0}
               </div>
             </CardContent>
@@ -198,7 +204,7 @@ function FeedbackFormDetail({ params }) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold flex items-center gap-2">
+              <div className="text-2xl flex items-center gap-2">
                 <StarRating rating={feedbackForm?.average_rating || 0} />
                 <span className="text-sm text-muted-foreground font-normal">
                   ({feedbackForm?.average_rating || 0})
@@ -213,7 +219,7 @@ function FeedbackFormDetail({ params }) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-2xl text-gray-900">
                 {feedbackForm?.questions?.length || 0}
               </div>
             </CardContent>
@@ -223,16 +229,16 @@ function FeedbackFormDetail({ params }) {
       {/* end of top section */}
 
       <Tabs defaultValue="responses" className="w-full">
-        <TabsList className="bg-white p-1 rounded-xl shadow-sm border border-border w-max">
+        <TabsList className="bg-white p-1 rounded shadow-sm border border-border w-max">
           <TabsTrigger
             value="responses"
-            className="px-6 rounded-lg text-sm font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            className="px-6 rounded text-sm  data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
           >
             Responses
           </TabsTrigger>
           <TabsTrigger
             value="questions"
-            className="px-6 rounded-lg text-sm font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            className="px-6 rounded text-sm  data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
           >
             Questions
           </TabsTrigger>
@@ -300,7 +306,7 @@ function FeedbackFormDetail({ params }) {
             <CardContent>
               {filterFeedbacks?.length > 0 ? (
                 <>
-                  <div className="rounded-md border overflow-x-auto">
+                  <div className="rounded border overflow-x-auto">
                     <Table>
                       <TableHeader>
                         <TableRow className="bg-muted ring-1 ring-border">
@@ -309,7 +315,7 @@ function FeedbackFormDetail({ params }) {
                           </TableHead>
                           <TableHead>Guest Name</TableHead>
                           <TableHead>Date</TableHead>
-                          <TableHead className="text-right">Action</TableHead>
+                          <TableHead>Action</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -339,7 +345,7 @@ function FeedbackFormDetail({ params }) {
                                     feedback.created_at
                                   ).toLocaleDateString()}
                                 </TableCell>
-                                <TableCell className="text-right">
+                                <TableCell>
                                   <Button
                                     variant="ghost"
                                     size="sm"
@@ -363,17 +369,17 @@ function FeedbackFormDetail({ params }) {
                               {isExpanded && (
                                 <TableRow className="bg-muted/20">
                                   <TableCell colSpan={4}>
-                                    <div className="p-6 grid gap-6 bg-white rounded-xl border shadow-inner">
-                                      <h4 className="font-bold text-gray-900 border-b pb-2">
+                                    <div className="p-6 grid gap-6 bg-white rounded border shadow-inner">
+                                      <h4 className=" text-gray-900 border-b pb-2">
                                         Full Review Details
                                       </h4>
                                       <div className="grid gap-6 sm:grid-cols-2">
                                         {feedback.responses.map((resp) => (
                                           <div
                                             key={resp.reference}
-                                            className="p-4 rounded-lg bg-gray-50 border border-gray-100 flex flex-col gap-2"
+                                            className="p-4 rounded bg-gray-50 border border-gray-100 flex flex-col gap-2"
                                           >
-                                            <div className="font-bold text-sm text-gray-700">
+                                            <div className=" text-sm text-gray-700">
                                               {resp.actual_question.text}
                                             </div>
                                             <div className="text-sm">
@@ -383,7 +389,7 @@ function FeedbackFormDetail({ params }) {
                                                     rating={resp.rating}
                                                     size={16}
                                                   />
-                                                  <span className="font-bold text-primary">
+                                                  <span className=" text-primary">
                                                     ({resp.rating})
                                                   </span>
                                                 </div>
@@ -393,11 +399,10 @@ function FeedbackFormDetail({ params }) {
                                                 </span>
                                               ) : resp.yes_no !== null ? (
                                                 <span
-                                                  className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                                    resp.yes_no
-                                                      ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
-                                                      : "bg-red-100 text-red-700 border border-red-200"
-                                                  }`}
+                                                  className={`px-3 py-1 rounded text-xs  ${resp.yes_no
+                                                    ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                                                    : "bg-red-100 text-red-700 border border-red-200"
+                                                    }`}
                                                 >
                                                   {resp.yes_no ? "Yes" : "No"}
                                                 </span>
@@ -444,7 +449,7 @@ function FeedbackFormDetail({ params }) {
                   </div>
                 </>
               ) : (
-                <div className="p-12 text-center text-muted-foreground bg-muted/20 rounded-xl border-2 border-dashed flex flex-col items-center gap-4">
+                <div className="p-12 text-center text-muted-foreground bg-muted/20 rounded border-2 border-dashed flex flex-col items-center gap-4">
                   <FileText className="h-10 w-10 opacity-20" />
                   No guest reviews found for this form yet.
                 </div>
@@ -463,7 +468,7 @@ function FeedbackFormDetail({ params }) {
             </CardHeader>
             <CardContent>
               {feedbackForm?.questions?.length > 0 ? (
-                <div className="rounded-md border overflow-x-auto">
+                <div className="rounded border overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-muted ring-1 ring-border">
@@ -473,7 +478,7 @@ function FeedbackFormDetail({ params }) {
                         <TableHead>Question Text</TableHead>
                         <TableHead>Response Type</TableHead>
                         <TableHead>Identity</TableHead>
-                        <TableHead className="text-right">Action</TableHead>
+                        <TableHead>Action</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -484,21 +489,21 @@ function FeedbackFormDetail({ params }) {
                             key={question.reference}
                             className="hover:bg-muted/30 transition-colors"
                           >
-                            <TableCell className="text-center font-bold text-primary">
+                            <TableCell className="text-center  text-primary">
                               #{question.order}
                             </TableCell>
                             <TableCell className="font-semibold text-gray-900">
                               {question.text}
                             </TableCell>
                             <TableCell>
-                              <span className="px-2 py-1 rounded-md text-xs font-bold border border-border bg-white text-gray-700">
+                              <span className="px-2 py-1 rounded text-xs  border border-border bg-white text-gray-700">
                                 {question.type}
                               </span>
                             </TableCell>
                             <TableCell className="font-mono text-xs text-muted-foreground">
                               {question.identity}
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell>
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -517,7 +522,7 @@ function FeedbackFormDetail({ params }) {
                   </Table>
                 </div>
               ) : (
-                <div className="p-12 text-center text-muted-foreground bg-muted/20 rounded-xl border-2 border-dashed flex flex-col items-center gap-4">
+                <div className="p-12 text-center text-muted-foreground bg-muted/20 rounded border-2 border-dashed flex flex-col items-center gap-4">
                   <Plus className="h-10 w-10 opacity-20" />
                   No questions established for this form.
                 </div>

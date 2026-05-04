@@ -53,15 +53,11 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 function ReportGenerator({ params }) {
   const { form_identity } = use(params);
-
-  const {
-    isLoading: isLoadingFeedbackForm,
-    data: feedbackForm,
-    refetch: refetchFeedbackForm,
-  } = useFetchFeedbackForm(form_identity);
+  const router = useRouter()
 
   const [reportType, setReportType] = useState("summary");
   const [selectedQuestion, setSelectedQuestion] = useState("");
@@ -69,177 +65,115 @@ function ReportGenerator({ params }) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [allQuestionsPage, setAllQuestionsPage] = useState(1);
-  const [specificTextPage, setSpecificTextPage] = useState(1);
   const [summaryTextPage, setSummaryTextPage] = useState(1);
+  const [specificTextPage, setSpecificTextPage] = useState(1);
+  const [selectedMonth, setSelectedMonth] = useState("");
+
+  // Helper to get month options (last 12 months)
+  const monthOptions = useMemo(() => {
+    const options = [];
+    const now = new Date();
+    for (let i = 0; i < 12; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const label = d.toLocaleString("default", { month: "long", year: "numeric" });
+      const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      options.push({ label, value });
+    }
+    return options;
+  }, []);
+
+  const handleMonthChange = (value) => {
+    setSelectedMonth(value);
+    if (value) {
+      const [year, month] = value.split("-").map(Number);
+      const firstDay = new Date(year, month - 1, 1);
+      const lastDay = new Date(year, month, 0);
+      
+      const formatDate = (date) => {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      };
+
+      setStartDate(formatDate(firstDay));
+      setEndDate(formatDate(lastDay));
+      setSpecificDate("");
+    }
+  };
+  const {
+    isLoading: isLoadingFeedbackForm,
+    data: feedbackForm,
+    refetch: refetchFeedbackForm,
+  } = useFetchFeedbackForm(form_identity, {
+    start_date: specificDate || startDate,
+    end_date: specificDate || endDate,
+  });
 
   const handleClearFilters = () => {
     setSpecificDate("");
     setStartDate("");
     setEndDate("");
+    setSelectedMonth("");
     setSelectedQuestion("");
     setAllQuestionsPage(1);
-    setSpecificTextPage(1);
     setSummaryTextPage(1);
+    setSpecificTextPage(1);
   };
 
   const createdAtDate = (response) =>
     new Date(response.created_at).toISOString().split("T")[0];
 
-  const filterResponses = useMemo(() => {
-    if (!feedbackForm?.form_submissions) return [];
-    let filtered = feedbackForm.form_submissions.flatMap(
-      (submission) => submission.responses
-    );
-    if (specificDate) {
-      filtered = filtered.filter(
-        (response) => createdAtDate(response) === specificDate
-      );
-    } else if (startDate && endDate) {
-      filtered = filtered.filter((response) => {
-        const date = createdAtDate(response);
-        return date >= startDate && date <= endDate;
-      });
-    }
-    if (reportType === "question-specific" && selectedQuestion) {
-      filtered = filtered.filter(
-        (response) => response.question === selectedQuestion
-      );
-    }
-    return filtered;
-  }, [
-    feedbackForm,
-    specificDate,
-    startDate,
-    endDate,
-    reportType,
-    selectedQuestion,
-  ]);
-
-  const generateSummaryReport = () => {
-    const totalSubmissions = feedbackForm?.total_submissions || 0;
-    const ratings = filterResponses
-      .filter((r) => r.rating !== null)
-      .map((r) => r.rating);
-    const yesNo = filterResponses
-      .filter((r) => r.yes_no !== null)
-      .map((r) => r.yes_no);
-    const texts = filterResponses
-      .filter((r) => r.text)
-      .map((r) => r.text)
-      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    const averageRating =
-      ratings.length > 0
-        ? ratings.reduce((a, b) => a + b, 0) / ratings.length
-        : 0;
-    const yesCount = yesNo.filter((v) => v).length;
-    const noCount = yesNo.filter((v) => !v).length;
-    const yesPercentage =
-      yesNo.length > 0 ? (yesCount / yesNo.length) * 100 : 0;
-    const noPercentage = yesNo.length > 0 ? (noCount / yesNo.length) * 100 : 0;
+  // Use pre-calculated stats from the backend
+  const summaryReport = useMemo(() => {
+    if (!feedbackForm) return null;
+    const allTexts = feedbackForm.form_submissions?.flatMap(s => 
+      s.responses.filter(r => r.text).map(r => ({
+        text: r.text,
+        created_at: r.created_at
+      }))
+    ) || [];
+    
+    allTexts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     return {
-      totalSubmissions,
-      averageRating,
-      yesPercentage,
-      noPercentage,
-      ratingCount: ratings.length,
-      yesNoCount: yesNo.length,
-      texts,
+      totalSubmissions: feedbackForm.total_submissions,
+      averageRating: feedbackForm.average_rating,
+      yesPercentage: feedbackForm.yes_no_breakdown?.yes_percentage || 0,
+      noPercentage: feedbackForm.yes_no_breakdown?.no_percentage || 0,
+      ratingCount: feedbackForm.total_submissions,
+      yesNoCount: feedbackForm.total_submissions,
+      texts: allTexts.map(t => t.text)
     };
-  };
+  }, [feedbackForm]);
 
-  const generateDefaultQuestionReport = () => {
-    const questionStats = {};
-    feedbackForm?.questions.forEach((question) => {
-      if (question.type === "RATING") {
-        const ratings = filterResponses
-          .filter((r) => r.question === question.identity && r.rating !== null)
-          .map((r) => r.rating);
-        questionStats[question.identity] = {
-          type: "RATING",
-          average:
-            ratings.length > 0
-              ? ratings.reduce((a, b) => a + b, 0) / ratings.length
-              : 0,
-          ratings: ratings,
-        };
-      } else if (question.type === "YES_NO") {
-        const yesNo = filterResponses
-          .filter((r) => r.question === question.identity && r.yes_no !== null)
-          .map((r) => r.yes_no);
-        const yesCount = yesNo.filter((v) => v).length;
-        const noCount = yesNo.filter((v) => !v).length;
-        const yesPercentage =
-          yesNo.length > 0 ? (yesCount / yesNo.length) * 100 : 0;
-        const noPercentage =
-          yesNo.length > 0 ? (noCount / yesNo.length) * 100 : 0;
-        questionStats[question.identity] = {
-          type: "YES_NO",
-          yesPercentage,
-          noPercentage,
-        };
-      } else if (question.type === "TEXT") {
-        const texts = filterResponses
-          .filter((r) => r.question === question.identity && r.text)
-          .map((r) => r.text)
-          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-        questionStats[question.identity] = {
-          type: "TEXT",
-          texts,
-        };
-      }
-    });
-    return questionStats;
-  };
+  const defaultQuestionReport = useMemo(() => {
+    if (!feedbackForm?.question_stats) return null;
+    return feedbackForm.question_stats;
+  }, [feedbackForm]);
 
-  const generateQuestionReport = () => {
-    const question = feedbackForm?.questions.find(
-      (q) => q.identity === selectedQuestion
-    );
-    if (!question) return null;
+  const questionReport = useMemo(() => {
+    if (!feedbackForm?.question_stats || !selectedQuestion) return null;
+    const stats = feedbackForm.question_stats[selectedQuestion];
+    if (!stats) return null;
 
-    const responses = filterResponses;
-    if (question.type === "RATING") {
-      const ratings = responses
-        .filter((r) => r.question === selectedQuestion && r.rating !== null)
-        .map((r) => r.rating);
-      const averageRating =
-        ratings.length > 0
-          ? ratings.reduce((a, b) => a + b, 0) / ratings.length
-          : 0;
-      return { averageRating, ratings };
-    } else if (question.type === "YES_NO") {
-      const yesNo = responses
-        .filter((r) => r.question === selectedQuestion && r.yes_no !== null)
-        .map((r) => r.yes_no);
-      const yesCount = yesNo.filter((v) => v).length;
-      const noCount = yesNo.filter((v) => !v).length;
-      const yesPercentage =
-        yesNo.length > 0 ? (yesCount / yesNo.length) * 100 : 0;
-      const noPercentage =
-        yesNo.length > 0 ? (noCount / yesNo.length) * 100 : 0;
-      return { yesPercentage, noPercentage };
-    } else if (question.type === "TEXT") {
-      const texts = responses
-        .filter((r) => r.question === selectedQuestion)
-        .map((r) => r.text)
-        .filter((t) => t)
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      return { texts };
+    if (stats.type === "RATING") {
+      return {
+        averageRating: stats.average_rating,
+        ratings: stats.rating_distribution // This is an object {1: count, ...}
+      };
+    } else if (stats.type === "YES_NO") {
+      return {
+        yesPercentage: stats.yes_percentage,
+        noPercentage: stats.no_percentage
+      };
+    } else if (stats.type === "TEXT") {
+      return {
+        texts: stats.recent_comments
+      };
     }
     return null;
-  };
-
-  const summaryReport =
-    reportType === "summary" ? generateSummaryReport() : null;
-  const defaultQuestionReport =
-    reportType === "question-specific" && !selectedQuestion
-      ? generateDefaultQuestionReport()
-      : null;
-  const questionReport =
-    reportType === "question-specific" && selectedQuestion
-      ? generateQuestionReport()
-      : null;
+  }, [feedbackForm, selectedQuestion]);
 
   const COLORS = ["#3490dc", "#e3342f"];
   const pieChartRef = useRef(null);
@@ -269,12 +203,12 @@ function ReportGenerator({ params }) {
         startY: yOffset,
         head: [["Metric", "Value"]],
         body: [
-          ["Total Submissions", summaryReport.totalSubmissions],
-          ["Average Rating", `${summaryReport.averageRating.toFixed(1)}`],
-          ["Yes Percentage", `${summaryReport.yesPercentage.toFixed(1)}%`],
-          ["No Percentage", `${summaryReport.noPercentage.toFixed(1)}%`],
-          ["Rating Responses", summaryReport.ratingCount],
-          ["Yes/No Responses", summaryReport.yesNoCount],
+          ["Total Submissions", summaryReport.totalSubmissions || 0],
+          ["Average Rating", `${Number(summaryReport.averageRating || 0).toFixed(1)}`],
+          ["Yes Percentage", `${Number(summaryReport.yesPercentage || 0).toFixed(1)}%`],
+          ["No Percentage", `${Number(summaryReport.noPercentage || 0).toFixed(1)}%`],
+          ["Rating Responses", summaryReport.ratingCount || 0],
+          ["Yes/No Responses", summaryReport.yesNoCount || 0],
         ],
         theme: "grid",
         styles: { cellPadding: 2, fontSize: 10, halign: "left" },
@@ -319,13 +253,13 @@ function ReportGenerator({ params }) {
         if (questionReport.averageRating !== undefined) {
           body.push([
             "Average Rating",
-            `${questionReport.averageRating.toFixed(1)}`,
+            `${Number(questionReport.averageRating || 0).toFixed(1)}`,
           ]);
         }
         if (questionReport.yesPercentage !== undefined) {
           body.push([
             "Yes Percentage",
-            `${questionReport.yesPercentage.toFixed(1)}%`,
+            `${Number(questionReport.yesPercentage || 0).toFixed(1)}%`,
           ]);
         }
         if (questionReport.texts && questionReport.texts.length > 0) {
@@ -399,10 +333,10 @@ function ReportGenerator({ params }) {
     }
   };
 
-  if (isLoadingFeedbackForm) return <LoadingSpinner />;
+  if (!feedbackForm && isLoadingFeedbackForm) return <LoadingSpinner />;
 
   return (
-    <div className="container mx-auto p-6 min-h-screen bg-gray-50/50">
+    <div className={`container mx-auto p-6 min-h-screen bg-gray-50/50 transition-opacity duration-300 ${isLoadingFeedbackForm ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -415,7 +349,7 @@ function ReportGenerator({ params }) {
         <div className="flex gap-2">
           <Button
             variant="outline"
-            onClick={() => window.history.back()}
+            onClick={() => router.back()}
             className="gap-2"
           >
             <ArrowLeft className="h-4 w-4" /> Back
@@ -431,7 +365,7 @@ function ReportGenerator({ params }) {
           <CardTitle className="text-lg">Filters</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             <div className="space-y-2">
               <Label>Report Type</Label>
               <div className="relative">
@@ -448,6 +382,23 @@ function ReportGenerator({ params }) {
               </div>
             </div>
             <div className="space-y-2">
+              <Label>Quick Select Month</Label>
+              <div className="relative">
+                <select
+                  value={selectedMonth}
+                  onChange={(e) => handleMonthChange(e.target.value)}
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="">Custom Range / Current</option>
+                  {monthOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="space-y-2">
               <Label>Specific Date</Label>
               <Input
                 type="date"
@@ -456,6 +407,7 @@ function ReportGenerator({ params }) {
                   setSpecificDate(e.target.value);
                   setStartDate("");
                   setEndDate("");
+                  setSelectedMonth("");
                 }}
                 disabled={startDate || endDate}
               />
@@ -468,6 +420,7 @@ function ReportGenerator({ params }) {
                 onChange={(e) => {
                   setStartDate(e.target.value);
                   setSpecificDate("");
+                  setSelectedMonth("");
                 }}
                 disabled={specificDate}
               />
@@ -480,6 +433,7 @@ function ReportGenerator({ params }) {
                 onChange={(e) => {
                   setEndDate(e.target.value);
                   setSpecificDate("");
+                  setSelectedMonth("");
                 }}
                 disabled={specificDate}
               />
@@ -513,9 +467,14 @@ function ReportGenerator({ params }) {
               </Button>
             </div>
           </div>
-          <p className="text-sm text-muted-foreground mt-4 text-right">
-            {filterResponses.length} responses found
-          </p>
+          <div className="flex justify-between items-center mt-4">
+            <div className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+              Active Range: {feedbackForm?.active_filters?.start_date || "..."} to {feedbackForm?.active_filters?.end_date || "..."}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {feedbackForm?.total_submissions || 0} responses found
+            </p>
+          </div>
         </CardContent>
       </Card>
 
@@ -551,7 +510,7 @@ function ReportGenerator({ params }) {
                           Average Rating
                         </TableCell>
                         <TableCell className="text-right">
-                          {summaryReport.averageRating.toFixed(1)}
+                          {Number(summaryReport.averageRating || 0).toFixed(1)}
                         </TableCell>
                       </TableRow>
                       <TableRow>
@@ -559,7 +518,7 @@ function ReportGenerator({ params }) {
                           Yes Percentage
                         </TableCell>
                         <TableCell className="text-right">
-                          {summaryReport.yesPercentage.toFixed(1)}%
+                          {Number(summaryReport.yesPercentage || 0).toFixed(1)}%
                         </TableCell>
                       </TableRow>
                       <TableRow>
@@ -567,7 +526,7 @@ function ReportGenerator({ params }) {
                           No Percentage
                         </TableCell>
                         <TableCell className="text-right">
-                          {summaryReport.noPercentage.toFixed(1)}%
+                          {Number(summaryReport.noPercentage || 0).toFixed(1)}%
                         </TableCell>
                       </TableRow>
                       <TableRow>
@@ -712,17 +671,14 @@ function ReportGenerator({ params }) {
                     );
                     if (!question) return null;
 
-                    const ratingData = Array.from({ length: 5 }, (_, i) => {
+                    const ratingData = Array.from({ length: 10 }, (_, i) => {
                       const rating = i + 1;
                       return {
                         rating: rating.toString(),
-                        count:
-                          stats.ratings?.filter((r) => Math.floor(r) === rating)
-                            .length || 0,
+                        count: stats.rating_distribution?.[rating.toString()] || 0,
                       };
                     });
-                    const textResponses =
-                      stats.type === "TEXT" ? stats.texts.slice(0, 10) : [];
+                    const textResponses = stats.recent_comments || [];
 
                     return (
                       <Card key={id} className="w-full">
@@ -732,32 +688,32 @@ function ReportGenerator({ params }) {
                           </CardTitle>
                           {(stats.type === "YES_NO" ||
                             stats.type === "RATING") && (
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={() => {
-                                // Use ref callback or store refs in object
-                                // For simplicity using unique ID selector here as refs in loop are tricky
-                                const el = document.getElementById(
-                                  `chart-container-${id}`
-                                );
-                                if (el) {
-                                  html2canvas(el, {
-                                    useCORS: true,
-                                    scale: 2,
-                                    backgroundColor: "#ffffff",
-                                  }).then((canvas) => {
-                                    const link = document.createElement("a");
-                                    link.download = `chart_${id}.png`;
-                                    link.href = canvas.toDataURL("image/png");
-                                    link.click();
-                                  });
-                                }
-                              }}
-                            >
-                              <Download className="h-4 w-4" />
-                            </Button>
-                          )}
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={() => {
+                                  // Use ref callback or store refs in object
+                                  // For simplicity using unique ID selector here as refs in loop are tricky
+                                  const el = document.getElementById(
+                                    `chart-container-${id}`
+                                  );
+                                  if (el) {
+                                    html2canvas(el, {
+                                      useCORS: true,
+                                      scale: 2,
+                                      backgroundColor: "#ffffff",
+                                    }).then((canvas) => {
+                                      const link = document.createElement("a");
+                                      link.download = `chart_${id}.png`;
+                                      link.href = canvas.toDataURL("image/png");
+                                      link.click();
+                                    });
+                                  }
+                                }}
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
+                            )}
                         </CardHeader>
                         <CardContent>
                           {stats.type === "RATING" && (
@@ -767,7 +723,7 @@ function ReportGenerator({ params }) {
                                   Average Rating
                                 </span>
                                 <span className="text-2xl font-bold">
-                                  {stats.average.toFixed(1)}
+                                  {stats.average_rating?.toFixed(1) || 0}
                                 </span>
                               </div>
                               <div
@@ -800,7 +756,7 @@ function ReportGenerator({ params }) {
                                       Yes
                                     </span>
                                     <span className="font-bold">
-                                      {stats.yesPercentage.toFixed(1)}%
+                                      {stats.yes_percentage?.toFixed(1) || 0}%
                                     </span>
                                   </div>
                                   <div className="flex justify-between">
@@ -808,7 +764,7 @@ function ReportGenerator({ params }) {
                                       No
                                     </span>
                                     <span className="font-bold">
-                                      {stats.noPercentage.toFixed(1)}%
+                                      {stats.no_percentage?.toFixed(1) || 0}%
                                     </span>
                                   </div>
                                 </div>
@@ -822,9 +778,9 @@ function ReportGenerator({ params }) {
                                     data={[
                                       {
                                         name: "Yes",
-                                        value: stats.yesPercentage,
+                                        value: stats.yes_percentage || 0,
                                       },
-                                      { name: "No", value: stats.noPercentage },
+                                      { name: "No", value: stats.no_percentage || 0 },
                                     ]}
                                   >
                                     <CartesianGrid strokeDasharray="3 3" />
@@ -868,7 +824,7 @@ function ReportGenerator({ params }) {
                                   </TableBody>
                                 </Table>
                               </div>
-                              {stats.texts.length > 10 && (
+                              {stats?.texts?.length > 10 && (
                                 <div className="flex items-center justify-end space-x-2 pt-2">
                                   <Button
                                     size="sm"
@@ -876,7 +832,7 @@ function ReportGenerator({ params }) {
                                     onClick={() =>
                                       setAllQuestionsPage(allQuestionsPage - 1)
                                     }
-                                    disabled={allQuestionsPage === 1}
+                                    disabled={true} // Pagination handled by API now
                                   >
                                     Prev
                                   </Button>
@@ -889,10 +845,7 @@ function ReportGenerator({ params }) {
                                     onClick={() =>
                                       setAllQuestionsPage(allQuestionsPage + 1)
                                     }
-                                    disabled={
-                                      allQuestionsPage * 10 >=
-                                      stats.texts.length
-                                    }
+                                    disabled={true}
                                   >
                                     Next
                                   </Button>
@@ -909,7 +862,7 @@ function ReportGenerator({ params }) {
             </div>
           )}
 
-          {selectedQuestion && questionReport && (
+          {selectedQuestion && (
             <div className="space-y-6">
               <h3 className="text-2xl font-bold tracking-tight">
                 Report for:{" "}
@@ -920,202 +873,216 @@ function ReportGenerator({ params }) {
                 }
               </h3>
 
-              <div className="grid gap-6 md:grid-cols-2">
-                {(questionReport.yesPercentage !== undefined ||
-                  questionReport.averageRating !== undefined) && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Metrics</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="overflow-x-auto">
+              {!questionReport ? (
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                    <div className="bg-muted rounded-full p-4 mb-4">
+                      <FileText className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                    <h4 className="text-lg font-semibold">No data available</h4>
+                    <p className="text-muted-foreground max-w-sm">
+                      There are no submissions for this question within the selected date range. Try adjusting your filters.
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <>
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {(questionReport.yesPercentage !== undefined ||
+                      questionReport.averageRating !== undefined) && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Metrics</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="overflow-x-auto">
+                              <Table>
+                                <TableBody>
+                                  {questionReport.averageRating !== undefined && (
+                                    <TableRow>
+                                      <TableCell className="font-medium">
+                                        Average Rating
+                                      </TableCell>
+                                      <TableCell className="text-right">
+                                        {Number(questionReport.averageRating || 0).toFixed(1)}
+                                      </TableCell>
+                                    </TableRow>
+                                  )}
+                                  {questionReport.yesPercentage !== undefined && (
+                                    <TableRow>
+                                      <TableCell className="font-medium">
+                                        Yes Percentage
+                                      </TableCell>
+                                      <TableCell className="text-right">
+                                        {Number(questionReport.yesPercentage || 0).toFixed(1)}%
+                                      </TableCell>
+                                    </TableRow>
+                                  )}
+                                </TableBody>
+                              </Table>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
+
+                    {questionReport.yesPercentage !== undefined && (
+                      <Card>
+                        <CardHeader className="flex flex-row items-center justify-between">
+                          <CardTitle>Distribution Chart</CardTitle>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() =>
+                              downloadGraphAsPng(
+                                pieChartRef,
+                                "question_distribution"
+                              )
+                            }
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="h-[300px]" ref={pieChartRef}>
+                            <ResponsiveContainer width="100%" height="100%">
+                              <PieChart>
+                                <Pie
+                                  data={[
+                                    {
+                                      name: "Yes",
+                                      value: questionReport.yesPercentage,
+                                    },
+                                    {
+                                      name: "No",
+                                      value: 100 - questionReport.yesPercentage,
+                                    },
+                                  ]}
+                                  dataKey="value"
+                                  nameKey="name"
+                                  cx="50%"
+                                  cy="50%"
+                                  outerRadius={80}
+                                  label
+                                >
+                                  {COLORS.map((color, index) => (
+                                    <Cell key={`cell-${index}`} fill={color} />
+                                  ))}
+                                </Pie>
+                                <Tooltip />
+                                <Legend />
+                              </PieChart>
+                            </ResponsiveContainer>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {questionReport.ratings && (
+                      <Card className="col-span-full">
+                        <CardHeader className="flex flex-row items-center justify-between">
+                          <CardTitle>Rating Distribution</CardTitle>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() =>
+                              downloadGraphAsPng(barChartRef, "rating_distribution")
+                            }
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="h-[300px]" ref={barChartRef}>
+                            <ResponsiveContainer width="100%" height="100%">
+                              <BarChart
+                                data={Array.from({ length: 10 }, (_, i) => {
+                                  const rating = i + 1;
+                                  return {
+                                    name: rating.toString(),
+                                    value: questionReport.ratings?.[rating.toString()] || 0,
+                                  };
+                                })}
+                              >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="name" />
+                                <YAxis />
+                                <Tooltip />
+                                <Bar
+                                  dataKey="value"
+                                  fill="#3490dc"
+                                  radius={[4, 4, 0, 0]}
+                                />
+                              </BarChart>
+                            </ResponsiveContainer>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+
+                  {questionReport.texts && (
+                    <Card className="mt-6">
+                      <CardHeader>
+                        <CardTitle>Comments</CardTitle>
+                      </CardHeader>
+                      <CardContent>
                         <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Comment</TableHead>
+                            </TableRow>
+                          </TableHeader>
                           <TableBody>
-                            {questionReport.averageRating !== undefined && (
+                            {questionReport.texts
+                              .slice(
+                                (specificTextPage - 1) * 10,
+                                specificTextPage * 10
+                              )
+                              .map((text, index) => (
+                                <TableRow key={index}>
+                                  <TableCell>{text}</TableCell>
+                                </TableRow>
+                              ))}
+                            {questionReport.texts.length === 0 && (
                               <TableRow>
-                                <TableCell className="font-medium">
-                                  Average Rating
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  {questionReport.averageRating.toFixed(1)}
-                                </TableCell>
-                              </TableRow>
-                            )}
-                            {questionReport.yesPercentage !== undefined && (
-                              <TableRow>
-                                <TableCell className="font-medium">
-                                  Yes Percentage
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  {questionReport.yesPercentage.toFixed(1)}%
+                                <TableCell className="text-muted-foreground text-center">
+                                  No comments
                                 </TableCell>
                               </TableRow>
                             )}
                           </TableBody>
                         </Table>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {questionReport.yesPercentage !== undefined && (
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between">
-                      <CardTitle>Distribution Chart</CardTitle>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() =>
-                          downloadGraphAsPng(
-                            pieChartRef,
-                            "question_distribution"
-                          )
-                        }
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="h-[300px]" ref={pieChartRef}>
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChart>
-                            <Pie
-                              data={[
-                                {
-                                  name: "Yes",
-                                  value: questionReport.yesPercentage,
-                                },
-                                {
-                                  name: "No",
-                                  value: 100 - questionReport.yesPercentage,
-                                },
-                              ]}
-                              dataKey="value"
-                              nameKey="name"
-                              cx="50%"
-                              cy="50%"
-                              outerRadius={80}
-                              label
+                        {questionReport.texts.length > 10 && (
+                          <div className="flex items-center justify-end space-x-2 py-4">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                setSpecificTextPage(specificTextPage - 1)
+                              }
+                              disabled={specificTextPage === 1}
                             >
-                              {COLORS.map((color, index) => (
-                                <Cell key={`cell-${index}`} fill={color} />
-                              ))}
-                            </Pie>
-                            <Tooltip />
-                            <Legend />
-                          </PieChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {questionReport.ratings && (
-                  <Card className="col-span-full">
-                    <CardHeader className="flex flex-row items-center justify-between">
-                      <CardTitle>Rating Distribution</CardTitle>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() =>
-                          downloadGraphAsPng(barChartRef, "rating_distribution")
-                        }
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="h-[300px]" ref={barChartRef}>
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart
-                            data={Array.from({ length: 5 }, (_, i) => {
-                              const rating = i + 1;
-                              return {
-                                name: rating.toString(),
-                                value: questionReport.ratings.filter(
-                                  (r) => Math.floor(r) === rating
-                                ).length,
-                              };
-                            })}
-                          >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Bar
-                              dataKey="value"
-                              fill="#3490dc"
-                              radius={[4, 4, 0, 0]}
-                            />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-
-              {questionReport.texts && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Comments</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Comment</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {questionReport.texts
-                          .slice(
-                            (specificTextPage - 1) * 10,
-                            specificTextPage * 10
-                          )
-                          .map((text, index) => (
-                            <TableRow key={index}>
-                              <TableCell>{text}</TableCell>
-                            </TableRow>
-                          ))}
-                        {questionReport.texts.length === 0 && (
-                          <TableRow>
-                            <TableCell className="text-muted-foreground text-center">
-                              No comments
-                            </TableCell>
-                          </TableRow>
+                              Previous
+                            </Button>
+                            <span className="text-sm">Page {specificTextPage}</span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                setSpecificTextPage(specificTextPage + 1)
+                              }
+                              disabled={
+                                specificTextPage * 10 >= questionReport.texts.length
+                              }
+                            >
+                              Next
+                            </Button>
+                          </div>
                         )}
-                      </TableBody>
-                    </Table>
-                    {questionReport.texts.length > 10 && (
-                      <div className="flex items-center justify-end space-x-2 py-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            setSpecificTextPage(specificTextPage - 1)
-                          }
-                          disabled={specificTextPage === 1}
-                        >
-                          Previous
-                        </Button>
-                        <span className="text-sm">Page {specificTextPage}</span>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            setSpecificTextPage(specificTextPage + 1)
-                          }
-                          disabled={
-                            specificTextPage * 10 >= questionReport.texts.length
-                          }
-                        >
-                          Next
-                        </Button>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                      </CardContent>
+                    </Card>
+                  )}
+                </>
               )}
             </div>
           )}

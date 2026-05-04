@@ -25,9 +25,10 @@ export const getFeedbackForms = async () => {
   return response?.data?.results || [];
 };
 
-export const getFeedbackForm = async (form_identity) => {
+export const getFeedbackForm = async (form_identity, params = {}) => {
   const response = await apiActions?.get(
-    `/api/v1/feedbackforms/${form_identity}/`
+    `/api/v1/feedbackforms/${form_identity}/`,
+    { params }
   );
   return response?.data || {};
 };

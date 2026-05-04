@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React, { useState } from "react";
+import { Table, TableHead, TableRow, TableBody, TableCell, TableHeader } from "../ui/table";
 
 function CentersTable({ centers, role }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,61 +20,61 @@ function CentersTable({ centers, role }) {
   return (
     <>
       <div className="overflow-x-auto">
-        <table className="w-full table-auto border rounded-lg border-border">
-          <thead>
-            <tr className="bg-muted text-black font-semibold text-sm">
-              <th className="border-b border-border px-4 py-2 text-left">
+        <Table className="w-full table-auto border rounded-lg border-border">
+          <TableHeader>
+            <TableRow className="bg-muted text-black font-semibold text-sm">
+              <TableHead className="border-b border-border px-4 py-2 text-left">
                 Name
-              </th>
-              <th className="border-b border-border px-4 py-2 text-left">
+              </TableHead>
+              <TableHead className="border-b border-border px-4 py-2 text-left">
                 Phone
-              </th>
-              <th className="border-b border-border px-4 py-2 text-left">
+              </TableHead>
+              <TableHead className="border-b border-border px-4 py-2 text-left">
                 Location
-              </th>
-              <th className="border-b border-border px-4 py-2 text-left">
+              </TableHead>
+              <TableHead className="border-b border-border px-4 py-2 text-left">
                 Action
-              </th>
-            </tr>
-          </thead>
-          <tbody>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {currentCenters.length > 0 ? (
               currentCenters.map((center) => (
-                <tr
+                <TableRow
                   key={center.reference}
                   className="bg-card hover:bg-muted/50 transition-colors"
                 >
-                  <td className="border-b border-border px-4 py-2 text-black">
+                  <TableCell className="border-b border-border px-4 py-2 text-black">
                     {center?.name}
-                  </td>
-                  <td className="border-b border-border px-4 py-2 text-black">
+                  </TableCell>
+                  <TableCell className="border-b border-border px-4 py-2 text-black">
                     {center?.contact}
-                  </td>
-                  <td className="border-b border-border px-4 py-2 text-black">
+                  </TableCell>
+                  <TableCell className="border-b border-border px-4 py-2 text-black">
                     {center?.location}
-                  </td>
-                  <td className="border-b border-border px-4 py-2">
+                  </TableCell>
+                  <TableCell className="border-b border-border px-4 py-2">
                     <Link
                       href={`/${role}/centers/${center?.center_identity}`}
                       className="bg-primary text-primary-foreground px-3 py-1 rounded-lg hover:bg-opacity-90 transition-colors"
                     >
                       View
                     </Link>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))
             ) : (
-              <tr>
-                <td
+              <TableRow>
+                <TableCell
                   colSpan="4"
                   className="border-b border-border px-4 py-2 text-center text-black bg-card"
                 >
                   No centers available
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
       {currentCenters.length > 0 && (
         <div className="mt-4 flex justify-between items-center">

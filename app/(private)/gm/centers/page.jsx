@@ -22,7 +22,7 @@ function Centers() {
   }
 
   return (
-    <div className="container mx-auto p-4 bg-gray-50/50 min-h-screen">
+    <div className="container mx-auto p-4 min-h-screen">
       <section className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -46,7 +46,7 @@ function Centers() {
             {centers?.length > 0 ? (
                 <CentersTable centers={centers} role="gm" />
             ) : (
-                <div className="p-8 text-center text-muted-foreground bg-muted/50 rounded-md border border-dashed">
+                <div className="p-8 text-center text-muted-foreground bg-muted/50 rounded border border-dashed">
                 No centers available
                 </div>
             )}
@@ -56,7 +56,7 @@ function Centers() {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-card p-6 rounded-lg shadow-lg w-full max-w-md overflow-y-auto relative border">
+          <div className="bg-card p-6 rounded shadow w-full max-w-md overflow-y-auto relative border">
             <button
               className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
               onClick={() => setIsModalOpen(false)}
