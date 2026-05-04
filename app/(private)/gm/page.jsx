@@ -65,7 +65,7 @@ function GeneralManager() {
   const [centerModal, setCenterModal] = useState(false);
 
   return (
-    <div className="container mx-auto p-4 md:p-6 bg-gray-50/50 min-h-screen">
+    <div className="container mx-auto p-4 min-h-screen">
       <section className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-2 border-b">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 leading-none">
@@ -83,7 +83,7 @@ function GeneralManager() {
         <div className="flex items-center gap-3">
           <Popover>
             <PopoverTrigger asChild>
-              <button className="inline-flex items-center justify-center rounded-xl text-sm font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-6 shadow-lg shadow-primary/20 cursor-pointer group">
+              <button className="inline-flex items-center justify-center rounded text-sm font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-6 shadow-lg shadow-primary/20 cursor-pointer group">
                 <Plus className="mr-2 h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
                 Quick Actions
                 <ChevronDown className="ml-2 h-4 w-4 opacity-50 group-data-[state=open]:rotate-180 transition-transform" />
@@ -92,7 +92,7 @@ function GeneralManager() {
             <PopoverContent className="w-56 p-2 shadow-2xl border-primary/10" align="end" sideOffset={8}>
               <div className="space-y-1">
                 <button
-                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group"
+                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded hover:bg-primary/5 transition-all text-left group"
                   onClick={() => setProfileModal(true)}
                 >
                   <UserPen className="mr-3 h-4 w-4 text-primary" />
@@ -102,7 +102,7 @@ function GeneralManager() {
                 <div className="h-px bg-border my-1 mx-2" />
 
                 <button
-                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded-xl hover:bg-primary/5 transition-all text-left group"
+                  className="flex items-center w-full px-4 py-3 text-sm font-bold rounded hover:bg-primary/5 transition-all text-left group"
                   onClick={() => setCenterModal(true)}
                 >
                   <Building2 className="mr-3 h-4 w-4 text-primary" />
@@ -115,7 +115,7 @@ function GeneralManager() {
       </section>
 
       <section className="mb-8 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card className="rounded">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">My Actions</CardTitle>
             <ListChecks className="h-4 w-4 text-muted-foreground" />
@@ -134,7 +134,7 @@ function GeneralManager() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Centers</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
@@ -153,7 +153,7 @@ function GeneralManager() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Feedback Forms</CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
@@ -172,7 +172,7 @@ function GeneralManager() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Postings</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
@@ -209,7 +209,7 @@ function GeneralManager() {
         </div>
 
         <TabsContent value="steps" className="mt-4">
-          <Card>
+          <Card className="rounded">
             <CardHeader>
               <CardTitle>Approval Steps</CardTitle>
             </CardHeader>
@@ -233,7 +233,7 @@ function GeneralManager() {
         </TabsContent>
 
         <TabsContent value="centers" className="mt-4">
-          <Card>
+          <Card className="rounded">
             <CardHeader>
               <CardTitle>Centers Management</CardTitle>
             </CardHeader>
@@ -249,7 +249,7 @@ function GeneralManager() {
                   <CentersTable centers={centers} role="gm" />
                 </div>
               ) : (
-                <div className="p-4 text-center text-muted-foreground bg-muted rounded-md border border-dashed">
+                <div className="p-4 text-center text-muted-foreground bg-muted rounded border border-dashed">
                   No centers available
                 </div>
               )}
@@ -258,7 +258,7 @@ function GeneralManager() {
         </TabsContent>
 
         <TabsContent value="postings" className="mt-4">
-          <Card>
+          <Card className="rounded">
             <CardHeader>
               <CardTitle>Postings</CardTitle>
             </CardHeader>
@@ -282,7 +282,7 @@ function GeneralManager() {
         </TabsContent>
 
         <TabsContent value="credit-notes" className="mt-4">
-          <Card>
+          <Card className="rounded">
             <CardHeader>
               <CardTitle>Credit Notes</CardTitle>
             </CardHeader>
@@ -324,10 +324,10 @@ function GeneralManager() {
         onClose={() => setProfileModal(false)}
         title="Update Profile"
       >
-        <UpdateProfile 
-          user={account} 
-          refetch={refetchAccount} 
-          onClose={() => setProfileModal(false)} 
+        <UpdateProfile
+          user={account}
+          refetch={refetchAccount}
+          onClose={() => setProfileModal(false)}
         />
       </Modal>
     </div>

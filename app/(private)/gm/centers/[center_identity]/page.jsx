@@ -75,10 +75,8 @@ function CenterDetail({ params }) {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Title</TableHead>
-                    <TableHead>Questions</TableHead>
-                    <TableHead>Submissions</TableHead>
                     <TableHead>Accommodation</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
+                    <TableHead>Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -87,19 +85,11 @@ function CenterDetail({ params }) {
                       <TableCell className="font-medium">
                         {feedbackForm?.title}
                       </TableCell>
-                      <TableCell>{feedbackForm?.questions?.length}</TableCell>
                       <TableCell>
-                        {feedbackForm?.form_submissions?.length}
+                        {feedbackForm?.is_accomodation ? "Yes" : "No"}
                       </TableCell>
                       <TableCell>
-                        {feedbackForm?.is_accomodation ? (
-                          <Badge variant="default">Yes</Badge>
-                        ) : (
-                          <Badge variant="secondary">No</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button asChild variant="ghost" size="sm">
+                        <Button asChild variant="default" size="sm">
                           <Link
                             href={`/gm/centers/${center_identity}/${feedbackForm?.form_identity}`}
                             className="flex items-center gap-1"
