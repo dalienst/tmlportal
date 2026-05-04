@@ -10,10 +10,10 @@ export function useFetchFeedbackForms() {
   });
 }
 
-export function useFetchFeedbackForm(form_identity) {
+export function useFetchFeedbackForm(form_identity, params = {}) {
   return useQuery({
-    queryKey: ["feedbackforms", form_identity],
-    queryFn: () => getFeedbackForm(form_identity),
+    queryKey: ["feedbackforms", form_identity, params],
+    queryFn: () => getFeedbackForm(form_identity, params),
     enabled: !!form_identity,
   });
 }
