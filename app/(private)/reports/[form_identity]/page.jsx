@@ -53,9 +53,11 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 function ReportGenerator({ params }) {
   const { form_identity } = use(params);
+  const router = useRouter()
 
   const {
     isLoading: isLoadingFeedbackForm,
@@ -415,7 +417,7 @@ function ReportGenerator({ params }) {
         <div className="flex gap-2">
           <Button
             variant="outline"
-            onClick={() => window.history.back()}
+            onClick={() => router.back()}
             className="gap-2"
           >
             <ArrowLeft className="h-4 w-4" /> Back
@@ -732,32 +734,32 @@ function ReportGenerator({ params }) {
                           </CardTitle>
                           {(stats.type === "YES_NO" ||
                             stats.type === "RATING") && (
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              onClick={() => {
-                                // Use ref callback or store refs in object
-                                // For simplicity using unique ID selector here as refs in loop are tricky
-                                const el = document.getElementById(
-                                  `chart-container-${id}`
-                                );
-                                if (el) {
-                                  html2canvas(el, {
-                                    useCORS: true,
-                                    scale: 2,
-                                    backgroundColor: "#ffffff",
-                                  }).then((canvas) => {
-                                    const link = document.createElement("a");
-                                    link.download = `chart_${id}.png`;
-                                    link.href = canvas.toDataURL("image/png");
-                                    link.click();
-                                  });
-                                }
-                              }}
-                            >
-                              <Download className="h-4 w-4" />
-                            </Button>
-                          )}
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                onClick={() => {
+                                  // Use ref callback or store refs in object
+                                  // For simplicity using unique ID selector here as refs in loop are tricky
+                                  const el = document.getElementById(
+                                    `chart-container-${id}`
+                                  );
+                                  if (el) {
+                                    html2canvas(el, {
+                                      useCORS: true,
+                                      scale: 2,
+                                      backgroundColor: "#ffffff",
+                                    }).then((canvas) => {
+                                      const link = document.createElement("a");
+                                      link.download = `chart_${id}.png`;
+                                      link.href = canvas.toDataURL("image/png");
+                                      link.click();
+                                    });
+                                  }
+                                }}
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
+                            )}
                         </CardHeader>
                         <CardContent>
                           {stats.type === "RATING" && (
@@ -923,40 +925,40 @@ function ReportGenerator({ params }) {
               <div className="grid gap-6 md:grid-cols-2">
                 {(questionReport.yesPercentage !== undefined ||
                   questionReport.averageRating !== undefined) && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Metrics</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="overflow-x-auto">
-                        <Table>
-                          <TableBody>
-                            {questionReport.averageRating !== undefined && (
-                              <TableRow>
-                                <TableCell className="font-medium">
-                                  Average Rating
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  {questionReport.averageRating.toFixed(1)}
-                                </TableCell>
-                              </TableRow>
-                            )}
-                            {questionReport.yesPercentage !== undefined && (
-                              <TableRow>
-                                <TableCell className="font-medium">
-                                  Yes Percentage
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  {questionReport.yesPercentage.toFixed(1)}%
-                                </TableCell>
-                              </TableRow>
-                            )}
-                          </TableBody>
-                        </Table>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Metrics</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="overflow-x-auto">
+                          <Table>
+                            <TableBody>
+                              {questionReport.averageRating !== undefined && (
+                                <TableRow>
+                                  <TableCell className="font-medium">
+                                    Average Rating
+                                  </TableCell>
+                                  <TableCell className="text-right">
+                                    {questionReport.averageRating.toFixed(1)}
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                              {questionReport.yesPercentage !== undefined && (
+                                <TableRow>
+                                  <TableCell className="font-medium">
+                                    Yes Percentage
+                                  </TableCell>
+                                  <TableCell className="text-right">
+                                    {questionReport.yesPercentage.toFixed(1)}%
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
 
                 {questionReport.yesPercentage !== undefined && (
                   <Card>

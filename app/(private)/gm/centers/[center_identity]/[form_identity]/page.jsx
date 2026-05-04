@@ -174,7 +174,6 @@ function FeedbackFormDetail({ params }) {
                 <Button asChild variant="ghost" className="justify-start gap-2 h-9" size="sm">
                   <Link
                     href={`/reports/${feedbackForm?.form_identity}`}
-                    target="_blank"
                   >
                     <FileText className="h-4 w-4 text-primary" /> Generate Report
                   </Link>
