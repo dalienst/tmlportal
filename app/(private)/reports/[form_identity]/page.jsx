@@ -67,8 +67,40 @@ function ReportGenerator({ params }) {
   const [allQuestionsPage, setAllQuestionsPage] = useState(1);
   const [summaryTextPage, setSummaryTextPage] = useState(1);
   const [specificTextPage, setSpecificTextPage] = useState(1);
+  const [selectedMonth, setSelectedMonth] = useState("");
 
-  // Sync dates with filters
+  // Helper to get month options (last 12 months)
+  const monthOptions = useMemo(() => {
+    const options = [];
+    const now = new Date();
+    for (let i = 0; i < 12; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const label = d.toLocaleString("default", { month: "long", year: "numeric" });
+      const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      options.push({ label, value });
+    }
+    return options;
+  }, []);
+
+  const handleMonthChange = (value) => {
+    setSelectedMonth(value);
+    if (value) {
+      const [year, month] = value.split("-").map(Number);
+      const firstDay = new Date(year, month - 1, 1);
+      const lastDay = new Date(year, month, 0);
+      
+      const formatDate = (date) => {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      };
+
+      setStartDate(formatDate(firstDay));
+      setEndDate(formatDate(lastDay));
+      setSpecificDate("");
+    }
+  };
   const {
     isLoading: isLoadingFeedbackForm,
     data: feedbackForm,
@@ -82,6 +114,7 @@ function ReportGenerator({ params }) {
     setSpecificDate("");
     setStartDate("");
     setEndDate("");
+    setSelectedMonth("");
     setSelectedQuestion("");
     setAllQuestionsPage(1);
     setSummaryTextPage(1);
@@ -300,10 +333,10 @@ function ReportGenerator({ params }) {
     }
   };
 
-  if (isLoadingFeedbackForm) return <LoadingSpinner />;
+  if (!feedbackForm && isLoadingFeedbackForm) return <LoadingSpinner />;
 
   return (
-    <div className="container mx-auto p-6 min-h-screen bg-gray-50/50">
+    <div className={`container mx-auto p-6 min-h-screen bg-gray-50/50 transition-opacity duration-300 ${isLoadingFeedbackForm ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -332,7 +365,7 @@ function ReportGenerator({ params }) {
           <CardTitle className="text-lg">Filters</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             <div className="space-y-2">
               <Label>Report Type</Label>
               <div className="relative">
@@ -349,6 +382,23 @@ function ReportGenerator({ params }) {
               </div>
             </div>
             <div className="space-y-2">
+              <Label>Quick Select Month</Label>
+              <div className="relative">
+                <select
+                  value={selectedMonth}
+                  onChange={(e) => handleMonthChange(e.target.value)}
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="">Custom Range / Current</option>
+                  {monthOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="space-y-2">
               <Label>Specific Date</Label>
               <Input
                 type="date"
@@ -357,6 +407,7 @@ function ReportGenerator({ params }) {
                   setSpecificDate(e.target.value);
                   setStartDate("");
                   setEndDate("");
+                  setSelectedMonth("");
                 }}
                 disabled={startDate || endDate}
               />
@@ -369,6 +420,7 @@ function ReportGenerator({ params }) {
                 onChange={(e) => {
                   setStartDate(e.target.value);
                   setSpecificDate("");
+                  setSelectedMonth("");
                 }}
                 disabled={specificDate}
               />
@@ -381,6 +433,7 @@ function ReportGenerator({ params }) {
                 onChange={(e) => {
                   setEndDate(e.target.value);
                   setSpecificDate("");
+                  setSelectedMonth("");
                 }}
                 disabled={specificDate}
               />
