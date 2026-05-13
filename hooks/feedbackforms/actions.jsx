@@ -1,7 +1,8 @@
 "use client";
 
-import { getFeedbackForm, getFeedbackForms, getPublicFeedbackFormDetails } from "@/services/feedbackforms";
+import { getFeedbackForm, getFeedbackForms, getPublicFeedbackFormDetails, getFeedbackReportsSummary } from "@/services/feedbackforms";
 import { useQuery } from "@tanstack/react-query";
+import useAxiosAuth from "@/hooks/general/useAxiosAuth";
 
 export function useFetchFeedbackForms() {
   return useQuery({
@@ -23,5 +24,14 @@ export function useFetchPublicFeedbackFormDetails(form_identity) {
     queryKey: ["feedbackforms", form_identity],
     queryFn: () => getPublicFeedbackFormDetails(form_identity),
     enabled: !!form_identity,
+  });
+}
+
+export function useFetchFeedbackReportsSummary(params = {}) {
+  const axios = useAxiosAuth();
+  return useQuery({
+    queryKey: ["feedbackforms-summary", params],
+    queryFn: () => getFeedbackReportsSummary(params, axios),
+    enabled: !!axios,
   });
 }

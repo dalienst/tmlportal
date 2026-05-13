@@ -33,6 +33,14 @@ export const getFeedbackForm = async (form_identity, params = {}) => {
   return response?.data || {};
 };
 
+export const getFeedbackReportsSummary = async (params = {}, axios) => {
+  const response = await apiActions?.get(`/api/v1/feedbackforms/list/summary/`, {
+    ...axios,
+    params,
+  });
+  return response?.data?.results || [];
+};
+
 
 export const getPublicFeedbackFormDetails = async (form_identity) => {
   const response = await apiActions?.get(`/api/v1/feedbackforms/public/detail/${form_identity}/`);
