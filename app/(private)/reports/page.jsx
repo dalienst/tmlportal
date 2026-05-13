@@ -53,6 +53,9 @@ export default function ReportsSummaryPage() {
     end_date: endDate
   });
 
+  const reports = summaryData?.results || [];
+  const aggregates = summaryData?.aggregates || {};
+
   if (isLoading) return <LoadingSpinner />;
 
   return (
@@ -86,9 +89,40 @@ export default function ReportsSummaryPage() {
         </div>
       </div>
 
+      {/* Group Aggregates */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+        <Card className="border-none shadow-sm bg-blue-600 text-white">
+          <CardContent className="pt-6">
+            <p className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">Group Score</p>
+            <div className="flex items-end gap-2">
+                <span className="text-4xl font-mono font-bold leading-none">{aggregates.average_rating || "0.0"}</span>
+                <span className="text-sm opacity-80 mb-1">/ 10</span>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-[#eee] shadow-sm bg-white">
+          <CardContent className="pt-6">
+            <p className="text-[10px] font-bold text-[#666] uppercase tracking-widest mb-1">Total Feedbacks</p>
+            <p className="text-4xl font-mono font-bold text-[#1a1a1a] leading-none">{aggregates.total_submissions || 0}</p>
+          </CardContent>
+        </Card>
+        <Card className="border-[#eee] shadow-sm bg-white">
+          <CardContent className="pt-6">
+            <p className="text-[10px] font-bold text-[#666] uppercase tracking-widest mb-1">Overall Satisfaction</p>
+            <p className="text-4xl font-mono font-bold text-green-600 leading-none">{aggregates.satisfaction_pct || 0}%</p>
+          </CardContent>
+        </Card>
+        <Card className="border-[#eee] shadow-sm bg-white">
+          <CardContent className="pt-6">
+            <p className="text-[10px] font-bold text-[#666] uppercase tracking-widest mb-1">Active Centers</p>
+            <p className="text-4xl font-mono font-bold text-[#1a1a1a] leading-none">{aggregates.center_count || 0}</p>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {summaryData?.map((report) => (
+        {reports.map((report) => (
           <Card key={report.form_identity} className="border-[#eee] shadow-sm hover:shadow-md transition-shadow bg-white overflow-hidden group">
             <CardHeader className="pb-3 border-b border-[#f9f9f9]">
               <div className="flex justify-between items-start">
@@ -154,7 +188,7 @@ export default function ReportsSummaryPage() {
         ))}
       </div>
 
-      {summaryData?.length === 0 && (
+      {reports.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 bg-white border border-dashed border-[#ccc] rounded-xl">
           <FileText className="w-12 h-12 text-[#ccc] mb-4" />
           <h3 className="text-lg font-bold text-[#666]">No active reports found</h3>

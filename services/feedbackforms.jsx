@@ -38,7 +38,7 @@ export const getFeedbackReportsSummary = async (params = {}, axios) => {
     ...axios,
     params,
   });
-  return response?.data?.results || [];
+  return response?.data?.results || {};
 };
 
 
