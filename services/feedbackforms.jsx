@@ -42,6 +42,14 @@ export const getFeedbackReportsSummary = async (params = {}, axios) => {
 };
 
 
+export const getFeedbackAIInsights = async (form_identity, params = {}, axios) => {
+  const response = await apiActions?.get(`/api/v1/feedbackforms/${form_identity}/insights/`, {
+    ...axios,
+    params,
+  });
+  return response?.data || {};
+};
+
 export const getPublicFeedbackFormDetails = async (form_identity) => {
   const response = await apiActions?.get(`/api/v1/feedbackforms/public/detail/${form_identity}/`);
   return response?.data || {};
