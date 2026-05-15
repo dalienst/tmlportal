@@ -1,17 +1,31 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import React, { useState, useMemo } from "react";
 import { useFetchFeedbackReportsSummary } from "@/hooks/feedbackforms/actions";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, FileText, LayoutDashboard, TrendingUp } from "lucide-react";
+import { ChevronRight, FileText, LayoutDashboard, TrendingUp, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function ReportsSummaryPage() {
+  const { data: session } = useSession();
   const [selectedMonth, setSelectedMonth] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+
+  const portalHref = useMemo(() => {
+    if (session?.user?.is_admin) return "/admin";
+    if (session?.user?.is_gm) return "/gm";
+    if (session?.user?.is_finance) return "/finance";
+    if (session?.user?.is_reservations) return "/reservations";
+    if (session?.user?.is_manager) return "/managers";
+    if (session?.user?.is_employee) return "/employees";
+    if (session?.user?.is_auditor) return "/auditor";
+    if (session?.user?.is_it) return "/it";
+    return "/";
+  }, [session]);
 
   // Helper to get month options (last 12 months)
   const monthOptions = useMemo(() => {
@@ -60,6 +74,17 @@ export default function ReportsSummaryPage() {
 
   return (
     <div className="container mx-auto p-4">
+      {/* Breadcrumb / Back Navigation */}
+      <div className="mb-6">
+        <Link 
+          href={portalHref}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-primary transition-colors group"
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+          Back to Portal
+        </Link>
+      </div>
+
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>

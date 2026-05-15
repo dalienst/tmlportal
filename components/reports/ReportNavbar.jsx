@@ -2,34 +2,35 @@
 
 import React, { useMemo } from "react";
 import Navbar from "@/components/general/Navbar";
-import { LayoutGrid } from "lucide-react";
+import { LayoutGrid, ArrowLeft, BarChart3, Home } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 function ReportNavbar() {
     const { data: session } = useSession();
 
-    const homeHref = useMemo(() => {
-        if (session?.user?.is_admin) return "/admin";
-        if (session?.user?.is_gm) return "/gm";
-        if (session?.user?.is_finance) return "/finance";
-        if (session?.user?.is_reservations) return "/reservations";
-        if (session?.user?.is_manager) return "/managers";
-        if (session?.user?.is_employee) return "/employees";
-        if (session?.user?.is_auditor) return "/auditor";
-        if (session?.user?.is_it) return "/it";
-        return "/";
+    const portalInfo = useMemo(() => {
+        if (session?.user?.is_admin) return { name: "Admin", href: "/admin" };
+        if (session?.user?.is_gm) return { name: "GM", href: "/gm" };
+        if (session?.user?.is_finance) return { name: "Finance", href: "/finance" };
+        if (session?.user?.is_reservations) return { name: "Reservations", href: "/reservations" };
+        if (session?.user?.is_manager) return { name: "Manager", href: "/managers" };
+        if (session?.user?.is_employee) return { name: "Employee", href: "/employees" };
+        if (session?.user?.is_auditor) return { name: "Auditor", href: "/auditor" };
+        if (session?.user?.is_it) return { name: "IT", href: "/it" };
+        return { name: "Home", href: "/" };
     }, [session]);
 
     const navItems = [
-        { label: "Dashboard", href: homeHref, icon: LayoutGrid },
+        { label: "Reports Overview", href: "/reports", icon: BarChart3 },
+        { label: `Exit to ${portalInfo.name} Portal`, href: portalInfo.href, icon: Home },
     ];
 
     return (
         <Navbar
             brand="TML | Reports"
-            subtitle="Reports Portal"
+            subtitle={`${portalInfo.name} Analytics Console`}
             navItems={navItems}
-            homeHref={homeHref}
+            homeHref="/reports"
             logoutCallback="/"
         />
     );

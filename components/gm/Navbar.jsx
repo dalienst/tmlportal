@@ -2,12 +2,12 @@
 
 import React from "react";
 import Navbar from "@/components/general/Navbar";
-import { LayoutGrid, Building2 } from "lucide-react";
+import { LayoutGrid, BarChart3 } from "lucide-react";
 
 function GMNavbar() {
   const navItems = [
     { label: "Dashboard", href: "/gm", icon: LayoutGrid },
-    { label: "Reports", href: "/reports", icon: Building2 },
+    { label: "Reports", href: "/reports", icon: BarChart3 },
   ];
 
   return (
