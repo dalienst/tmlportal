@@ -33,6 +33,31 @@ export const getFeedbackForm = async (form_identity, params = {}) => {
   return response?.data || {};
 };
 
+export const getFeedbackReportsSummary = async (params = {}, axios) => {
+  const response = await apiActions?.get(`/api/v1/feedbackforms/list/summary/`, {
+    ...axios,
+    params,
+  });
+  return response?.data || {};
+};
+
+
+export const getFeedbackAIInsights = async (form_identity, params = {}, axios) => {
+  const response = await apiActions?.get(`/api/v1/feedbackforms/${form_identity}/insights/`, {
+    ...axios,
+    params,
+  });
+  return response?.data || {};
+};
+
+export const askAiChat = async (form_identity, query, authContext) => {
+  const response = await apiActions.post(
+    `/api/v1/feedbackforms/${form_identity}/chat/`,
+    { query },
+    authContext || {}
+  );
+  return response?.data || {};
+};
 
 export const getPublicFeedbackFormDetails = async (form_identity) => {
   const response = await apiActions?.get(`/api/v1/feedbackforms/public/detail/${form_identity}/`);

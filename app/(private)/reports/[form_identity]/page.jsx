@@ -52,8 +52,14 @@ import {
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
+  Sparkles,
+  BrainCircuit,
+  RefreshCw,
+  TrendingUp,
+  Bot,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import AIChatSidebar from "@/components/reports/AIChatSidebar";
 
 function ReportGenerator({ params }) {
   const { form_identity } = use(params);
@@ -68,6 +74,8 @@ function ReportGenerator({ params }) {
   const [summaryTextPage, setSummaryTextPage] = useState(1);
   const [specificTextPage, setSpecificTextPage] = useState(1);
   const [selectedMonth, setSelectedMonth] = useState("");
+  const [refreshAi, setRefreshAi] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // Helper to get month options (last 12 months)
   const monthOptions = useMemo(() => {
@@ -108,7 +116,14 @@ function ReportGenerator({ params }) {
   } = useFetchFeedbackForm(form_identity, {
     start_date: specificDate || startDate,
     end_date: specificDate || endDate,
+    refresh_ai: refreshAi,
   });
+
+  const handleRefreshAi = async () => {
+    setRefreshAi(true);
+    await refetchFeedbackForm();
+    setRefreshAi(false);
+  };
 
   const handleClearFilters = () => {
     setSpecificDate("");
@@ -336,6 +351,7 @@ function ReportGenerator({ params }) {
   if (!feedbackForm && isLoadingFeedbackForm) return <LoadingSpinner />;
 
   return (
+    <>
     <div className={`container mx-auto p-6 min-h-screen bg-gray-50/50 transition-opacity duration-300 ${isLoadingFeedbackForm ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
@@ -1089,6 +1105,29 @@ function ReportGenerator({ params }) {
         </div>
       )}
     </div>
+    
+    {/* AI Analyst Floating Button */}
+    <div className="fixed bottom-6 right-6 z-40">
+      <Button
+        onClick={() => setIsChatOpen(true)}
+        className="h-14 w-14 rounded-full bg-blue-600 hover:bg-blue-700 shadow-xl flex items-center justify-center group relative overflow-hidden transition-all hover:scale-105 active:scale-95"
+      >
+        <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 animate-pulse" />
+        <Bot className="h-6 w-6 text-white" />
+        <span className="absolute -top-12 right-0 bg-slate-900 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap font-bold uppercase tracking-tighter">
+          Ask AI Analyst
+        </span>
+      </Button>
+    </div>
+
+    {/* AI Analyst Sidebar */}
+    <AIChatSidebar 
+      isOpen={isChatOpen} 
+      onClose={() => setIsChatOpen(false)} 
+      formIdentity={form_identity}
+      centerName={feedbackForm?.center || "this center"}
+    />
+    </>
   );
 }
 
