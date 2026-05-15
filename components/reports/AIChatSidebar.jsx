@@ -113,8 +113,8 @@ export default function AIChatSidebar({ isOpen, onClose, formIdentity, centerNam
               <Bot className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-xs">AI Analyst</h3>
-              <p className="text-[9px] text-blue-100 uppercase font-medium truncate max-w-[120px]">{centerName}</p>
+              <h3 className="font-bold text-xs">Ukwaju AI</h3>
+              <p className="text-[9px] text-blue-100 uppercase font-medium truncate max-w-[150px]">Context: {centerName}</p>
             </div>
           </div>
           
@@ -194,7 +194,7 @@ export default function AIChatSidebar({ isOpen, onClose, formIdentity, centerNam
         </ScrollArea>
 
         {/* Suggested Questions */}
-        {messages.length < 4 && !isLoading && (
+        {!isLoading && (
           <div className="px-3 py-2 bg-slate-50/50 border-t border-slate-100">
             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 px-1">Suggested</p>
             <div className={`grid gap-1.5 ${isCentered || isMaximized ? "grid-cols-2" : "grid-cols-1"}`}>
