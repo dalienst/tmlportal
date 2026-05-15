@@ -50,6 +50,15 @@ export const getFeedbackAIInsights = async (form_identity, params = {}, axios) =
   return response?.data || {};
 };
 
+export const askAiChat = async (form_identity, query, authContext) => {
+  const response = await apiActions.post(
+    `/api/v1/feedbackforms/${form_identity}/chat/`,
+    { query },
+    authContext || {}
+  );
+  return response?.data || {};
+};
+
 export const getPublicFeedbackFormDetails = async (form_identity) => {
   const response = await apiActions?.get(`/api/v1/feedbackforms/public/detail/${form_identity}/`);
   return response?.data || {};
