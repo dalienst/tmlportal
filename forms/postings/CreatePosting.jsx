@@ -3,6 +3,7 @@
 import useAxiosAuth from "@/hooks/general/useAxiosAuth";
 import { Field, Form, Formik } from "formik";
 import React, { useState } from "react";
+import { X } from "lucide-react";
 import toast from "react-hot-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -100,11 +101,41 @@ export default function CreatePosting({ closeModal, refetch, managers }) {
                 multiple
                 name="uploaded_attachments"
                 id="uploaded_attachments"
-                onChange={(e) =>
-                  setFieldValue("uploaded_attachments", Array.from(e.target.files))
-                }
+                onChange={(e) => {
+                  const newFiles = Array.from(e.target.files);
+                  setFieldValue("uploaded_attachments", [...values.uploaded_attachments, ...newFiles]);
+                  e.target.value = "";
+                }}
                 className="file:text-foreground"
               />
+              
+              {values.uploaded_attachments.length > 0 && (
+                <div className="mt-2 grid grid-cols-1 gap-2">
+                  {values.uploaded_attachments.map((file, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 bg-slate-50 rounded-md border border-slate-200">
+                      <div className="flex items-center gap-2 overflow-hidden">
+                        <span className="text-[10px] font-medium truncate">{file.name}</span>
+                        <span className="text-[8px] text-muted-foreground whitespace-nowrap">
+                          ({(file.size / 1024).toFixed(1)} KB)
+                        </span>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-destructive hover:bg-destructive/10"
+                        onClick={() => {
+                          const newFiles = values.uploaded_attachments.filter((_, i) => i !== index);
+                          setFieldValue("uploaded_attachments", newFiles);
+                        }}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <p className="text-[10px] text-muted-foreground italic">
                 {values.uploaded_attachments.length > 0 ? `${values.uploaded_attachments.length} files selected` : "Upload attachments"}
               </p>
