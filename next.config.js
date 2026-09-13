@@ -1,6 +1,15 @@
 // next.config.js
 module.exports = {
   images: {
-    domains: ["res.cloudinary.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "media.tamarind.co.ke",
+      },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+    ],
   },
 };
